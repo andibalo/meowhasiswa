@@ -9,7 +9,7 @@ Anonymous forum-based social media app targeted for University and School Studen
 Ensure you have the following installed
 - Expo
 - node >= 21.7.3
-- yarn >= 4.5.0 
+- yarn >= 4.0.0
 
 Install dependencies by running:
 ```
