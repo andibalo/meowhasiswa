@@ -1,5 +1,5 @@
 import { config as configBase } from '@tamagui/config/v3'
-import { colors } from 'constants/Colors'
+import { colors } from './constants/Colors'
 import { createTamagui } from 'tamagui'
 
 const conf = {

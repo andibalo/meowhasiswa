@@ -53,7 +53,15 @@ function RootLayoutNav() {
               headerShown: false,
             }}
           />
-
+          <Stack.Screen
+            name="chat/chat-list"
+            options={{
+              headerTitle: "Chat",
+            }}
+          />
+          <Stack.Screen
+            name="chat/chat-detail"
+          />
           <Stack.Screen
             name="modal"
             options={{
