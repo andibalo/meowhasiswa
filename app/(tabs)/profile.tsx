@@ -1,50 +1,47 @@
-import { Text, View, Image } from 'tamagui'
+import { View, Text, Image } from 'tamagui'
+import { ReviewList } from 'components/university'
+import { FontAwesome } from '@expo/vector-icons' // Icon library for stars and bottom navigation icons
 
-export default function ProfileScreen() {
+export default function UniversityScreen() {
   return (
-    <View flex={1} backgroundColor="$white" padding={20}>
-      <View alignItems="center" marginBottom={10}>
-        <Text fontSize={35} color="$black" paddingLeft={10}>
-          Profile
+    <View flex={1} padding={'$3'} backgroundColor="$white">
+      {/* Header */}
+      <View alignItems="center" marginBottom={'$3'}>
+        <Text fontSize={35} color="$black">
+          University
         </Text>
       </View>
 
-      <View flexDirection="row" justifyContent="space-between" alignItems="center" paddingVertical={10} borderBottomWidth={1} borderBottomColor="$gray">
-        <View flexDirection="row" alignItems="center">
-          <Image
-            source={require('./assets/placeholder.png')}
-            width={50}
-            height={50}
-            borderRadius={25}
-          />
-          <View marginLeft={10}>
-            <Text fontSize={16} color="$black" fontWeight="bold">
-              Kampus
-            </Text>
-            <Text fontSize={14} color="$gray">
-              Username
-            </Text>
-            <Text fontSize={14} color="$gray">
-              Prodi
-            </Text>
-          </View>
+      {/* University Info Section */}
+      <View flexDirection="row" alignItems="center" marginBottom={'$3'}>
+        <Image
+          source={require('./assets/umn-logo.png')} // Replace with the path to your logo
+          width={50}
+          height={50}
+          borderRadius={25}
+        />
+        <View marginLeft={'$3'}>
+          <Text fontSize={16} fontWeight="bold" color="$black">
+            UMN
+          </Text>
+          <Text fontSize={14} color="$gray">
+            6 hours ago
+          </Text>
+          <Text fontSize={14} color="$gray">
+            Informatika
+          </Text>
         </View>
-
-        <Text fontSize={14} color="$gray">
-          Joined Date
-        </Text>
       </View>
 
-      <View flexDirection="row" justifyContent="center" marginVertical={10}>
-        <Text fontSize={16} fontWeight="bold" marginHorizontal={20} textDecorationLine="underline">
-          Profile
-        </Text>
-        <Text fontSize={16} marginHorizontal={20} color="$gray">
-          Posts
-        </Text>
-        <Text fontSize={16} marginHorizontal={20} color="$gray">
-          Comments
-        </Text>
+      {/* Review List */}
+      <ReviewList />
+
+      {/* Bottom Navigation */}
+      <View flexDirection="row" justifyContent="space-around" paddingVertical={'$3'} borderTopWidth={1} borderTopColor="$gray2">
+        <FontAwesome name="home" size={20} color="#ccc" />
+        <FontAwesome name="paw" size={20} color="#ccc" /> {/* "Submeow" icon */}
+        <FontAwesome name="university" size={20} color="#000" /> {/* Selected "University" icon */}
+        <FontAwesome name="user" size={20} color="#ccc" />
       </View>
     </View>
   )
