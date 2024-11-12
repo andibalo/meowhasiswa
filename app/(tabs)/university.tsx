@@ -17,7 +17,7 @@ export default function UniversityScreen() {
       {/* University Info Section */}
       <View flexDirection="row" alignItems="center" marginBottom={'$3'}>
         <Image
-          source={require('./assets/placeholder.png')}
+          source={require('assets/images/placeholder.png')}
           width={50}
           height={50}
           borderRadius={25}

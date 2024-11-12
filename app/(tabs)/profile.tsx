@@ -15,7 +15,7 @@ export default function UniversityScreen() {
       {/* University Info Section */}
       <View flexDirection="row" alignItems="center" marginBottom={'$3'}>
         <Image
-          source={require('./assets/umn-logo.png')} // Replace with the path to your logo
+          source={require('assets/images/placeholder.png')} // Replace with the path to your logo
           width={50}
           height={50}
           borderRadius={25}
