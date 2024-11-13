@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router'
 import { useTheme } from 'tamagui'
 import { Home, School, User, MessagesSquare } from '@tamagui/lucide-icons'
+import { NavigationContainer } from '@react-navigation/native'
 
 export default function TabLayout() {
   const theme = useTheme()
