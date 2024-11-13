@@ -16,6 +16,7 @@ export default function HomeScreen() {
       borderRadius={'$2'}
       paddingHorizontal={'$2'}
       paddingVertical={'$1'}
+      marginBottom={'$3'}
     >
       <FontAwesome name="search" size={16} color="#FFFFFF" style={{ marginRight: 8, marginLeft: 10 }} />
       <Input
