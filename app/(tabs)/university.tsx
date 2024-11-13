@@ -93,9 +93,6 @@ export default function UniversityScreen() {
 
       {/* Divider Line */}
       <View height={1} backgroundColor="$grayLight" marginBottom={'$3'} />
-
-      {/* Review List */}
-      <ReviewList />
     </View>
   )
 }
