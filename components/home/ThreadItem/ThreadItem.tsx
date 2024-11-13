@@ -69,7 +69,7 @@ export const ThreadItem = (props: ThreadItemProps) => {
                     <Text ml={'$1'} color="#030303">13</Text>
                 </XStack>
             </XStack>
-            <View height={2} backgroundColor="#030303" marginBottom={'$3'} marginTop={'$3'} opacity={1} />
+            <View height={3} backgroundColor="#030303" marginBottom={'$3'} marginTop={'$3'} opacity={1} />
         </View>
     );
 };
