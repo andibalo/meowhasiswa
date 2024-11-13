@@ -15,8 +15,9 @@ export const ThreadList = ({ ListHeaderComponent, ...otherProps }) => {
             keyExtractor={(item, index) => `thread-${index}`}
             onEndReachedThreshold={0.5}
             scrollEventThrottle={16}
-            showsVerticalScrollIndicator={false}
+            showsVerticalScrollIndicator={true}
             ListHeaderComponent={ListHeaderComponent}
+            {...otherProps}
         />
     );
 };

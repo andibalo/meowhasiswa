@@ -21,6 +21,7 @@ export default function UniversityScreen() {
           placeholder="Placeholder. Search goes here later."
           placeholderTextColor="#FFFFFF"
           backgroundColor="transparent"
+          color="#FFFFFF"
           flex={1}
           borderWidth={0}
         />
