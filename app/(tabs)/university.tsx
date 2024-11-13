@@ -15,16 +15,16 @@ export default function UniversityScreen() {
       paddingHorizontal={'$2'}
       paddingVertical={'$1'}
       marginBottom={'$3'}
-    >
-      <FontAwesome name="search" size={16} color="#FFFFFF" style={{ marginRight: 8, marginLeft: 10 }} />
-      <Input
-        placeholder="Placeholder. Search goes here later."
-        placeholderTextColor="#FFFFFF"
-        backgroundColor="transparent"
-        flex={1}
-        borderWidth={0}
-      />
-    </View>
+      >
+        <FontAwesome name="search" size={16} color="#FFFFFF" style={{ marginRight: 8, marginLeft: 10 }} />
+        <Input
+          placeholder="Placeholder. Search goes here later."
+          placeholderTextColor="#FFFFFF"
+          backgroundColor="transparent"
+          flex={1}
+          borderWidth={0}
+        />
+      </View>
       <ScrollView>
         {/* Review Card */}
         {[1, 2].map((item, index) => (

@@ -1,70 +1,75 @@
-import { MessageSquare, ThumbsDown, ThumbsUp } from '@tamagui/lucide-icons'
-import { Text, View, XStack, YStack, Avatar } from 'tamagui'
+import { MessageSquare, ThumbsDown, ThumbsUp } from '@tamagui/lucide-icons';
+import { Text, View, XStack, YStack, Avatar } from 'tamagui';
 
 interface ThreadItemProps {
-    post: any
+    post: any;
 }
 
 export const ThreadItem = (props: ThreadItemProps) => {
-
     return (
-        <View mb={'$3'} p={'$2'} pb={'$0'} bg={'$white1'} borderRadius={'$radius.4'} minHeight={300}>
-            <XStack p={'$3'} jc={"space-between"}>
-                <View>
-                    <XStack>
-                        <View mr={'$2'}>
-                            <Avatar borderRadius={'$2'} size="$4">
-                                <Avatar.Image
-                                    accessibilityLabel="Cam"
-                                    src="https://images.unsplash.com/photo-1548142813-c348350df52b?&w=150&h=150&dpr=2&q=80"
-                                />
-                                <Avatar.Fallback backgroundColor="$blue10" />
-                            </Avatar>
-                        </View>
-                        <YStack jc={'space-between'}>
-                            <XStack gap="$2">
-                                <Text>UMN</Text>
-                                <Text>inco</Text>
-                            </XStack>
-                            <XStack gap="$2">
-                                <Text>4 hari lalu</Text>
-                                <Text>/public</Text>
-                            </XStack>
-                        </YStack>
+        <View mb={'$3'} p={'$3'} bg={'$white'} borderRadius={'$4'}>
+            {/* Header Section */}
+            <XStack alignItems="center" mb={'$3'}>
+                <Avatar size="$5" mr={'$2'}>
+                    <Avatar.Image
+                        accessibilityLabel="User Avatar"
+                        src="https://images.unsplash.com/photo-1548142813-c348350df52b?&w=150&h=150&dpr=2&q=80"
+                    />
+                    <Avatar.Fallback backgroundColor="$blue10" />
+                </Avatar>
+                <YStack>
+                    <Text fontWeight="bold" fontSize={'$4'}>UMN</Text>
+                    <XStack gap="$2">
+                        <Text fontSize={'$2'} color="#C5C5C5">username12</Text>
+                        <Text fontSize={'$2'} color="#030303">6 jam yang lalu</Text>
+                        <Text fontSize={'$2'} color="$blue10" backgroundColor="$blue2" borderRadius={'$2'} px={'$1'}>
+                            m/Public
+                        </Text>
                     </XStack>
-                </View>
+                </YStack>
             </XStack>
-            <YStack pr={'$3'} pl={'$3'} pb={'$1.5'} gap="$1">
-                <Text fontSize={'$7'}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elitqua
+
+            {/* Title and Content */}
+            <YStack mb={'$3'}>
+                <Text fontWeight="bold" fontSize={20} mb={'$2'} color="#030303">
+                    This is a title
                 </Text>
-                <Text>
-                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis a
-                    ute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                    Excepteur sint occaecat cupidatat non proident, sunt in culpa
+                <Text color="#030303" lineHeight={22}>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    Duis aute irure dolor in reprehenderit.
                 </Text>
             </YStack>
-            <View p={'$3'} pt={'$1.5'} pb={'$1.5'}>
-                <Text>TLDR</Text>
-            </View>
-            <View p={'$3'} pt={'$1.5'}>
-                <Text>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </Text>
-            </View>
-            <XStack pl={'$3'} pr={'$3'} pb={'$3'} gap={'$5'}>
-                <XStack ai={'center'}>
-                    <ThumbsUp />
-                    <Text ml={'$2'} >3</Text>
+
+            {/* Divider */}
+            <View height={1} backgroundColor="#030303" mb={'$3'} />
+
+            {/* TLDR Section */}
+            <YStack mb={'$3'}>
+                <Text color="#030303" mb={'$1'}>
+                    TLDR
+                </Text>
+                <Text color="#030303" lineHeight={22}>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                </Text>
+            </YStack>
+
+            {/* Reactions Section */}
+            <XStack justifyContent="flex-start" pt={'$3'}>
+                <XStack alignItems="center" mr={'$5'}>
+                    <ThumbsUp color="#030303" />
+                    <Text ml={'$1'} color="#030303">24</Text>
                 </XStack>
-                <XStack ai={'center'}>
-                    <ThumbsDown />
-                    <Text ml={'$2'} >3</Text>
+                <XStack alignItems="center" mr={'$5'}>
+                    <ThumbsDown color="#030303" />
+                    <Text ml={'$1'} color="#030303">2</Text>
                 </XStack>
-                <XStack ai={'center'}>
-                    <MessageSquare />
-                    <Text ml={'$2'} >3</Text>
+                <XStack alignItems="center" mr={'$5'}>
+                    <MessageSquare color="#030303" />
+                    <Text ml={'$1'} color="#030303">13</Text>
                 </XStack>
             </XStack>
+            <View height={2} backgroundColor="#030303" marginBottom={'$3'} marginTop={'$3'} opacity={1} />
         </View>
-
-    )
-}
+    );
+};
