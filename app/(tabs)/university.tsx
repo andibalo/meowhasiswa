@@ -38,7 +38,7 @@ export default function UniversityScreen() {
                 borderRadius={25}
               />
               <View marginLeft={'$3'}>
-                <Text fontSize={16} fontWeight="bold" color="#030303">
+                <Text fontSize={16} fontWeight={'bold'} color="#030303">
                   UMN
                 </Text>
                 <Text fontSize={12} color="#030303">
@@ -52,7 +52,7 @@ export default function UniversityScreen() {
 
             {/* Rating and Review Section */}
             <View marginBottom={'$3'}>
-              <Text fontSize={18} fontWeight="bold" color="#030303" marginBottom={'$1'}>
+              <Text fontSize={24} fontWeight="bold" color="#030303" marginBottom={'$1'}>
                 {index === 0 ? "Nice" : "Overall good"}
               </Text>
               <View flexDirection="row" alignItems="center">
@@ -65,13 +65,13 @@ export default function UniversityScreen() {
                       <FontAwesome
                         key={i}
                         name={isFullStar ? "star" : isHalfStar ? "star-half-full" : "star-o"}
-                        size={20}
+                        size={24}
                         color="#FFD700"
                       />
                     );
                   })}
                 </View>
-                <Text fontSize={18} marginLeft={'$2'} color="#030303" fontWeight="bold">
+                <Text fontSize={24} marginLeft={'$2'} color="#030303" fontWeight="bold">
                   {rating}
                 </Text>
               </View>
