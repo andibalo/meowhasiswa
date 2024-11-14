@@ -5,9 +5,11 @@ import * as yup from 'yup';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { login } from "redux/slice/auth";
-import { useAppDispatch } from "redux/store";
+import { RootState, useAppDispatch } from "redux/store";
 import * as SecureStore from 'expo-secure-store'
 import { JWT_TOKEN_KEY } from "constants/common";
+import { useSelector } from "react-redux";
+import { Redirect } from "expo-router";
 
 type LoginFormData = {
   email: string
@@ -17,7 +19,8 @@ type LoginFormData = {
 const loginSchema = yup.object().shape({
   email: yup.
     string().
-    required('Email is required'),
+    required('Email is required').
+    email("Invalid email format"),
   password: yup.
     string().
     required('Password is required'),
@@ -27,6 +30,12 @@ export default function Login() {
 
   const navigation = useNavigation();
   const dispatch = useAppDispatch()
+
+  const token = useSelector((state: RootState) => state.auth.token)
+
+  if (token != "") {
+    return <Redirect href="(tabs)" />;
+  }
 
   const {
     control,

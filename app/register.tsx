@@ -20,7 +20,7 @@ export default function Register() {
           source={require("../assets/images/meow-logo.png")}
           width={260}
           height={260}
-          resizeMode="contain"
+          objectFit="contain"
         />
       </YStack>
       <Text fontSize="$9" fontWeight="bold" color="$color" mb="$5">
@@ -68,7 +68,10 @@ export default function Register() {
         </Text>
         <Text
           fontWeight="bold"
-          onPress={() => navigation.navigate("login")}
+          onPress={() => {
+            //@ts-ignore
+            navigation.navigate("login")
+          }}
           style={{ textDecorationLine: "underline" }}
           ml="$2"
         >

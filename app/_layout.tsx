@@ -67,15 +67,6 @@ function RootLayoutNav() {
             }}
           />
           <Stack.Screen
-            name="chat/chat-list"
-            options={{
-              headerTitle: "Chat",
-            }}
-          />
-          <Stack.Screen
-            name="chat/chat-detail"
-          />
-          <Stack.Screen
             name="modal"
             options={{
               title: 'Tamagui + Expo',
