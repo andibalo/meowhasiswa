@@ -21,6 +21,7 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync()
 
 export default function RootLayout() {
+
   const [interLoaded, interError] = useFonts({
     Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
     InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf'),
@@ -47,7 +48,7 @@ function RootLayoutNav() {
     <Provider>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack>
-        <Stack.Screen
+          <Stack.Screen
             name="login"
             options={{
               headerShown: false,
@@ -64,15 +65,6 @@ function RootLayoutNav() {
             options={{
               headerShown: false,
             }}
-          />
-          <Stack.Screen
-            name="chat/chat-list"
-            options={{
-              headerTitle: "Chat",
-            }}
-          />
-          <Stack.Screen
-            name="chat/chat-detail"
           />
           <Stack.Screen
             name="modal"
