@@ -1,16 +1,65 @@
-import React, { useState } from "react";
 import { Button, Input, Stack, Text, YStack, XStack, Image } from "tamagui";
 import { FontAwesome } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import * as yup from 'yup';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { login } from "redux/slice/auth";
+import { useAppDispatch } from "redux/store";
+import * as SecureStore from 'expo-secure-store'
+import { JWT_TOKEN_KEY } from "constants/common";
+
+type LoginFormData = {
+  email: string
+  password: string
+}
+
+const loginSchema = yup.object().shape({
+  email: yup.
+    string().
+    required('Email is required'),
+  password: yup.
+    string().
+    required('Password is required'),
+});
 
 export default function Login() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const navigation = useNavigation();
 
-  const handleLogin = () => {
-    console.log("Username:", username, "Password:", password);
-  };
+  const navigation = useNavigation();
+  const dispatch = useAppDispatch()
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: yupResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: ''
+    },
+  });
+
+  const onHandleLogin = async (formData: LoginFormData) => {
+
+    try {
+      const res = await dispatch(login({
+        email: formData.email,
+        password: formData.password
+      })).unwrap()
+
+      if (!res?.data) {
+        throw new Error("unable to login")
+      }
+
+      await SecureStore.setItemAsync(JWT_TOKEN_KEY, res.data);
+
+      // @ts-ignore
+      navigation.navigate("(tabs)")
+    } catch (error) {
+      console.log(error, "LOGIN FORM")
+    }
+  }
 
   return (
     <YStack f={1} jc="center" ai="center" padding="$4" bg="$background">
@@ -19,7 +68,7 @@ export default function Login() {
           source={require("../assets/images/meow-logo.png")}
           width={260}
           height={260}
-          resizeMode="contain"
+          objectFit="contain"
         />
       </YStack>
       <Text fontSize="$9" fontWeight="bold" color="$color" mb="$5">
@@ -29,26 +78,46 @@ export default function Login() {
         <Text fontSize="$3" color="$color" mb="$1">
           Username
         </Text>
-        <Input
-          placeholder="Type your username"
-          value={username}
-          onChangeText={setUsername}
-          bg="$backgroundSoft"
-          padding="$3"
-          borderRadius="$2"
+        <Controller
+          control={control}
+          rules={{
+            required: true,
+          }}
+          render={({ field: { onChange, value } }) => (
+            <Input
+              placeholder="Type your username"
+              value={value}
+              onChangeText={onChange}
+              bg="$backgroundSoft"
+              padding="$3"
+              borderRadius="$2"
+            />
+          )}
+          name="email"
         />
+        {errors.email && <Text color="$red10" fontSize={12}>{errors.email.message}</Text>}
         <Text fontSize="$3" color="$color" mt="$3">
           Password
         </Text>
-        <Input
-          placeholder="Enter your password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          bg="$backgroundSoft"
-          padding="$3"
-          borderRadius="$2"
+        <Controller
+          control={control}
+          rules={{
+            required: true,
+          }}
+          render={({ field: { onChange, value } }) => (
+            <Input
+              placeholder="Enter your password"
+              value={value}
+              onChangeText={onChange}
+              secureTextEntry
+              bg="$backgroundSoft"
+              padding="$3"
+              borderRadius="$2"
+            />
+          )}
+          name="password"
         />
+        {errors.password && <Text color="$red10" fontSize={12}>{errors.password.message}</Text>}
       </Stack>
       <XStack mt="$3" ai="center">
         <Text fontSize="$3" color="$color">
@@ -56,7 +125,10 @@ export default function Login() {
         </Text>
         <Text
           fontWeight="bold"
-          onPress={() => navigation.navigate("register")}
+          onPress={() => {
+            // @ts-ignore
+            navigation.navigate("register")
+          }}
           style={{ textDecorationLine: "underline" }}
           ml="$2"
         >
@@ -65,7 +137,7 @@ export default function Login() {
       </XStack>
       <XStack width="80%" jc="flex-end" mt="$5">
         <Button
-          onPress={handleLogin}
+          onPress={handleSubmit(onHandleLogin)}
           bg="$primary"
           padding="$3"
           borderRadius="$3"

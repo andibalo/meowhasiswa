@@ -1,9 +1,17 @@
-import { Tabs } from 'expo-router'
+import { Redirect, Tabs } from 'expo-router'
 import { useTheme } from 'tamagui'
 import { Home, School, User, MessagesSquare } from '@tamagui/lucide-icons'
+import { RootState } from 'redux/store'
+import { useSelector } from 'react-redux'
 
 export default function TabLayout() {
   const theme = useTheme()
+
+  const token = useSelector((state: RootState) => state.auth.token)
+
+  if (token === "") {
+    return <Redirect href="/login" />;
+  }
 
   return (
     <Tabs
