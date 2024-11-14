@@ -49,8 +49,9 @@ export default function Login() {
     },
   });
 
-  const onHandleLogin = async (formData: LoginFormData) => {
+  const handleLogin = async (formData: LoginFormData) => {
 
+    //TODO: add error handling and success/fail toast
     try {
       const res = await dispatch(login({
         email: formData.email,
@@ -83,9 +84,9 @@ export default function Login() {
       <Text fontSize="$9" fontWeight="bold" color="$color" mb="$5">
         MeowHasiswa
       </Text>
-      <Stack space="$2" width="80%">
+      <Stack gap="$2" width="80%">
         <Text fontSize="$3" color="$color" mb="$1">
-          Username
+          Email
         </Text>
         <Controller
           control={control}
@@ -94,7 +95,7 @@ export default function Login() {
           }}
           render={({ field: { onChange, value } }) => (
             <Input
-              placeholder="Type your username"
+              placeholder="Enter your email"
               value={value}
               onChangeText={onChange}
               bg="$backgroundSoft"
@@ -146,7 +147,7 @@ export default function Login() {
       </XStack>
       <XStack width="80%" jc="flex-end" mt="$5">
         <Button
-          onPress={handleSubmit(onHandleLogin)}
+          onPress={handleSubmit(handleLogin)}
           bg="$primary"
           padding="$3"
           borderRadius="$3"
