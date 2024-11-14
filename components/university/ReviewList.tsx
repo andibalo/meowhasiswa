@@ -1,23 +1,22 @@
-import { ReviewItem } from './ReviewItem';
 import { FlatList } from 'react-native';
+import { ReviewItem } from './ReviewItem';
 
-
-export const ReviewList = () => {
-
-    const testData = ['1', '2', '3', '4', '5']
-
-    const renderPost = ({ item }) => (
-        <ReviewItem />
-    );
-
-    return (
-        <FlatList
-            data={testData}
-            renderItem={renderPost}
-            keyExtractor={(item, index) => `review-uni-${index}`}
-            onEndReachedThreshold={0.5}
-            scrollEventThrottle={16}
-            showsVerticalScrollIndicator={false}
-        />
-    )
+export function ReviewList({
+  ListHeaderComponent,
+  contentContainerStyle,
+  showsVerticalScrollIndicator,
+  data,
+}) {
+  return (
+    <FlatList
+        data={data}
+        renderItem={({ item }) => (
+            <ReviewItem review={item} rating={item.rating || 4.5} />
+        )}
+        keyExtractor={(item) => item.id.toString()}
+        ListHeaderComponent={ListHeaderComponent}
+        contentContainerStyle={contentContainerStyle}
+        showsVerticalScrollIndicator={showsVerticalScrollIndicator}
+    />
+  );
 }
