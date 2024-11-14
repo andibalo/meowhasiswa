@@ -13,7 +13,8 @@ export default function TabLayout() {
   const theme = useTheme()
   const dispatch = useAppDispatch()
   const token = useSelector((state: RootState) => state.auth.token)
-
+  const enableAuthentication = process.env.EXPO_PUBLIC_ENABLE_AUTHENTICATION
+  
   const getUserTokenFromStorage = async () => {
     let result = SecureStore.getItem(JWT_TOKEN_KEY);
 
@@ -26,8 +27,10 @@ export default function TabLayout() {
     getUserTokenFromStorage();
   }, [])
 
-  if (token === "") {
-    return <Redirect href="/login" />;
+  if(enableAuthentication == "1") {
+    if (token === "") {
+      return <Redirect href="/login" />;
+    }
   }
 
   return (

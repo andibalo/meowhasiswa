@@ -1,10 +1,11 @@
 import axios from 'axios'
+import { APP_NAME } from 'constants/common'
 // import AsyncStorage from '@react-native-community/async-storage'
 
 const axiosInstance = axios.create({
-  baseURL: 'http://192.168.0.38:8082/api',
+  baseURL: process.env.EXPO_PUBLIC_CORE_SERVICE_API_URL,
   timeout: 3000,
-  headers: {'X-Client-Id': 'MEOWHASISWA_APP'},
+  headers: {'X-Client-Id': APP_NAME},
 })
 
 // instanceAxios.interceptors.request.use(

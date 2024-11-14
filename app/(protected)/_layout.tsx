@@ -5,9 +5,12 @@ import { RootState } from 'redux/store';
 export default function ProtectedLayout() {
 
     const token = useSelector((state: RootState) => state.auth.token)
+    const enableAuthentication = process.env.EXPO_PUBLIC_ENABLE_AUTHENTICATION
 
-    if (token === "") {
-        return <Redirect href="/login" />;
+    if (enableAuthentication == "1") {
+        if (token === "") {
+            return <Redirect href="/login" />;
+        }
     }
 
     return (
