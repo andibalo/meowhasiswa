@@ -5,69 +5,45 @@ import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { ThreadList } from 'components/home';
+import { SearchBar, TopTabBar } from 'components/common';
+import { TabView, SceneMap } from 'react-native-tab-view';
+import { useWindowDimensions } from 'react-native';
 
-const Tab = createMaterialTopTabNavigator();
+const routes = [
+  { key: 'first', title: 'Trending' },
+  { key: 'second', title: 'Latest' },
+];
 
-const Overlay = styled(View, {
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  justifyContent: 'flex-end',
-});
-
-const PopupContainer = styled(YStack, {
-  backgroundColor: '#FFFFFF',
-  padding: 20,
-  borderTopLeftRadius: 16,
-  borderTopRightRadius: 16,
-  width: '100%',
+const renderScene = SceneMap({
+  first: () => <ThreadList title='Trending' />,
+  second: () => <ThreadList title='Newest' />,
 });
 
 export default function HomeScreen() {
-  const router = useRouter(); // For navigation to the popup
-  const renderSearchBar = () => (
-    <View 
-      flexDirection="row" 
-      alignItems="center" 
-      backgroundColor="#595959" 
-      borderRadius={'$2'}
-      paddingHorizontal={'$2'}
-      paddingVertical={'$1'}
-      marginBottom={'$3'}
-    >
-      <FontAwesome name="search" size={16} color="#FFFFFF" style={{ marginRight: 8, marginLeft: 10 }} />
-      <Input
-        placeholder="Search Thread"
-        placeholderTextColor="#FFFFFF"
-        backgroundColor="transparent"
-        color="#FFFFFF"
-        flex={1}
-        borderWidth={0}
-      />
-    </View>
+  const layout = useWindowDimensions();
+  const [index, setIndex] = useState(0);
+
+  const renderTabBar = (props) => (
+    <TopTabBar {...props} />
   );
+  const router = useRouter();
 
   const blankSpace = () => <View></View>;
 
-  const RenderTabScreen = () => (
-    <View flex={1} backgroundColor="#FFFFFF">
-      <ThreadList
-        ListHeaderComponent={blankSpace}
-        contentContainerStyle={{ paddingTop: 16 }}
-        showsVerticalScrollIndicator={true}
-      />
-    </View>
-  );
 
   return (
     <View flex={1} backgroundColor="#FFFFFF" padding={'$3'}>
-      {renderSearchBar()}
-
-      {RenderTabScreen()}
-
+      <View mb="$3">
+        <SearchBar placeholder="Search Thread" />
+      </View>
+      <TabView
+        lazy
+        renderTabBar={renderTabBar}
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        onIndexChange={setIndex}
+        initialLayout={{ width: layout.width }}
+      />
       {/* Bottom-right button to open the modal */}
       <TouchableOpacity
         style={{

@@ -1,36 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image } from 'tamagui';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { NavigationContainer } from '@react-navigation/native';
+import { TabView, SceneMap } from 'react-native-tab-view';
+import { useWindowDimensions } from 'react-native'; // For handling layout dimensions
+import { SearchBar, TopTabBar } from 'components/common'; // Import your custom components
 
-const Tab = createMaterialTopTabNavigator();
 
 // Placeholder components for tabs
-function ProfileContentScreen() {
-  return (
-    <View flex={1} alignItems="center" justifyContent="center" backgroundColor="#ffffff">
-      <Text>Profile Content</Text>
-    </View>
-  );
-}
+const routes = [
+  { key: 'first', title: 'Profile' },
+  { key: 'second', title: 'Post' },
+  { key: 'third', title: 'Comments'}
+];
 
-function PostsScreen() {
-  return (
-    <View flex={1} alignItems="center" justifyContent="center" backgroundColor="#ffffff">
-      <Text>Posts Content</Text>
-    </View>
-  );
-}
-
-function CommentsScreen() {
-  return (
-    <View flex={1} alignItems="center" justifyContent="center" backgroundColor="#ffffff">
-      <Text>Comments Content</Text>
-    </View>
-  );
-}
+const renderScene = SceneMap({
+  first: () => <Text>Profile Content</Text>,
+  second: () => <Text>Post Content</Text>,
+  third: () => <Text>Comments Content</Text>,
+});
 
 export default function ProfileScreen() {
+  const { width } = useWindowDimensions();
+  const [index, setIndex] = useState(0); // Manage the active tab index
+
   return (
     <NavigationContainer>
       <View flex={1} padding="$4" backgroundColor="#ffffff">
@@ -57,26 +49,14 @@ export default function ProfileScreen() {
         </View>
 
         {/* Material Top Tabs */}
-        <Tab.Navigator
-          screenOptions={({ route }) => ({
-            tabBarLabel: ({ focused, color }) => (
-              <Text style={{ fontSize: 14, fontWeight: focused ? 'bold' : 'normal', color }}>
-                {route.name}
-              </Text>
-            ),
-            tabBarIndicatorStyle: { backgroundColor: '#030303', height: 3 },
-            tabBarActiveTintColor: '#030303',
-            tabBarInactiveTintColor: '#C5C5C5',
-            tabBarStyle: {
-              elevation: 0,
-              shadowOpacity: 0,
-            },
-          })}
-        >
-          <Tab.Screen name="Profile" component={ProfileContentScreen} />
-          <Tab.Screen name="Posts" component={PostsScreen} />
-          <Tab.Screen name="Comments" component={CommentsScreen} />
-        </Tab.Navigator>
+        <TabView
+          lazy
+          renderTabBar={(props) => <TopTabBar {...props} />}
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={{ width }} // Set the initial layout based on screen width
+        />
       </View>
     </NavigationContainer>
   );
