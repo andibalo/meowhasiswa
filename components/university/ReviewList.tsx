@@ -17,6 +17,7 @@ export function ReviewList({
   const data: IReview[] = [
     {
       id: 1,
+      "university_image_url": "https://registrasi.untar.ac.id/assets/images/logo_untar.png",
       universityName: 'UMN',
       created_at: "2024-11-09T20:16:52.744793Z",
       department: 'Informatika',
@@ -28,6 +29,7 @@ export function ReviewList({
     },
     {
       id: 2,
+      "university_image_url": "https://registrasi.untar.ac.id/assets/images/logo_untar.png",
       universityName: 'UBM',
       created_at: "2024-11-09T19:33:28.384301Z",
       department: 'Akuntansi',
