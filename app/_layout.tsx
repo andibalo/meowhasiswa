@@ -76,6 +76,12 @@ function RootLayoutNav() {
               gestureDirection: 'horizontal',
             }}
           />
+          <Stack.Screen
+            name="(protected)"
+            options={{
+              headerShown: false,
+            }}
+          />
         </Stack>
       </ThemeProvider>
     </Provider>

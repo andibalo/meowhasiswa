@@ -1,9 +1,9 @@
 import { ThreadList } from 'components/home'
 import { useState } from 'react';
 import { useWindowDimensions } from 'react-native';
-import { View, Text } from 'tamagui'
+import { View } from 'tamagui'
 import { TabView, SceneMap } from 'react-native-tab-view';
-import { SearchBar, TopTabBar } from 'components/common';
+import { Error, NotFound, SearchBar, TopTabBar } from 'components/common';
 import { useFetchThreadListQuery } from 'redux/api/thread';
 import { IThread } from 'types/model';
 
@@ -108,6 +108,7 @@ const TabItem = (props: { title: string }) => {
   const [cursor, setCursor] = useState("")
   const enableAPIIntegration = process.env.EXPO_PUBLIC_ENABLE_API_INTEGRATION
 
+
   if (enableAPIIntegration === "0") {
     return (
       <View pb="$3">
@@ -134,7 +135,7 @@ const TabItem = (props: { title: string }) => {
 
   // TODO: IMPROVE ERROR AND NOT FOUND UI
   if (error) {
-    return <Text>Error</Text>
+    return <Error/>
   }
 
   return (
@@ -143,7 +144,7 @@ const TabItem = (props: { title: string }) => {
         data && data.data?.threads && data.data?.threads.length > 0 ?
           <ThreadList title={props.title} isLoading={isLoading} handleLoadMore={handleLoadMore} data={data.data.threads} />
           :
-          <Text>Not Found</Text>
+          <NotFound description='Threads Not Found' />
       }
     </View>
   )
