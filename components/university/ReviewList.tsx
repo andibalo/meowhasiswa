@@ -13,12 +13,12 @@ export function ReviewList({
   contentContainerStyle,
   showsVerticalScrollIndicator = false, // Default is false to hide scroll bar
 }: ReviewListProps) {
-  // Sample reviews data moved into ReviewList
+  // Sample reviews data moved into ReviewList with updated `created_at`
   const data: IReview[] = [
     {
       id: 1,
       universityName: 'UMN',
-      timeAgo: '6 hours ago',
+      created_at: "2024-11-09T20:16:52.744793Z",
       department: 'Informatika',
       title: 'Nice',
       body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -29,7 +29,7 @@ export function ReviewList({
     {
       id: 2,
       universityName: 'UBM',
-      timeAgo: '2 days ago',
+      created_at: "2024-11-09T19:33:28.384301Z",
       department: 'Akuntansi',
       title: 'Overall good',
       body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',

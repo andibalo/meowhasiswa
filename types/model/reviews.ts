@@ -1,7 +1,7 @@
 export interface IReview {
     id: number;
     universityName: string;
-    timeAgo: string;
+    created_at: string;
     department: string;
     title: string;
     body: string;

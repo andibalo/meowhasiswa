@@ -1,6 +1,10 @@
 import { View, Text, Image, XStack, YStack } from 'tamagui';
 import { FontAwesome } from '@expo/vector-icons';
-import { IReview } from '../../types/model'; // Import IReview type
+import { IReview } from '../../types/model';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime); // Extend dayjs with relative time plugin
 
 interface ReviewItemProps {
   review: IReview; // Use IReview type for the review prop
@@ -8,6 +12,8 @@ interface ReviewItemProps {
 }
 
 export const ReviewItem = ({ review, rating }: ReviewItemProps) => {
+  const timeAgo = dayjs(review.created_at).fromNow(); // Use dayjs to calculate relative time
+
   return (
     <View marginBottom={'$3'}>
       {/* University Info Section */}
@@ -23,7 +29,7 @@ export const ReviewItem = ({ review, rating }: ReviewItemProps) => {
             {review.universityName}
           </Text>
           <Text fontSize={12} color="#030303">
-            {review.timeAgo}
+            {timeAgo} {/* Display relative time */}
           </Text>
         </View>
       </View>
