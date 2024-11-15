@@ -1,5 +1,5 @@
 import { FlatList } from "react-native";
-import { SizableText, XStack, YStack, Image, Avatar } from "tamagui";
+import { SizableText, XStack, YStack, Avatar } from "tamagui";
 
 const messages = [
   {

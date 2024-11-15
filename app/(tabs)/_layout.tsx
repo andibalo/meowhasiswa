@@ -53,7 +53,6 @@ export default function TabLayout() {
               onPress={() => {
                 router.push('/chat/chat-list')
               }}
-              size="small"
               theme={theme.name}
               backgroundColor="white"
               borderRadius={8}

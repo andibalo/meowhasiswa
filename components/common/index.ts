@@ -1,3 +1,5 @@
 export * from './StarRating'
 export * from './TopTabBar'
 export * from './SearchBar'
+export * from './Error'
+export * from './NotFound'
