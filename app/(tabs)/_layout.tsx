@@ -1,13 +1,41 @@
-import { Tabs } from 'expo-router'
+import { Redirect, Tabs } from 'expo-router'
 import { useTheme } from 'tamagui'
 import { Home, School, User, MessagesSquare } from '@tamagui/lucide-icons'
 import { useRouter } from 'expo-router'
 import { Button } from 'tamagui'
 import Ionicons from '@expo/vector-icons/Ionicons'
+import { RootState, useAppDispatch } from 'redux/store'
+import { useSelector } from 'react-redux'
+import { useEffect } from 'react'
+import * as SecureStore from 'expo-secure-store'
+import { JWT_TOKEN_KEY } from 'constants/common'
+import { setToken } from 'redux/slice/auth'
 
 export default function TabLayout() {
+
   const theme = useTheme()
   const router = useRouter()
+  const dispatch = useAppDispatch()
+  const token = useSelector((state: RootState) => state.auth.token)
+  const enableAuthentication = process.env.EXPO_PUBLIC_ENABLE_AUTHENTICATION
+  
+  const getUserTokenFromStorage = async () => {
+    let result = SecureStore.getItem(JWT_TOKEN_KEY);
+
+    if (result) {
+      dispatch(setToken(result))
+    }
+  };
+
+  useEffect(() => {
+    getUserTokenFromStorage();
+  }, [])
+
+  if(enableAuthentication == "1") {
+    if (token === "") {
+      return <Redirect href="/login" />;
+    }
+  }
 
   return (
     <Tabs
