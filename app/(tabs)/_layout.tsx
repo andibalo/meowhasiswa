@@ -1,6 +1,9 @@
 import { Redirect, Tabs } from 'expo-router'
 import { useTheme } from 'tamagui'
 import { Home, School, User, MessagesSquare } from '@tamagui/lucide-icons'
+import { useRouter } from 'expo-router'
+import { Button } from 'tamagui'
+import Ionicons from '@expo/vector-icons/Ionicons'
 import { RootState, useAppDispatch } from 'redux/store'
 import { useSelector } from 'react-redux'
 import { useEffect } from 'react'
@@ -11,6 +14,7 @@ import { setToken } from 'redux/slice/auth'
 export default function TabLayout() {
 
   const theme = useTheme()
+  const router = useRouter()
   const dispatch = useAppDispatch()
   const token = useSelector((state: RootState) => state.auth.token)
   const enableAuthentication = process.env.EXPO_PUBLIC_ENABLE_AUTHENTICATION
@@ -43,7 +47,26 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <Home color={color} />
+          tabBarIcon: ({ color }) => <Home color={color} />,
+          headerRight: () => (
+            <Button
+              onPress={() => {
+                router.push('/chat/chat-list')
+              }}
+              size="small"
+              theme={theme.name}
+              backgroundColor="white"
+              borderRadius={8}
+              paddingHorizontal={10}   
+              style={{
+                backgroundColor: 'white',
+                borderWidth: 0,
+                borderColor: 'transparent',
+              }}
+            >
+              <Ionicons name="chatbox-ellipses-outline" size={24} color={theme.primary.val} />
+            </Button>
+          ),
         }}
       />
       <Tabs.Screen
