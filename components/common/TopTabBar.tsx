@@ -24,17 +24,6 @@ export const TopTabBar = (props: TabBarProps<Route>) => {
                 elevation: 0,
                 shadowOpacity: 0,
             }}
-            renderLabel={({ route, focused }) => (
-                <Text
-                    style={{
-                        fontSize: 14,
-                        fontWeight: focused ? 'bold' : 'normal',
-                        color: focused ? '#030303' : '#C5C5C5',
-                    }}
-                >
-                    {route.title}
-                </Text>
-            )}
         />
     );
 };
