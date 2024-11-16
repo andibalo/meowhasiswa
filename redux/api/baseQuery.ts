@@ -14,7 +14,7 @@ export const baseQuery = fetchBaseQuery({
             headers.set('Authorization', `Bearer ${token}`)
         }
 
-        const enableUseStaticToken = process.env.EXPO_PUBLIC_ENABLE_API_INTEGRATION
+        const enableUseStaticToken = process.env.EXPO_PUBLIC_USE_STATIC_TOKEN
 
         if (enableUseStaticToken === "1") {
             // TODO: REMOVE AFTER DEV FINISH
