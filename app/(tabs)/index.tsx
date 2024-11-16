@@ -174,6 +174,7 @@ export default function HomeScreen() {
         initialLayout={{ width: layout.width }}
       />
 
+      {/* Button for creating Thread. DO NOT REMOVE. */}
       <TouchableOpacity
         style={{
           position: 'absolute',
