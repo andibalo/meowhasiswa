@@ -31,10 +31,10 @@ export const TopTabBar = (props: TabBarProps<Route>) => {
                     style={{
                         fontSize: 14,
                         fontWeight: focused ? 'bold' : 'normal',
-                        color: focused ? '#030303' : '#C5C5C5', // Color based on focused state
+                        color: focused ? '#030303' : '#C5C5C5',
                     }}
                 >
-                    {route.title} {/* Use `title` as label */}
+                    {route.title}
                 </Text>
             )}
         />
