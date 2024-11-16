@@ -8,8 +8,6 @@ type Route = {
 };
 
 export const TopTabBar = (props: TabBarProps<Route>) => {
-    const theme = useTheme();
-
     return (
         <TabBar
             {...props}
