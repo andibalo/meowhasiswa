@@ -1,8 +1,8 @@
-import { ThreadList } from 'components/home'
+import { ThreadList } from 'components/home';
 import { useState } from 'react';
 import { useWindowDimensions, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import { View } from 'tamagui'
+import { View } from 'tamagui';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { Error, NotFound, SearchBar, TopTabBar } from 'components/common';
 import { useFetchThreadListQuery } from 'redux/api/thread';
@@ -107,9 +107,9 @@ const renderScene = SceneMap({
 });
 
 const TabItem = (props: { title: string }) => {
-  const [cursor, setCursor] = useState("")
+  const [cursor, setCursor] = useState("");
 
-  const enableAPIIntegration = process.env.EXPO_PUBLIC_ENABLE_API_INTEGRATION
+  const enableAPIIntegration = process.env.EXPO_PUBLIC_ENABLE_API_INTEGRATION;
 
   if (enableAPIIntegration === "0") {
     return (
@@ -123,51 +123,55 @@ const TabItem = (props: { title: string }) => {
           onRefresh={() => null}
         />
       </View>
-    )
+    );
   }
 
   // TODO: ADD QUERY TRENDING AND NEWEST
   const { data, error, isLoading } = useFetchThreadListQuery({
     cursor: cursor,
     limit: 10
-  })
+  });
 
   const onRefresh = () => {
-    setCursor("")
+    setCursor("");
   };
 
   const handleLoadMore = () => {
     if (data?.data) {
-      let nextCursor = data.data.meta.next_cursor
+      let nextCursor = data.data.meta.next_cursor;
 
-      if (nextCursor != "") {
-        setCursor(nextCursor)
+      if (nextCursor !== "") {
+        setCursor(nextCursor);
       }
     }
-  }
+  };
+
+  // Use default data when there's an error. REMOVE LABEL AT YOUR OWN RISK
+  const threads = error ? testData : data?.data?.threads;
 
   // TODO: IMPROVE ERROR AND NOT FOUND UI
-  if (error) {
-    return <Error />
-  }
+  //if (error) {
+  //  return <Error />
+  //}
+  
 
   return (
     <View flex={1}>
       {
-        data && data.data?.threads && data.data?.threads.length > 0 ?
+        threads && threads.length > 0 ?
           <ThreadList
             title={props.title}
             isLoading={isLoading}
             handleLoadMore={handleLoadMore}
-            data={data.data.threads}
+            data={threads}
             onRefresh={onRefresh}
           />
           :
           <NotFound description='Threads Not Found' />
       }
     </View>
-  )
-}
+  );
+};
 
 export default function HomeScreen() {
   const layout = useWindowDimensions();
@@ -195,7 +199,7 @@ export default function HomeScreen() {
           position: 'absolute',
           bottom: 20,
           right: 20,
-          backgroundColor: '$secondary',
+          backgroundColor: '#000000',
           width: 60,
           height: 60,
           borderRadius: 30,

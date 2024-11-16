@@ -744,7 +744,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-class-properties@npm:^7.0.0-0, @babel/plugin-transform-class-properties@npm:^7.25.4":
+"@babel/plugin-transform-class-properties@npm:^7.25.4":
   version: 7.25.9
   resolution: "@babel/plugin-transform-class-properties@npm:7.25.9"
   dependencies:
@@ -756,7 +756,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-classes@npm:^7.0.0, @babel/plugin-transform-classes@npm:^7.0.0-0, @babel/plugin-transform-classes@npm:^7.25.4":
+"@babel/plugin-transform-classes@npm:^7.0.0, @babel/plugin-transform-classes@npm:^7.25.4":
   version: 7.25.9
   resolution: "@babel/plugin-transform-classes@npm:7.25.9"
   dependencies:
@@ -1143,7 +1143,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-unicode-regex@npm:^7.0.0, @babel/plugin-transform-unicode-regex@npm:^7.0.0-0, @babel/plugin-transform-unicode-regex@npm:^7.24.7":
+"@babel/plugin-transform-unicode-regex@npm:^7.0.0, @babel/plugin-transform-unicode-regex@npm:^7.24.7":
   version: 7.25.9
   resolution: "@babel/plugin-transform-unicode-regex@npm:7.25.9"
   dependencies:
@@ -7588,7 +7588,7 @@ __metadata:
     react-native-gifted-chat: "npm:^2.6.4"
     react-native-pager-view: "npm:6.3.0"
     react-native-ratings: "npm:^8.1.0"
-    react-native-reanimated: "npm:^3.16.1"
+    react-native-reanimated: "npm:3.10.1"
     react-native-safe-area-context: "npm:^4.10.5"
     react-native-screens: "npm:~3.31.1"
     react-native-svg: "npm:15.2.0"
@@ -11792,18 +11792,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-reanimated@npm:^3.16.1":
-  version: 3.16.1
-  resolution: "react-native-reanimated@npm:3.16.1"
+"react-native-reanimated@npm:3.10.1":
+  version: 3.10.1
+  resolution: "react-native-reanimated@npm:3.10.1"
   dependencies:
     "@babel/plugin-transform-arrow-functions": "npm:^7.0.0-0"
-    "@babel/plugin-transform-class-properties": "npm:^7.0.0-0"
-    "@babel/plugin-transform-classes": "npm:^7.0.0-0"
     "@babel/plugin-transform-nullish-coalescing-operator": "npm:^7.0.0-0"
     "@babel/plugin-transform-optional-chaining": "npm:^7.0.0-0"
     "@babel/plugin-transform-shorthand-properties": "npm:^7.0.0-0"
     "@babel/plugin-transform-template-literals": "npm:^7.0.0-0"
-    "@babel/plugin-transform-unicode-regex": "npm:^7.0.0-0"
     "@babel/preset-typescript": "npm:^7.16.7"
     convert-source-map: "npm:^2.0.0"
     invariant: "npm:^2.2.4"
@@ -11811,7 +11808,7 @@ __metadata:
     "@babel/core": ^7.0.0-0
     react: "*"
     react-native: "*"
-  checksum: 3e46c32655a5e3d89dd79606179ebd6da96cedf31f15c64a32d4cea2c35ec5724411099aeaa59e5f8220c93fc268ee1b391b3210e7e87e43544e279edd2a2ccc
+  checksum: bb2a0802fd619999dd5d1dd9734875fc14699de29d3537003997e85040dd3a0b430716192388c71544d600fc7abf243af1cfc24ce2513c282b046e8bb3430125
   languageName: node
   linkType: hard
 

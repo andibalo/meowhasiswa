@@ -18,7 +18,7 @@ export const ReviewItem = ({ review, rating }: ReviewItemProps) => {
     return (
         <View marginBottom={'$3'}>
             <View flexDirection="row" alignItems="center" marginBottom={'$2'}>
-                <Avatar size="$5" mr={'$2'}>
+                <Avatar size="$5" mr={'$2'} borderRadius={'$2'} borderWidth="$1" borderColor="$primary">
                     <Avatar.Image
                         accessibilityLabel="University Logo"
                         src={review.university_image_url}

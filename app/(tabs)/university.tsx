@@ -5,11 +5,11 @@ import { SearchBar } from 'components/common';
 
 export default function UniversityScreen() {
   return (
-    <View flex={1} padding={'$3'} backgroundColor="$secondary">
+    <View flex={1} padding={'$3'} bg="$backgroundSoft">
       <View mb="$3">
         <SearchBar placeholder="Search University" />
       </View>
-      <View flex={1} backgroundColor="$secondary" mb={'$3'} p={'$3'} borderRadius={'$4'}>
+      <View flex={1} bg="#ffffff" mb={'$3'} p={'$3'} borderRadius={'$4'}>
         <ReviewList
           ListHeaderComponent={() => <View />}
           contentContainerStyle={{ paddingTop: 16 }}
