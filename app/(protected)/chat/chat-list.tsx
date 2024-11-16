@@ -40,12 +40,17 @@ export default function ChatListScreen() {
           <Avatar.Fallback backgroundColor="$secondary" />
         </Avatar>
         <YStack flex={1}>
-          <XStack alignItems="center">
-            <SizableText size="$5" fontWeight="bold" color="$primary">
-              {item.university}
-            </SizableText>
-            <SizableText size="$3" marginLeft="$2" color="$secondary">
-              {item.username}
+          <XStack justifyContent="space-between" alignItems="center">
+            <XStack alignItems="center">
+              <SizableText size="$5" fontWeight="bold" color="$primary">
+                {item.university}
+              </SizableText>
+              <SizableText size="$3" marginLeft="$2" color="$secondary">
+                {item.username}
+              </SizableText>
+            </XStack>
+            <SizableText size="$1" color="$secondary">
+              {item.timestamp}
             </SizableText>
           </XStack>
           <SizableText size="$4" color="$primary" numberOfLines={1}>
@@ -53,9 +58,6 @@ export default function ChatListScreen() {
           </SizableText>
         </YStack>
       </XStack>
-      <SizableText size="$1" color="$secondary">
-        {item.timestamp}
-      </SizableText>
     </XStack>
   );
 

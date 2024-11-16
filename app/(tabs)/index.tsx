@@ -108,7 +108,6 @@ const renderScene = SceneMap({
 
 const TabItem = (props: { title: string }) => {
   const [cursor, setCursor] = useState("")
-  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const enableAPIIntegration = process.env.EXPO_PUBLIC_ENABLE_API_INTEGRATION
 
@@ -134,10 +133,7 @@ const TabItem = (props: { title: string }) => {
   })
 
   const onRefresh = () => {
-    setIsRefreshing(true);
-    setTimeout(() => {
-      setIsRefreshing(false);
-    }, 2000);
+    setCursor("")
   };
 
   const handleLoadMore = () => {
@@ -156,7 +152,7 @@ const TabItem = (props: { title: string }) => {
   }
 
   return (
-    <View flex={1} pb="$3">
+    <View flex={1}>
       {
         data && data.data?.threads && data.data?.threads.length > 0 ?
           <ThreadList
@@ -164,7 +160,6 @@ const TabItem = (props: { title: string }) => {
             isLoading={isLoading}
             handleLoadMore={handleLoadMore}
             data={data.data.threads}
-            isRefreshing={isRefreshing}
             onRefresh={onRefresh}
           />
           :

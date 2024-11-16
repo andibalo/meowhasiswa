@@ -43,7 +43,11 @@ export const threadsApi = createApi({
                 return endpointName;
             },
             // Always merge incoming data to the cache entry
-            merge: (currentCache, newItems) => {
+            merge: (currentCache, newItems, { arg }) => {
+                if (arg.cursor === "") {
+                    return newItems
+                }
+
                 if (currentCache.data && newItems.data) {
                     currentCache.data.threads.push(...newItems.data.threads);
                     currentCache.data.meta = newItems.data.meta

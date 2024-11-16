@@ -8,7 +8,7 @@ interface IThreadListProps {
     handleLoadMore: () => void
     isLoading: boolean
     onRefresh: () => void
-    isRefreshing: boolean
+    isRefreshing?: boolean
 }
 
 const renderFooterLoading = (loadingMore) => {
@@ -38,7 +38,7 @@ export const ThreadList = (props: IThreadListProps) => {
             showsVerticalScrollIndicator={false}
             refreshControl={
                 <RefreshControl
-                    refreshing={props.isRefreshing}
+                    refreshing={!!props.isRefreshing}
                     onRefresh={props.onRefresh}
                 />
             }
