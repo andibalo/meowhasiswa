@@ -51,8 +51,6 @@ export default function CreateThreadScreen() {
     const [createThread, results] = useCreateThreadMutation()
 
     const handleCreateThread = async (formData: CreateThreadFormData) => {
-        console.log(formData)
-
         if (subthreadID) {
             await createThread({
                 subthread_id: subthreadID,

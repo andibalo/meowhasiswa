@@ -24,7 +24,7 @@ export default function ProtectedLayout() {
           <Stack.Screen
             name="chat/chat-detail"
             options={({ route }) => ({
-              headerTitle: route.params?.message?.username || "Chat-detail",
+              headerTitle: route.params?.message?.username || "Chat Detail",
             })}
           />
             <Stack.Screen

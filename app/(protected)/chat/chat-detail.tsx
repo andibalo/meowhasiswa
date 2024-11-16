@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { GiftedChat, Bubble, Day, Time } from "react-native-gifted-chat";
 import { useRoute } from "@react-navigation/native";
 import { Avatar } from "tamagui";
