@@ -78,6 +78,12 @@ function RootLayoutNav() {
               presentation: 'modal',
               animation: 'slide_from_bottom',
             }}
+            />
+          <Stack.Screen
+            name="(protected)"
+            options={{
+              headerShown: false,
+            }}
           />
         </Stack>
       </ThemeProvider>
