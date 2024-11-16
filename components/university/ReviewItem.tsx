@@ -27,21 +27,21 @@ export const ReviewItem = ({ review, rating }: ReviewItemProps) => {
                     <Avatar.Fallback backgroundColor="$blue10" />
                 </Avatar>
                 <View marginLeft={'$3'}>
-                    <Text fontSize={16} fontWeight={'bold'} color="#030303">
+                    <Text fontSize={16} fontWeight={'bold'} color="$primary">
                         {review.universityName}
                     </Text>
-                    <Text fontSize={12} color="#030303">
+                    <Text fontSize={12} color="$primary">
                         {timeAgo} {/* Display relative time */}
                     </Text>
                 </View>
             </View>
-            <Text fontSize={12} color="#C5C5C5" marginBottom={'$2'}>
+            <Text fontSize={12} color="$secondary" marginBottom={'$2'}>
                 {review.department}
             </Text>
 
             {/* Rating and Review Section */}
             <View marginBottom={'$3'}>
-                <Text fontSize={24} fontWeight="bold" color="#030303" marginBottom={'$1'}>
+                <Text fontSize={24} fontWeight="bold" color="$primary" marginBottom={'$1'}>
                     {review.title}
                 </Text>
                 <View flexDirection="row" alignItems="center">
@@ -60,41 +60,41 @@ export const ReviewItem = ({ review, rating }: ReviewItemProps) => {
                             );
                         })}
                     </View>
-                    <Text fontSize={24} marginLeft={'$2'} color="#030303" fontWeight="bold">
+                    <Text fontSize={24} marginLeft={'$2'} color="$primary" fontWeight="bold">
                         {rating}
                     </Text>
                 </View>
-                <Text fontSize={14} color="#030303" marginTop={'$1'}>
+                <Text fontSize={14} color="$primary" marginTop={'$1'}>
                     {review.body}
                 </Text>
             </View>
 
             {/* Pros and Cons Section */}
             <View marginBottom={'$3'}>
-                <Text fontSize={16} fontWeight="bold" color="#030303" marginBottom={'$1'}>
+                <Text fontSize={16} fontWeight="bold" color="$primary" marginBottom={'$1'}>
                     Pros
                 </Text>
                 <View marginBottom={'$2'}>
                     {review.pros.map((pros, index) => (
-                        <Text key={index} fontSize={14} color="#030303">
+                        <Text key={index} fontSize={14} color="$primary">
                         • {pros}
                         </Text>
                     ))}
                 </View>
 
-                <Text fontSize={16} fontWeight="bold" color="#030303" marginBottom={'$1'}>
+                <Text fontSize={16} fontWeight="bold" color="$primary" marginBottom={'$1'}>
                     Cons
                 </Text>
                 <View marginBottom={'$2'}>
                     {review.cons.map((con, index) => (
-                        <Text key={index} fontSize={14} color="#030303">
+                        <Text key={index} fontSize={14} color="$primary">
                         • {con}
                         </Text>
                     ))}
                 </View>
             </View>
             {/* Divider Line */}
-            <View height={3} backgroundColor="#030303" marginBottom={'$3'} opacity={1} />
+            <View height={3} backgroundColor="$primary" marginBottom={'$3'} opacity={1} />
         </View>
     );
 }

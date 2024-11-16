@@ -179,7 +179,7 @@ export default function HomeScreen() {
           position: 'absolute',
           bottom: 20,
           right: 20,
-          backgroundColor: '#000000',
+          backgroundColor: '$primary',
           width: 60,
           height: 60,
           borderRadius: 30,
