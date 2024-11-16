@@ -8,6 +8,7 @@ const messages = [
     university: "UBM",
     username: "tolecat",
     text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vel augue nisl. Vestibulum pellentesque ante ex, eu molestie nulla malesuada eget. Nullam dapibus sit amet erat ac ornare.",
+    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vel augue nisl. Vestibulum pellentesque ante ex, eu molestie nulla malesuada eget. Nullam dapibus sit amet erat ac ornare.",
     timestamp: "Kemarin",
     profilePic:
       "https://pacificgarden.co.id/wp-content/uploads/2021/10/Logo-UBM-Universitas-Bunda-Mulia-Original-1024x744.png",
@@ -16,6 +17,7 @@ const messages = [
     id: "2",
     university: "Untar",
     username: "catlover",
+    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vel augue nisl. Vestibulum pellentesque ante ex, eu molestie nulla malesuada eget. Nullam dapibus sit amet erat ac ornare.",
     text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vel augue nisl. Vestibulum pellentesque ante ex, eu molestie nulla malesuada eget. Nullam dapibus sit amet erat ac ornare.",
     timestamp: "12/03/2024",
     profilePic: "https://registrasi.untar.ac.id/assets/images/logo_untar.png",
@@ -66,13 +68,16 @@ export default function ChatListScreen() {
     </TouchableOpacity>
   );
 
+
   return (
+    <YStack flex={1} padding="$4" backgroundColor="$background">
     <YStack flex={1} padding="$4" backgroundColor="$background">
       <FlatList
         data={messages}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
       />
+    </YStack>
     </YStack>
   );
 }
