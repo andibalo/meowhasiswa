@@ -14,6 +14,22 @@ export interface IThread {
     like_count: number;
     dislike_count: number;
     comment_count: number;
+    comments?: IComment[];
+    created_by: string;
+    created_at: string;
+    updated_by: string | null;
+    updated_at: string | null;
+}
+
+export interface IComment {
+    id: string;
+    user_id: string;
+    username: string;
+    university_abbreviated_name: string;
+    university_image_url: string;
+    content: string;
+    like_count: number;
+    dislike_count: number;
     created_by: string;
     created_at: string;
     updated_by: string | null;

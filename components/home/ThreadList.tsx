@@ -1,7 +1,7 @@
 import { ThreadItem } from './ThreadItem';
 import { FlatList, RefreshControl } from 'react-native';
 import { IThread } from '../../types/model'
-import { Spinner } from 'tamagui';
+import { Spinner, View } from 'tamagui';
 interface IThreadListProps {
     title: string
     data: IThread[]
@@ -23,7 +23,10 @@ const renderFooterLoading = (loadingMore) => {
 export const ThreadList = (props: IThreadListProps) => {
 
     const renderPost = ({ item }) => (
-        <ThreadItem thread={item} />
+        <View>
+            <ThreadItem thread={item} />
+            <View my="$2" />
+        </View>
     );
 
     return (
