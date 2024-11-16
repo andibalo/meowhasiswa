@@ -73,6 +73,9 @@ function RootLayoutNav() {
           />
           <Stack.Screen
             name="chat/chat-detail"
+            options={({ route }) => ({
+              headerTitle: route.params?.message?.username || "Chat-detail",
+            })}
           />
           <Stack.Screen
             name="modal"
