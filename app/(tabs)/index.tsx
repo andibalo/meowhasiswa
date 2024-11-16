@@ -1,11 +1,13 @@
 import { ThreadList } from 'components/home'
 import { useState } from 'react';
-import { useWindowDimensions } from 'react-native';
+import { useWindowDimensions, TouchableOpacity } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 import { View, Text } from 'tamagui'
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { SearchBar, TopTabBar } from 'components/common';
 import { useFetchThreadListQuery } from 'redux/api/thread';
 import { IThread } from 'types/model';
+import { useRouter } from 'expo-router';
 
 const testData: IThread[] = [
   {
@@ -152,6 +154,7 @@ const TabItem = (props: { title: string }) => {
 export default function HomeScreen() {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
+  const router = useRouter();
 
   const renderTabBar = (props) => (
     <TopTabBar {...props} />
@@ -170,6 +173,23 @@ export default function HomeScreen() {
         onIndexChange={setIndex}
         initialLayout={{ width: layout.width }}
       />
+
+      <TouchableOpacity
+        style={{
+          position: 'absolute',
+          bottom: 20,
+          right: 20,
+          backgroundColor: '#000000',
+          width: 60,
+          height: 60,
+          borderRadius: 30,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+        onPress={() => router.push('/newThread/NewThreadScreen')}
+      >
+        <FontAwesome name="plus" size={24} color="#FFFFFF" />
+      </TouchableOpacity>
     </View>
   );
 }
