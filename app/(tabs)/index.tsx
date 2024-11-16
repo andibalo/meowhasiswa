@@ -185,7 +185,7 @@ export default function HomeScreen() {
           justifyContent: 'center',
           alignItems: 'center',
         }}
-        onPress={() => router.push('/newThread/NewThreadScreen')}
+        onPress={() => router.push('./newthread/new_thread_screen')}
       >
         <FontAwesome name="plus" size={24} color="#FFFFFF" />
       </TouchableOpacity>
