@@ -1,22 +1,23 @@
 import { ThreadItem } from './ThreadItem';
-import { FlatList } from 'react-native';
+import { FlatList, RefreshControl } from 'react-native';
 import { IThread } from '../../types/model'
 import { Spinner } from 'tamagui';
-
 interface IThreadListProps {
     title: string
     data: IThread[]
     handleLoadMore: () => void
     isLoading: boolean
+    onRefresh: () => void
+    isRefreshing: boolean
 }
 
 const renderFooterLoading = (loadingMore) => {
     if (!loadingMore) {
-      return null;
+        return null;
     }
 
-    return <Spinner size="large" color="$primary" />;
-  };
+    return <Spinner size="large" color="$primary" mb="$3" />;
+};
 
 
 export const ThreadList = (props: IThreadListProps) => {
@@ -35,6 +36,12 @@ export const ThreadList = (props: IThreadListProps) => {
             onEndReached={props.handleLoadMore}
             ListFooterComponent={renderFooterLoading(props.isLoading)}
             showsVerticalScrollIndicator={false}
+            refreshControl={
+                <RefreshControl
+                    refreshing={props.isRefreshing}
+                    onRefresh={props.onRefresh}
+                />
+            }
         />
     )
 }

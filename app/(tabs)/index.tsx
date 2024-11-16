@@ -1,11 +1,13 @@
 import { ThreadList } from 'components/home'
 import { useState } from 'react';
-import { useWindowDimensions } from 'react-native';
+import { TouchableOpacity, useWindowDimensions } from 'react-native';
 import { View } from 'tamagui'
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { Error, NotFound, SearchBar, TopTabBar } from 'components/common';
 import { useFetchThreadListQuery } from 'redux/api/thread';
 import { IThread } from 'types/model';
+import { FontAwesome } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 const testData: IThread[] = [
   {
@@ -106,13 +108,21 @@ const renderScene = SceneMap({
 
 const TabItem = (props: { title: string }) => {
   const [cursor, setCursor] = useState("")
-  const enableAPIIntegration = process.env.EXPO_PUBLIC_ENABLE_API_INTEGRATION
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
+  const enableAPIIntegration = process.env.EXPO_PUBLIC_ENABLE_API_INTEGRATION
 
   if (enableAPIIntegration === "0") {
     return (
-      <View pb="$3">
-        <ThreadList title={props.title} isLoading={false} handleLoadMore={() => null} data={testData} />
+      <View>
+        <ThreadList
+          title={props.title}
+          isLoading={false}
+          handleLoadMore={() => null}
+          data={testData}
+          isRefreshing={false}
+          onRefresh={() => null}
+        />
       </View>
     )
   }
@@ -122,6 +132,13 @@ const TabItem = (props: { title: string }) => {
     cursor: cursor,
     limit: 10
   })
+
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 2000);
+  };
 
   const handleLoadMore = () => {
     if (data?.data) {
@@ -135,14 +152,21 @@ const TabItem = (props: { title: string }) => {
 
   // TODO: IMPROVE ERROR AND NOT FOUND UI
   if (error) {
-    return <Error/>
+    return <Error />
   }
 
   return (
-    <View pb="$3">
+    <View flex={1} pb="$3">
       {
         data && data.data?.threads && data.data?.threads.length > 0 ?
-          <ThreadList title={props.title} isLoading={isLoading} handleLoadMore={handleLoadMore} data={data.data.threads} />
+          <ThreadList
+            title={props.title}
+            isLoading={isLoading}
+            handleLoadMore={handleLoadMore}
+            data={data.data.threads}
+            isRefreshing={isRefreshing}
+            onRefresh={onRefresh}
+          />
           :
           <NotFound description='Threads Not Found' />
       }
@@ -154,6 +178,8 @@ export default function HomeScreen() {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
 
+  const router = useRouter()
+
   const renderTabBar = (props) => (
     <TopTabBar {...props} />
   );
@@ -164,13 +190,28 @@ export default function HomeScreen() {
         <SearchBar placeholder="Search Thread" />
       </View>
       <TabView
-        lazy
         renderTabBar={renderTabBar}
         navigationState={{ index, routes }}
         renderScene={renderScene}
         onIndexChange={setIndex}
         initialLayout={{ width: layout.width }}
       />
+      <TouchableOpacity
+        style={{
+          position: 'absolute',
+          bottom: 20,
+          right: 20,
+          backgroundColor: '#000000',
+          width: 60,
+          height: 60,
+          borderRadius: 30,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+        onPress={() => router.push('/thread/create-thread')}
+      >
+        <FontAwesome name="plus" size={24} color="#FFFFFF" />
+      </TouchableOpacity>
     </View>
   )
 }
