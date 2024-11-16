@@ -9,13 +9,16 @@ export const SearchBar = (props: ISearchBarProps) => {
 
     return (
         <XStack borderRadius="$2" bg="#595959" alignItems="center" >
-            <Input value={props.value}
+            <Input
+                value={props.value}
                 onChangeText={props.onChangeText}
                 backgroundColor="transparent"
-                flex={1} borderWidth={0}
+                flex={1}
+                borderWidth={0}
                 color='white'
                 placeholder={props.placeholder}
-                placeholderTextColor="white" />
+                placeholderTextColor="white"
+            />
             <Button disabled chromeless padding="$3" icon={<Search color="white" size="$1.5" />} />
         </XStack>
     )

@@ -1,4 +1,4 @@
-import { FlatList, TouchableOpacity } from "react-native";
+import { FlatList, Pressable } from "react-native";
 import { SizableText, XStack, YStack, Avatar } from "tamagui";
 import { useNavigation } from "@react-navigation/native";
 
@@ -8,8 +8,7 @@ const messages = [
     university: "UBM",
     username: "tolecat",
     text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vel augue nisl. Vestibulum pellentesque ante ex, eu molestie nulla malesuada eget. Nullam dapibus sit amet erat ac ornare.",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vel augue nisl. Vestibulum pellentesque ante ex, eu molestie nulla malesuada eget. Nullam dapibus sit amet erat ac ornare.",
-    timestamp: "Kemarin",
+    timestamp: "12/03/2024",
     profilePic:
       "https://pacificgarden.co.id/wp-content/uploads/2021/10/Logo-UBM-Universitas-Bunda-Mulia-Original-1024x744.png",
   },
@@ -17,7 +16,6 @@ const messages = [
     id: "2",
     university: "Untar",
     username: "catlover",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vel augue nisl. Vestibulum pellentesque ante ex, eu molestie nulla malesuada eget. Nullam dapibus sit amet erat ac ornare.",
     text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vel augue nisl. Vestibulum pellentesque ante ex, eu molestie nulla malesuada eget. Nullam dapibus sit amet erat ac ornare.",
     timestamp: "12/03/2024",
     profilePic: "https://registrasi.untar.ac.id/assets/images/logo_untar.png",
@@ -28,26 +26,28 @@ export default function ChatListScreen() {
   const navigation = useNavigation();
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity
-      onPress={() => navigation.navigate("chat/chat-detail", { message: item })}
+    <Pressable
+      onPress={() => {
+        // @ts-ignore
+        navigation.navigate("chat/chat-detail", { message: item })
+      }}
     >
-      <XStack padding="$1" marginBottom="$4" alignItems="center">
-        <XStack flex={1} alignItems="center">
-          <Avatar
-            borderRadius={"$2"}
-            borderWidth="$1"
-            borderColor="$primary"
-            marginRight="$2"
-            size="$5"
-          >
-            <Avatar.Image
-              accessibilityLabel="Profile Picture"
-              src={item.profilePic}
-              objectFit="contain"
-            />
-            <Avatar.Fallback backgroundColor="$secondary" />
-          </Avatar>
-          <YStack flex={1}>
+      <XStack flex={1} padding="$1" marginBottom="$4" alignItems="center">
+        <Avatar
+          borderRadius={"$2"}
+          borderWidth="$1"
+          borderColor="$primary"
+          marginRight="$2"
+          size="$5"
+        >
+          <Avatar.Image
+            accessibilityLabel="Profile Picture"
+            src={item.profilePic}
+            objectFit="contain"
+          />
+          <Avatar.Fallback backgroundColor="$secondary" />
+        </Avatar>
+        <YStack flex={1}>
           <XStack justifyContent="space-between" alignItems="center">
             <XStack alignItems="center">
               <SizableText size="$5" fontWeight="bold" color="$primary">
@@ -61,25 +61,22 @@ export default function ChatListScreen() {
               {item.timestamp}
             </SizableText>
           </XStack>
-            <SizableText size="$4" color="$primary" numberOfLines={1}>
-              {item.text}
-            </SizableText>
-          </YStack>
-        </XStack>
+          <SizableText size="$4" color="$primary" numberOfLines={1}>
+            {item.text}
+          </SizableText>
+        </YStack>
       </XStack>
-    </TouchableOpacity>
+    </Pressable>
   );
 
 
   return (
     <YStack flex={1} padding="$3" backgroundColor="$background">
-    <YStack flex={1} padding="$2" backgroundColor="$background">
       <FlatList
         data={messages}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
       />
-    </YStack>
     </YStack>
   );
 }
