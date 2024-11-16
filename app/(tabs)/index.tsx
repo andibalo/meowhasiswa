@@ -108,13 +108,20 @@ const renderScene = SceneMap({
 
 const TabItem = (props: { title: string }) => {
   const [cursor, setCursor] = useState("")
-  const enableAPIIntegration = process.env.EXPO_PUBLIC_ENABLE_API_INTEGRATION
 
+  const enableAPIIntegration = process.env.EXPO_PUBLIC_ENABLE_API_INTEGRATION
 
   if (enableAPIIntegration === "0") {
     return (
-      <View pb="$3">
-        <ThreadList title={props.title} isLoading={false} handleLoadMore={() => null} data={testData} />
+      <View>
+        <ThreadList
+          title={props.title}
+          isLoading={false}
+          handleLoadMore={() => null}
+          data={testData}
+          isRefreshing={false}
+          onRefresh={() => null}
+        />
       </View>
     )
   }
@@ -124,6 +131,10 @@ const TabItem = (props: { title: string }) => {
     cursor: cursor,
     limit: 10
   })
+
+  const onRefresh = () => {
+    setCursor("")
+  };
 
   const handleLoadMore = () => {
     if (data?.data) {
@@ -137,14 +148,20 @@ const TabItem = (props: { title: string }) => {
 
   // TODO: IMPROVE ERROR AND NOT FOUND UI
   if (error) {
-    return <Error/>
+    return <Error />
   }
 
   return (
-    <View pb="$3">
+    <View flex={1}>
       {
         data && data.data?.threads && data.data?.threads.length > 0 ?
-          <ThreadList title={props.title} isLoading={isLoading} handleLoadMore={handleLoadMore} data={data.data.threads} />
+          <ThreadList
+            title={props.title}
+            isLoading={isLoading}
+            handleLoadMore={handleLoadMore}
+            data={data.data.threads}
+            onRefresh={onRefresh}
+          />
           :
           <NotFound description='Threads Not Found' />
       }
@@ -167,7 +184,6 @@ export default function HomeScreen() {
         <SearchBar placeholder="Search Thread" />
       </View>
       <TabView
-        lazy
         renderTabBar={renderTabBar}
         navigationState={{ index, routes }}
         renderScene={renderScene}

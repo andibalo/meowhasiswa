@@ -1,13 +1,25 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { baseQuery } from './baseQuery'
-import { IFetchThreadListQueryParams } from 'types/request/thread'
-import { FetchThreadListAPIResponse } from 'types/response'
+import { ICreateThreadRequest, IFetchThreadListQueryParams } from 'types/request/thread'
+import { APIResponse, FetchThreadListAPIResponse } from 'types/response'
 
 export const threadsApi = createApi({
     reducerPath: "threads",
     baseQuery: baseQuery,
+    tagTypes: ['Thread'],
     endpoints: (builder) => ({
+        createThread: builder.mutation<APIResponse<any>, ICreateThreadRequest>({
+            invalidatesTags: ['Thread'],
+            query: (body) => {
+                return {
+                    url: "/v1/thread",
+                    method: "POST",
+                    body
+                }
+            },
+        }),
         fetchThreadList: builder.query<FetchThreadListAPIResponse, IFetchThreadListQueryParams>({
+            providesTags: ['Thread'],
             query: (qParams) => {
 
                 let params: Record<string, any> = {}
@@ -31,7 +43,11 @@ export const threadsApi = createApi({
                 return endpointName;
             },
             // Always merge incoming data to the cache entry
-            merge: (currentCache, newItems) => {
+            merge: (currentCache, newItems, { arg }) => {
+                if (arg.cursor === "") {
+                    return newItems
+                }
+
                 if (currentCache.data && newItems.data) {
                     currentCache.data.threads.push(...newItems.data.threads);
                     currentCache.data.meta = newItems.data.meta
@@ -45,4 +61,4 @@ export const threadsApi = createApi({
     }),
 })
 
-export const { useFetchThreadListQuery } = threadsApi
+export const { useFetchThreadListQuery, useCreateThreadMutation } = threadsApi
