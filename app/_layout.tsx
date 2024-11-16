@@ -72,7 +72,7 @@ function RootLayoutNav() {
             }}
           />
           <Stack.Screen
-            name="newthread/new_thread_screen"
+            name="newThread/NewThreadScreen"
             options={{
               title: 'New Thread',
               presentation: 'modal',

@@ -23,7 +23,7 @@ export default function ProfileScreen() {
 
   return (
     <NavigationContainer>
-      <View flex={1} padding="$4" backgroundColor="#ffffff">
+      <View flex={1} padding="$4" backgroundColor="$primary">
         <View flexDirection="row" alignItems="center" justifyContent="space-between" marginBottom="$4" borderBottomWidth={1} borderBottomColor="#cccccc" paddingBottom="$3">
           <View flexDirection="row" alignItems="center">
             <Image
