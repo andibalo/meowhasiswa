@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { baseQuery } from './baseQuery'
 import { ICreateThreadRequest, IFetchThreadListQueryParams } from 'types/request/thread'
-import { APIResponse, FetchThreadListAPIResponse } from 'types/response'
+import { APIResponse, FetchThreadByIdAPIResponse, FetchThreadListAPIResponse } from 'types/response'
 
 export const threadsApi = createApi({
     reducerPath: "threads",
@@ -58,7 +58,18 @@ export const threadsApi = createApi({
                 return currentArg !== previousArg;
             }
         }),
+        fetchThreadById: builder.query<FetchThreadByIdAPIResponse, string>({
+            providesTags: (result, error, threadId) => {
+                return [{ type: "Thread", id: threadId }]
+            },
+            query: (threadId) => {
+                return {
+                    url: `/v1/thread/${threadId}`,
+                    method: "GET"
+                }
+            },
+        }),
     }),
 })
 
-export const { useFetchThreadListQuery, useCreateThreadMutation } = threadsApi
+export const { useFetchThreadListQuery, useFetchThreadByIdQuery, useCreateThreadMutation } = threadsApi

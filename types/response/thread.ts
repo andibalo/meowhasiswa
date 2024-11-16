@@ -7,3 +7,10 @@ interface IFetchThreadListData {
 }
 
 export type FetchThreadListAPIResponse = APIResponse<IFetchThreadListData>;
+
+interface IFetchThreadByIdData {
+    thread: IThread;
+    meta: IPaginationMeta;
+}
+
+export type FetchThreadByIdAPIResponse = APIResponse<IFetchThreadByIdData>;
