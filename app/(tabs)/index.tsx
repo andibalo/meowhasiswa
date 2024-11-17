@@ -1,12 +1,12 @@
-import { ThreadList } from 'components/home'
+import { ThreadList } from 'components/home';
 import { useState } from 'react';
-import { TouchableOpacity, useWindowDimensions } from 'react-native';
-import { View } from 'tamagui'
+import { useWindowDimensions, TouchableOpacity } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+import { View } from 'tamagui';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { Error, NotFound, SearchBar, TopTabBar } from 'components/common';
 import { useFetchThreadListQuery } from 'redux/api/thread';
 import { IThread } from 'types/model';
-import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
 const testData: IThread[] = [
@@ -107,9 +107,9 @@ const renderScene = SceneMap({
 });
 
 const TabItem = (props: { title: string }) => {
-  const [cursor, setCursor] = useState("")
+  const [cursor, setCursor] = useState("");
 
-  const enableAPIIntegration = process.env.EXPO_PUBLIC_ENABLE_API_INTEGRATION
+  const enableAPIIntegration = process.env.EXPO_PUBLIC_ENABLE_API_INTEGRATION;
 
   if (enableAPIIntegration === "0") {
     return (
@@ -123,33 +123,34 @@ const TabItem = (props: { title: string }) => {
           onRefresh={() => null}
         />
       </View>
-    )
+    );
   }
 
   // TODO: ADD QUERY TRENDING AND NEWEST
   const { data, error, isLoading } = useFetchThreadListQuery({
     cursor: cursor,
     limit: 10
-  })
+  });
 
   const onRefresh = () => {
-    setCursor("")
+    setCursor("");
   };
 
   const handleLoadMore = () => {
     if (data?.data) {
-      let nextCursor = data.data.meta.next_cursor
+      let nextCursor = data.data.meta.next_cursor;
 
-      if (nextCursor != "") {
-        setCursor(nextCursor)
+      if (nextCursor !== "") {
+        setCursor(nextCursor);
       }
     }
-  }
+  };
 
-  // TODO: IMPROVE ERROR AND NOT FOUND UI
+
   if (error) {
     return <Error />
   }
+
 
   return (
     <View flex={1}>
@@ -166,14 +167,13 @@ const TabItem = (props: { title: string }) => {
           <NotFound description='Threads Not Found' />
       }
     </View>
-  )
-}
+  );
+};
 
 export default function HomeScreen() {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
-
-  const router = useRouter()
+  const router = useRouter();
 
   const renderTabBar = (props) => (
     <TopTabBar {...props} />
@@ -208,5 +208,5 @@ export default function HomeScreen() {
         <FontAwesome name="plus" size={24} color="#FFFFFF" />
       </TouchableOpacity>
     </View>
-  )
+  );
 }
