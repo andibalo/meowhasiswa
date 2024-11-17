@@ -15,7 +15,7 @@ export const SubthreadItem = (props: SubThreadItemProps) => {
                         <Avatar borderRadius={'$2'} borderWidth="$1" borderColor="$primary" size="$4">
                             <Avatar.Image
                                 accessibilityLabel="Cam"
-                                src={Subthread.university_image_url}
+                                src={Subthread.image_url}
                                 objectFit="contain"
                             />
                             <Avatar.Fallback backgroundColor="$secondary" />
@@ -23,20 +23,20 @@ export const SubthreadItem = (props: SubThreadItemProps) => {
                     </View>
                     <View flex={1}>
                         <XStack flex={1} justifyContent='space-between'>
-                            <Text color="$primary" fontWeight="bold">m/{Subthread.subthread_name}</Text>
+                            <Text color="$primary" fontWeight="bold">m/{Subthread.name}</Text>
                             <Button bg="$backgroundSoft" padding="$1" borderRadius="$3" width={100} height={24} >
                                 <Text fontSize="$2"> Follow </Text>
                             </Button>
                         </XStack>
                         <XStack gap="$2" alignItems="center">
-                            <Text color="$primary" fontSize="$3">{Subthread.subthread_follower}</Text>
+                            <Text color="$primary" fontSize="$3">{Subthread.followers_count}</Text>
                         </XStack>
                     </View>
                 </XStack>
             </XStack>
             <YStack pr={'$3'} pl={'$3'} pb={'$1.5'} gap="$1">
                 <Text color="$primary">
-                    {Subthread.subthread_description}
+                    {Subthread.description}
                 </Text>
             </YStack>
         </View>
