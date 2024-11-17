@@ -15,7 +15,7 @@ const renderScene = SceneMap({
   second: () => <SubthreadList title='Following' />,
 });
 
-export default function HomeScreen() {
+export default function SubThreadScreen() {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
 

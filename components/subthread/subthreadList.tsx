@@ -97,14 +97,14 @@ const testData: ISubThread[] = [
     }
 ]
 
-interface ISubThreadProps {
+interface ISubThreadListProps {
     title: string
 }
 
-export const SubthreadList = (props: ISubThreadProps) => {
+export const SubthreadList = (props: ISubThreadListProps) => {
 
     const renderPost = ({ item }) => (
-        <SubthreadItem thread={item} />
+        <SubthreadItem Subthread={item} />
     );
 
     return (
