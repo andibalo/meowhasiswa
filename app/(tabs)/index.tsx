@@ -4,7 +4,7 @@ import { useWindowDimensions, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { View } from 'tamagui';
 import { TabView, SceneMap } from 'react-native-tab-view';
-import { Error, NotFound, SearchBar, TopTabBar } from 'components/common';
+import { Error, Loading, NotFound, SearchBar, TopTabBar } from 'components/common';
 import { useFetchThreadListQuery } from 'redux/api/thread';
 import { IThread } from 'types/model';
 import { useRouter } from 'expo-router';
@@ -146,11 +146,13 @@ const TabItem = (props: { title: string }) => {
     }
   };
 
+  if (isLoading) {
+    return <Loading />
+  }
 
   if (error) {
     return <Error />
   }
-
 
   return (
     <View flex={1}>
