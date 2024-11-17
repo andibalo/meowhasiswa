@@ -4559,7 +4559,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tamagui/stacks@npm:1.116.15, @tamagui/stacks@npm:^1.116.14":
+"@tamagui/stacks@npm:1.116.15":
   version: 1.116.15
   resolution: "@tamagui/stacks@npm:1.116.15"
   dependencies:
@@ -7560,7 +7560,6 @@ __metadata:
     "@tamagui/config": "npm:^1.110.0"
     "@tamagui/lucide-icons": "npm:^1.110.0"
     "@tamagui/metro-plugin": "npm:^1.110.0"
-    "@tamagui/stacks": "npm:^1.116.14"
     "@tamagui/toast": "npm:^1.110.0"
     "@types/add": "npm:^2"
     "@types/react": "npm:~18.2.79"

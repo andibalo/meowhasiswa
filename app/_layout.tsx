@@ -72,14 +72,6 @@ function RootLayoutNav() {
             }}
           />
           <Stack.Screen
-            name="newthread/new-thread-screen"
-            options={{
-              title: 'New Thread',
-              presentation: 'modal',
-              animation: 'slide_from_bottom',
-            }}
-            />
-          <Stack.Screen
             name="(protected)"
             options={{
               headerShown: false,

@@ -21,7 +21,6 @@
     "@reduxjs/toolkit": "^2.3.0",
     "@tamagui/config": "^1.110.0",
     "@tamagui/lucide-icons": "^1.110.0",
-    "@tamagui/stacks": "^1.116.14",
     "@tamagui/toast": "^1.110.0",
     "add": "^2.0.6",
     "axios": "^1.7.7",

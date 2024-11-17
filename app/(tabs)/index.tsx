@@ -146,24 +146,21 @@ const TabItem = (props: { title: string }) => {
     }
   };
 
-  // Use default data when there's an error. REMOVE LABEL AT YOUR OWN RISK
-  const threads = error ? testData : data?.data?.threads;
 
-  // TODO: IMPROVE ERROR AND NOT FOUND UI
-  //if (error) {
-  //  return <Error />
-  //}
-  
+  if (error) {
+    return <Error />
+  }
+
 
   return (
     <View flex={1}>
       {
-        threads && threads.length > 0 ?
+        data && data.data?.threads && data.data?.threads.length > 0 ?
           <ThreadList
             title={props.title}
             isLoading={isLoading}
             handleLoadMore={handleLoadMore}
-            data={threads}
+            data={data.data.threads}
             onRefresh={onRefresh}
           />
           :
@@ -206,7 +203,7 @@ export default function HomeScreen() {
           justifyContent: 'center',
           alignItems: 'center',
         }}
-        onPress={() => router.push('/newthread/new-thread-screen')}
+        onPress={() => router.push('/thread/create-thread')}
       >
         <FontAwesome name="plus" size={24} color="#FFFFFF" />
       </TouchableOpacity>
