@@ -23,6 +23,28 @@ export default function ProtectedLayout() {
             />
             <Stack.Screen
                 name="chat/chat-detail"
+                options={({ route }) => ({
+                    headerTitle: route.params?.message?.username || "Chat Detail",
+                })}
+            />
+            <Stack.Screen
+                name="thread/[id]"
+                options={{
+                    headerTitle: "Comments",
+                }}
+            />
+            <Stack.Screen
+                name="thread/create-thread"
+                options={{
+                    headerTitle: "Create Thread",
+                }}
+            />
+            <Stack.Screen
+                name="thread/select-subthread"
+                options={{
+                    headerTitle: "Select Subthread",
+                    presentation: "modal"
+                }}
             />
             <Stack.Screen
                 name="subthread/create-subthread"

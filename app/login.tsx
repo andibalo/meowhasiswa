@@ -5,11 +5,9 @@ import * as yup from 'yup';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { login } from "redux/slice/auth";
-import { RootState, useAppDispatch } from "redux/store";
+import { useAppDispatch } from "redux/store";
 import * as SecureStore from 'expo-secure-store'
 import { JWT_TOKEN_KEY } from "constants/common";
-import { useSelector } from "react-redux";
-import { Redirect } from "expo-router";
 
 type LoginFormData = {
   email: string
@@ -30,12 +28,6 @@ export default function Login() {
 
   const navigation = useNavigation();
   const dispatch = useAppDispatch()
-
-  const token = useSelector((state: RootState) => state.auth.token)
-
-  if (token != "") {
-    return <Redirect href="(tabs)" />;
-  }
 
   const {
     control,
@@ -97,6 +89,8 @@ export default function Login() {
             <Input
               placeholder="Enter your email"
               value={value}
+              keyboardType="email-address"
+              textContentType="emailAddress"
               onChangeText={onChange}
               bg="$backgroundSoft"
               padding="$3"

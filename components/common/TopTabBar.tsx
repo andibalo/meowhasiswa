@@ -1,4 +1,4 @@
-import { useTheme } from 'tamagui'
+import { useTheme } from 'tamagui';
 import { TabBar, TabBarProps } from 'react-native-tab-view';
 
 type Route = {
@@ -13,14 +13,19 @@ export const TopTabBar = (props: TabBarProps<Route>) => {
     return (
         <TabBar
             {...props}
-            indicatorStyle={{ backgroundColor: theme.primary.val }}
+            indicatorStyle={{
+                backgroundColor: theme.primary.val,
+                height: 3,
+            }}
             activeColor={theme.primary.val}
-            inactiveColor={theme.secondary.val}
+            inactiveColor="#C5C5C5"
             style={{
-                borderRadius: 2,
                 backgroundColor: 'white',
-                marginBottom: 10
+                borderRadius: 2,
+                marginBottom: 10,
+                elevation: 0,
+                shadowOpacity: 0,
             }}
         />
-    )
-}
+    );
+};

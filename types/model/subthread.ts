@@ -12,3 +12,10 @@ export interface ISubThread {
     updated_by: string | null;
     updated_at: string | null;
 }
+
+export interface ISubThreadItem {
+    id: string;
+    name: string;
+    imageUrl: string;
+    followersCount: number
+}

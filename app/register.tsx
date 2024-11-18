@@ -132,6 +132,8 @@ export default function Register() {
               onChangeText={onChange}
               secureTextEntry
               bg="$backgroundSoft"
+              keyboardType="email-address"
+              textContentType="emailAddress"
               padding="$3"
               borderRadius="$2"
             />
