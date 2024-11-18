@@ -1,34 +1,55 @@
 import { Separator, View, Text, YStack, ScrollView, Input, XStack, Button } from "tamagui";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useFetchThreadByIdQuery } from "redux/api/thread";
+import { useFetchThreadByIdQuery, usePostCommentMutation } from "redux/api/thread";
 import { CommentItem, ThreadItem } from "components/home";
 import { Error, Loading, NotFound } from "components/common";
 import { Send } from "@tamagui/lucide-icons";
+import { useState, useRef } from "react";
 
 export default function ThreadDetailScreen() {
-    const navigation = useNavigation()
+    const navigation = useNavigation();
     const { id } = useLocalSearchParams<{ id: string }>();
 
     if (!id) {
-        navigation.goBack()
-        return
+        navigation.goBack();
+        return;
     }
 
-    const { data, error, isLoading } = useFetchThreadByIdQuery(id)
+    const { data, error, isLoading } = useFetchThreadByIdQuery(id);
+    const [postComment] = usePostCommentMutation();  // Hook for posting a comment
+    const [comment, setComment] = useState("");  // Local state to store the comment text
+    const scrollViewRef = useRef<ScrollView>(null); // Reference for ScrollView
 
     if (isLoading) {
-        return <Loading />
+        return <Loading />;
     }
 
     if (error) {
-        return <Error />
+        return <Error />;
     }
 
-    // TODO: Enhance UI for view reply comments & integrate with API
+    // Handle posting the comment
+    const handlePostComment = async () => {
+        if (comment.trim() === "") return;  // Prevent submitting empty comments
+
+        try {
+            // Post the comment to the backend
+            await postComment({ threadId: id, content: comment }).unwrap();
+            setComment(""); // Clear the input field after successful submission
+
+            // Scroll to the bottom after the comment has been rendered
+            setTimeout(() => {
+                scrollViewRef.current?.scrollToEnd({ animated: true });
+            }, 200);  // Slightly longer delay to allow for render
+        } catch (err) {
+            console.error("Error posting comment:", err);
+        }
+    };
+
     return (
         data?.data?.thread ?
             <View flex={1} backgroundColor="$background">
-                <ScrollView>
+                <ScrollView ref={scrollViewRef}>
                     <ThreadItem thread={data.data.thread} />
                     <View>
                         <Separator mb="$2" />
@@ -47,14 +68,15 @@ export default function ThreadDetailScreen() {
                                                 <CommentItem canReply={false} key={"23"} comment={comment} />
                                             </YStack>
                                         </View>
-                                    )
-                                    )
+                                    ))
                                 }
                             </YStack>
                         }
                         <View height={50} />
                     </View>
                 </ScrollView>
+
+                {/* Comment Input and Submit Button */}
                 <XStack
                     borderTopWidth={1}
                     borderTopColor="$primary"
@@ -68,8 +90,18 @@ export default function ThreadDetailScreen() {
                     px="$2"
                     gap="$1"
                 >
-                    <Input flex={1} placeholder="Write a comment..." />
-                    <Button size="$3" chromeless icon={<Send color="$primary" size="$1.5" />} />
+                    <Input
+                        flex={1}
+                        placeholder="Write a comment..."
+                        value={comment}
+                        onChangeText={setComment}  // Update local state on change
+                    />
+                    <Button
+                        size="$3"
+                        chromeless
+                        icon={<Send color="$primary" size="$1.5" />}
+                        onPress={handlePostComment}  // Call the function to post the comment
+                    />
                 </XStack>
             </View>
             :
