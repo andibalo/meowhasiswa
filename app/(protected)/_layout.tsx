@@ -24,6 +24,12 @@ export default function ProtectedLayout() {
             <Stack.Screen
                 name="chat/chat-detail"
             />
+            <Stack.Screen
+                name="subthread/create-subthread"
+                options={{
+                    headerTitle: "Create Subthread",
+                }}
+            />
         </Stack>
     );
 }
