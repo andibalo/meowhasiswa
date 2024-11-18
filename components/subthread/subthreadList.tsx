@@ -75,7 +75,7 @@ export const SubthreadList = (props: ISubThreadListProps) => {
         <FlatList
             data={testData}
             renderItem={renderPost}
-            keyExtractor={(item, index) => `thread-${item.id}`}
+            keyExtractor={(item, index) => `subthread-${item.id}`}
             onEndReachedThreshold={0.5}
             scrollEventThrottle={16}
             showsVerticalScrollIndicator={false}
