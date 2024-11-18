@@ -32,6 +32,10 @@ export const threadsApi = createApi({
                     params.limit = qParams.limit
                 }
 
+                if (qParams.username) {
+                    params.username = qParams.username;
+                }
+
                 return {
                     url: "/v1/thread",
                     params,

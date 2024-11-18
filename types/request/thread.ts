@@ -1,6 +1,7 @@
 export interface IFetchThreadListQueryParams {
     limit?: number;
     cursor?: string;
+    username?: string;
 }
 
 export interface ICreateThreadRequest {
