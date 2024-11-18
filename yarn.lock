@@ -1259,6 +1259,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@egjs/hammerjs@npm:^2.0.17":
+  version: 2.0.17
+  resolution: "@egjs/hammerjs@npm:2.0.17"
+  dependencies:
+    "@types/hammerjs": "npm:^2.0.36"
+  checksum: f695129d45edfcfd6c5f2d1d36186da36ffade013991972ce23721a6b7ad7f214ce282abc4023e3f6b63062620852a63e897b523f247804afc7acd188fee9d9d
+  languageName: node
+  linkType: hard
+
 "@emotion/is-prop-valid@npm:^0.8.2":
   version: 0.8.8
   resolution: "@emotion/is-prop-valid@npm:0.8.8"
@@ -5043,6 +5052,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/hammerjs@npm:^2.0.36":
+  version: 2.0.46
+  resolution: "@types/hammerjs@npm:2.0.46"
+  checksum: 1b6502d668f45ca49fb488c01f7938d3aa75e989d70c64801c8feded7d659ca1a118f745c1b604d220efe344c93231767d5cc68c05e00e069c14539b6143cfd9
+  languageName: node
+  linkType: hard
+
 "@types/hoist-non-react-statics@npm:^3.3.1":
   version: 3.3.5
   resolution: "@types/hoist-non-react-statics@npm:3.3.5"
@@ -7467,6 +7483,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-image-loader@npm:~4.7.0":
+  version: 4.7.0
+  resolution: "expo-image-loader@npm:4.7.0"
+  peerDependencies:
+    expo: "*"
+  checksum: dbd87fdbf3e50b8c459e5ea985bfd20d77462229e46edefbd62b68e1676416f8608c16cf09103c2fef1bd84ecf55a1fd48f38e1954a2dd535e6f9beef04785bb
+  languageName: node
+  linkType: hard
+
+"expo-image-picker@npm:~15.0.7":
+  version: 15.0.7
+  resolution: "expo-image-picker@npm:15.0.7"
+  dependencies:
+    expo-image-loader: "npm:~4.7.0"
+  peerDependencies:
+    expo: "*"
+  checksum: 6ebd8638ce41c13f63c51494d4c95a991eac31ef6625dc8c4fffa4ce4ccda3fa1bc0b4b3528995262435ddfa76080752ac7f6762c62c1122d7933a4ad85629f6
+  languageName: node
+  linkType: hard
+
 "expo-keep-awake@npm:~13.0.2":
   version: 13.0.2
   resolution: "expo-keep-awake@npm:13.0.2"
@@ -7572,6 +7608,7 @@ __metadata:
     dayjs: "npm:^1.11.13"
     expo: "npm:^51.0.38"
     expo-font: "npm:~12.0.10"
+    expo-image-picker: "npm:~15.0.7"
     expo-linking: "npm:~6.3.1"
     expo-router: "npm:~3.5.15"
     expo-secure-store: "npm:~13.0.2"
@@ -7583,6 +7620,7 @@ __metadata:
     react-dom: "npm:18.2.0"
     react-hook-form: "npm:^7.53.2"
     react-native: "npm:0.74.1"
+    react-native-gesture-handler: "npm:^2.21.0"
     react-native-get-random-values: "npm:^1.11.0"
     react-native-gifted-chat: "npm:^2.6.4"
     react-native-pager-view: "npm:6.3.0"
@@ -7594,6 +7632,7 @@ __metadata:
     react-native-tab-view: "npm:^4.0.1"
     react-native-web: "npm:^0.19.12"
     react-redux: "npm:^9.1.2"
+    reanimated-color-picker: "npm:^3.0.4"
     redux-devtools-expo-dev-plugin: "npm:^0.2.1"
     tamagui: "npm:^1.110.0"
     typescript: "npm:^5.5.2"
@@ -11476,7 +11515,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.7.x, prop-types@npm:^15.8.1":
+"prop-types@npm:^15.7.2, prop-types@npm:^15.7.x, prop-types@npm:^15.8.1":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
@@ -11687,6 +11726,21 @@ __metadata:
     react-native-svg:
       optional: true
   checksum: 5d99c7bfe0ef7b75032b60b162c3991fa162d200d3c5f64935e6a31c888173532bf06e6a551286b18ad20f419926af8fb64aa6884feccd76f38aacae517acbf5
+  languageName: node
+  linkType: hard
+
+"react-native-gesture-handler@npm:^2.21.0":
+  version: 2.21.0
+  resolution: "react-native-gesture-handler@npm:2.21.0"
+  dependencies:
+    "@egjs/hammerjs": "npm:^2.0.17"
+    hoist-non-react-statics: "npm:^3.3.0"
+    invariant: "npm:^2.2.4"
+    prop-types: "npm:^15.7.2"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 8c5aa42be32a9ee8e8267cc5b787ec90c29986d7aae9042215bd2e59ed22aee4462cb8625c7c98afc3a80e01bff696d67cd1b6c5f6b37e0d5c7f40acca531f3e
   languageName: node
   linkType: hard
 
@@ -12124,6 +12178,22 @@ __metadata:
   version: 1.3.0
   resolution: "readline@npm:1.3.0"
   checksum: 2cb7c274333fe1ed55e1bd06c670a32bd9eae5324d8e1fafb9af5c128dfde85601d59defe47947788b0682d5e9efeae6b88ea5fe233d5236a02f382a0b0ad4c3
+  languageName: node
+  linkType: hard
+
+"reanimated-color-picker@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "reanimated-color-picker@npm:3.0.4"
+  peerDependencies:
+    expo: ">=44.0.0"
+    react: "*"
+    react-native: "*"
+    react-native-gesture-handler: ">=2.0.0"
+    react-native-reanimated: ^2.0.0 || ^3.0.0
+  peerDependenciesMeta:
+    expo:
+      optional: true
+  checksum: 589cdbd8dfe6131d4b60f4a7bb62d79f8e230c8715723f1438edca20f5aa26eba0a876c674124d70ee3e59c2da3d3ece7a0ea997a0c8c757e7a081a7ba74636e
   languageName: node
   linkType: hard
 

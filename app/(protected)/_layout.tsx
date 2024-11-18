@@ -46,6 +46,12 @@ export default function ProtectedLayout() {
                     presentation: "modal"
                 }}
             />
+            <Stack.Screen
+                name="subthread/create-subthread"
+                options={{
+                    headerTitle: "Create Subthread",
+                }}
+            />
         </Stack>
     );
 }
