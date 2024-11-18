@@ -1,5 +1,6 @@
 import { Button, Text, View, XStack, YStack, Avatar, } from 'tamagui'
 import { ISubThread } from 'types/model/subthread'
+
 interface SubThreadItemProps {
     Subthread: ISubThread
 }
