@@ -1,4 +1,4 @@
-import { SubthreadItem } from './subthreadItem';
+import { SubThreadItem } from './SubThreadItem';
 import { FlatList } from 'react-native';
 import { ISubThread } from '../../types/model'
 
@@ -65,10 +65,10 @@ interface ISubThreadListProps {
     title: string
 }
 
-export const SubthreadList = (props: ISubThreadListProps) => {
+export const SubThreadList = (props: ISubThreadListProps) => {
 
     const renderPost = ({ item }) => (
-        <SubthreadItem Subthread={item} />
+        <SubThreadItem Subthread={item} />
     );
 
     return (

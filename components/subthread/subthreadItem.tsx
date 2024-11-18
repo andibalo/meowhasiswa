@@ -4,7 +4,7 @@ interface SubThreadItemProps {
     Subthread: ISubThread
 }
 
-export const SubthreadItem = (props: SubThreadItemProps) => {
+export const SubThreadItem = (props: SubThreadItemProps) => {
     const Subthread = props.Subthread
 
     return (

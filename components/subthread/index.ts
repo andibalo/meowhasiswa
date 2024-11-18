@@ -1,2 +1,2 @@
-export * from './subthreadItem'
-export * from './subthreadList'
+export * from './SubThreadItem'
+export * from './SubThreadList'
