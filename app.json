@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "expo-router-example",
-    "slug": "expo-router-example",
+    "name": "MeowHasiswa",
+    "slug": "meowhasiswa",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -22,7 +22,9 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "meowhasiswa.app",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
@@ -36,6 +38,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "9ab4946c-85bc-4747-977c-48300c0d0d3f"
+      }
+    },
+    "owner": "andibalo213"
   }
 }
