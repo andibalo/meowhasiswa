@@ -31,9 +31,11 @@ export const threadsApi = createApi({
                     method: "GET"
                 }
             },
+            // Only have one cache entry because the arg always maps to one string
             serializeQueryArgs: ({ endpointName }) => {
                 return endpointName;
             },
+            // Always merge incoming data to the cache entry
             merge: (currentCache, newItems, { arg }) => {
                 if (arg.cursor === "") {
                     return newItems;
@@ -43,6 +45,7 @@ export const threadsApi = createApi({
                     currentCache.data.meta = newItems.data.meta;
                 }
             },
+            // Refetch when the page arg changes
             forceRefetch({ currentArg, previousArg }) {
                 return currentArg !== previousArg;
             }
