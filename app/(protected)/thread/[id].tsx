@@ -16,9 +16,9 @@ export default function ThreadDetailScreen() {
     }
 
     const { data, error, isLoading } = useFetchThreadByIdQuery(id);
-    const [postComment] = usePostCommentMutation();  // Hook for posting a comment
-    const [comment, setComment] = useState("");  // Local state to store the comment text
-    const scrollViewRef = useRef<ScrollView>(null); // Reference for ScrollView
+    const [postComment] = usePostCommentMutation();
+    const [comment, setComment] = useState("");
+    const scrollViewRef = useRef<ScrollView>(null);
 
     if (isLoading) {
         return <Loading />;
@@ -28,24 +28,21 @@ export default function ThreadDetailScreen() {
         return <Error />;
     }
 
-    // Handle posting the comment
     const handlePostComment = async () => {
-        if (comment.trim() === "") return;  // Prevent submitting empty comments
+        if (comment.trim() === "") return;
 
         try {
-            // Post the comment to the backend
             await postComment({ threadId: id, content: comment }).unwrap();
-            setComment(""); // Clear the input field after successful submission
-
-            // Scroll to the bottom after the comment has been rendered
+            setComment("");
             setTimeout(() => {
                 scrollViewRef.current?.scrollToEnd({ animated: true });
-            }, 200);  // Slightly longer delay to allow for render
+            }, 200);
         } catch (err) {
             console.error("Error posting comment:", err);
         }
     };
 
+    // TODO: Enhance UI for view reply comments & integrate with API
     return (
         data?.data?.thread ?
             <View flex={1} backgroundColor="$background">
@@ -75,8 +72,6 @@ export default function ThreadDetailScreen() {
                         <View height={50} />
                     </View>
                 </ScrollView>
-
-                {/* Comment Input and Submit Button */}
                 <XStack
                     borderTopWidth={1}
                     borderTopColor="$primary"
@@ -94,13 +89,13 @@ export default function ThreadDetailScreen() {
                         flex={1}
                         placeholder="Write a comment..."
                         value={comment}
-                        onChangeText={setComment}  // Update local state on change
+                        onChangeText={setComment}
                     />
                     <Button
                         size="$3"
                         chromeless
                         icon={<Send color="$primary" size="$1.5" />}
-                        onPress={handlePostComment}  // Call the function to post the comment
+                        onPress={handlePostComment}
                     />
                 </XStack>
             </View>

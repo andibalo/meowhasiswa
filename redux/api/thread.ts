@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from './baseQuery';
-import { ICreateThreadRequest, IFetchThreadListQueryParams } from 'types/request/thread';
+import { ICreateThreadRequest, IFetchThreadListQueryParams, IPostCommentRequest } from 'types/request/thread';
 import { APIResponse, FetchThreadByIdAPIResponse, FetchThreadListAPIResponse } from 'types/response';
 
 export const threadsApi = createApi({
@@ -24,7 +24,7 @@ export const threadsApi = createApi({
                 let params: Record<string, any> = {}
                 if (qParams.cursor) params.cursor = qParams.cursor;
                 if (qParams.limit) params.limit = qParams.limit;
-                if (qParams.username) params.username = qParams.username;
+                if (qParams.user_id) params.user_id = qParams.user_id;
                 return {
                     url: "/v1/thread",
                     params,
@@ -58,8 +58,7 @@ export const threadsApi = createApi({
                 };
             },
         }),
-        // New endpoint for posting a comment
-        postComment: builder.mutation<APIResponse<any>, { threadId: string, content: string }>({
+        postComment: builder.mutation<APIResponse<any>, IPostCommentRequest>({
             invalidatesTags: (result, error, { threadId }) => [{ type: 'Thread', id: threadId }],
             query: ({ threadId, content }) => {
                 return {
