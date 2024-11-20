@@ -2490,6 +2490,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-picker/picker@npm:2.7.5":
+  version: 2.7.5
+  resolution: "@react-native-picker/picker@npm:2.7.5"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: fb2111753ef46365799e5a7ef0f4a542244788054de4145cb982bd2b15a86daf4e0794503fb69918d7cbcb67e2f9719f984143764ae79d858f6bee9bd6cad473
+  languageName: node
+  linkType: hard
+
 "@react-native/assets-registry@npm:0.74.83":
   version: 0.74.83
   resolution: "@react-native/assets-registry@npm:0.74.83"
@@ -5175,6 +5185,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-native-modal-dropdown@npm:^1":
+  version: 1.0.5
+  resolution: "@types/react-native-modal-dropdown@npm:1.0.5"
+  dependencies:
+    "@types/react": "npm:*"
+    "@types/react-native": "npm:^0.70"
+  checksum: e98e235a410ef295280cc1feb98b9e7a8c69071a54c655d3f6953f0eae2c5f633692395d2a5ac90977fb941d35ab6dcbe78e49a01068437f3ef04bde24902df4
+  languageName: node
+  linkType: hard
+
+"@types/react-native@npm:^0.70":
+  version: 0.70.19
+  resolution: "@types/react-native@npm:0.70.19"
+  dependencies:
+    "@types/react": "npm:*"
+  checksum: 43b280990f7a3c45cd707098d686ddbf353270cc463c9bb4306a5f675e3fe84010a32e344274b00b8a11629d73a8df1a1075af267d182a0f7094599616ae622c
+  languageName: node
+  linkType: hard
+
 "@types/react-native@npm:^0.73.0":
   version: 0.73.0
   resolution: "@types/react-native@npm:0.73.0"
@@ -7590,6 +7619,7 @@ __metadata:
     "@expo/metro-runtime": "npm:~3.2.1"
     "@expo/vector-icons": "npm:^14.0.2"
     "@hookform/resolvers": "npm:^3.9.1"
+    "@react-native-picker/picker": "npm:2.7.5"
     "@react-navigation/native": "npm:^6.1.17"
     "@reduxjs/toolkit": "npm:^2.3.0"
     "@tamagui/babel-plugin": "npm:^1.110.0"
@@ -7601,6 +7631,7 @@ __metadata:
     "@types/react": "npm:~18.2.79"
     "@types/react-native": "npm:^0.73.0"
     "@types/react-native-get-random-values": "npm:^1"
+    "@types/react-native-modal-dropdown": "npm:^1"
     add: "npm:^2.0.6"
     axios: "npm:^1.7.7"
     babel-preset-expo: "npm:^11.0.6"
@@ -7620,9 +7651,11 @@ __metadata:
     react-dom: "npm:18.2.0"
     react-hook-form: "npm:^7.53.2"
     react-native: "npm:0.74.1"
+    react-native-element-dropdown: "npm:^2.12.2"
     react-native-gesture-handler: "npm:^2.21.0"
     react-native-get-random-values: "npm:^1.11.0"
     react-native-gifted-chat: "npm:^2.6.4"
+    react-native-modal-dropdown: "npm:^1.0.2"
     react-native-pager-view: "npm:6.3.0"
     react-native-ratings: "npm:^8.1.0"
     react-native-reanimated: "npm:3.10.1"
@@ -11515,7 +11548,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.7.2, prop-types@npm:^15.7.x, prop-types@npm:^15.8.1":
+"prop-types@npm:^15.6.0, prop-types@npm:^15.7.2, prop-types@npm:^15.7.x, prop-types@npm:^15.8.1":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
@@ -11729,6 +11762,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-element-dropdown@npm:^2.12.2":
+  version: 2.12.2
+  resolution: "react-native-element-dropdown@npm:2.12.2"
+  dependencies:
+    lodash: "npm:^4.17.21"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 3523ab3bfd42c6472dcb78ad15268b49cb89ca1223dad2f0f6bc77182595b0106fca5cb99b1d2341098e7505074c17ff52603d4f9c7113f8a678334756da8425
+  languageName: node
+  linkType: hard
+
 "react-native-gesture-handler@npm:^2.21.0":
   version: 2.21.0
   resolution: "react-native-gesture-handler@npm:2.21.0"
@@ -11808,6 +11853,15 @@ __metadata:
     react: ">=16.8.0"
     react-native: ">=0.61.0"
   checksum: 9cd4d4029666896acccede1d7c9a6b5c4f5e2fc87426547a5f737f583d4bf1f214e5a4e5be741b3d4290835a6dd0372bda4c2aa3c8d72dad67d43a1ec4019f78
+  languageName: node
+  linkType: hard
+
+"react-native-modal-dropdown@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "react-native-modal-dropdown@npm:1.0.2"
+  dependencies:
+    prop-types: "npm:^15.6.0"
+  checksum: 6cabaa2fd578a88e086b4af323c3b6c20afc6be4557b0b3815cb3bcd54a2bd467fa3b0fb42c53ab34d42a382a76ed7a5402491feead9bcad08176979e08d00c6
   languageName: node
   linkType: hard
 

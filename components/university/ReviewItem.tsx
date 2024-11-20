@@ -8,10 +8,10 @@ dayjs.extend(relativeTime);
 
 interface ReviewItemProps {
     review: IReview;
-    rating: number;
 }
 
-export const ReviewItem = ({ review, rating }: ReviewItemProps) => {
+export const ReviewItem = (props: ReviewItemProps) => { 
+    const review = props.review
     const timeAgo = dayjs(review.created_at).fromNow();
 
     return (
@@ -27,7 +27,7 @@ export const ReviewItem = ({ review, rating }: ReviewItemProps) => {
                 </Avatar>
                 <View>
                     <Text fontSize={16} fontWeight={'bold'} color="$primary">
-                        {review.universityName}
+                        {review.university_abbreviated_name}
                     </Text>
                     <Text fontSize={12} color="$primary">
                         {timeAgo}
@@ -35,20 +35,20 @@ export const ReviewItem = ({ review, rating }: ReviewItemProps) => {
                 </View>
             </View>
             <Text fontSize={12} color="$secondary" marginBottom={'$2'}>
-                {review.department}
+                {review.university_major}
             </Text>
             <View marginBottom={'$3'}>
                 <Text fontSize={24} fontWeight="bold" color="$primary" marginBottom={'$1'}>
                     {review.title}
                 </Text>
                 <View flexDirection="row" alignItems="center">
-                    <StarRating rating={rating} />
+                    <StarRating rating={review.overall_rating} />
                     <Text fontSize={24} marginLeft={'$2'} color="$primary" fontWeight="bold">
-                        {rating}
+                        {review.overall_rating}
                     </Text>
                 </View>
                 <Text fontSize={14} color="$primary" marginTop={'$1'}>
-                    {review.body}
+                    {review.content}
                 </Text>
             </View>
             <View marginBottom={'$3'}>

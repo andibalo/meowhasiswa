@@ -1,4 +1,4 @@
-import { SubthreadList } from 'components/subthread'
+import { SubThreadList } from 'components/subthread'
 import { useState } from 'react';
 import { useWindowDimensions, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
@@ -13,8 +13,8 @@ const routes = [
 ];
 
 const renderScene = SceneMap({
-  first: () => <SubthreadList title='Explore' />,
-  second: () => <SubthreadList title='Following' />,
+  first: () => <SubThreadList title='Explore' />,
+  second: () => <SubThreadList title='Following' />,
 });
 
 export default function SubThreadScreen() {

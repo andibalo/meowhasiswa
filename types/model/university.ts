@@ -6,5 +6,5 @@ export interface IUniversity {
     created_by: string;
     created_at: string;
     updated_by: string | null;
-    updated_at: string | null;
+    updated_at: string | null;    
 }
