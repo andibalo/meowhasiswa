@@ -52,6 +52,12 @@ export default function ProtectedLayout() {
                     headerTitle: "Create Subthread",
                 }}
             />
+            <Stack.Screen
+                name="university/rate-university"
+                options={{
+                    headerTitle: "Rate University",
+                }}
+            />
         </Stack>
     );
 }
