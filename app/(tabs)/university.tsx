@@ -3,7 +3,7 @@ import { ReviewList } from 'components/university';
 import { Error, Loading, NotFound, SearchBar } from 'components/common';
 import { TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import { useFetchReviewListQuery } from 'redux/api';
+import { useFetchUniversityReviewListQuery } from 'redux/api';
 import { useRouter } from 'expo-router';
 import { IReview } from 'types/model';
 
@@ -11,8 +11,6 @@ const enableAPIIntegration = process.env.EXPO_PUBLIC_ENABLE_API_INTEGRATION;
 
 export default function UniversityScreen() {
   const router = useRouter();
-
-  // Static test data for fallback
   const testData: IReview[] = [
     {
       id: "e0b2e510-0492-479c-abb4-f1c9a044806a",
@@ -58,7 +56,6 @@ export default function UniversityScreen() {
     },
   ];
 
-  // If API integration is disabled, show test data directly
   if (enableAPIIntegration === "0") {
     return (
       <View flex={1} p="$3" pb="0" bg="$backgroundSoft">
@@ -70,7 +67,7 @@ export default function UniversityScreen() {
             ListHeaderComponent={() => <View />}
             contentContainerStyle={{ paddingTop: 16 }}
             showsVerticalScrollIndicator={true}
-            data={testData} // Pass testData to ReviewList
+            data={testData} 
           />
         </View>
         <TouchableOpacity
@@ -85,7 +82,7 @@ export default function UniversityScreen() {
             justifyContent: 'center',
             alignItems: 'center',
           }}
-          onPress={() => router.push('/review/rate-university')}
+          onPress={() => router.push('/university/rate-university')}
         >
           <FontAwesome name="plus" size={24} color="#FFFFFF" />
         </TouchableOpacity>
@@ -93,13 +90,11 @@ export default function UniversityScreen() {
     );
   }
 
-  // Fetch data from the backend if API integration is enabled
-  const { data, error, isLoading } = useFetchReviewListQuery({
-    cursor: '', // Pass initial cursor for pagination
-    limit: 20,  // Default number of reviews to fetch
+  const { data, error, isLoading } = useFetchUniversityReviewListQuery({
+    cursor: '', 
+    limit: 10,  
   });
 
-  // Handle loading, error, and empty data states
   if (isLoading) {
     return <Loading />;
   }
@@ -110,26 +105,21 @@ export default function UniversityScreen() {
 
   return (
     <View flex={1} p="$3" pb="0" bg="$backgroundSoft">
-      {/* Search Bar */}
       <View mb="$3">
         <SearchBar placeholder="Search University" />
       </View>
-
-      {/* Review List */}
       <View flex={1} bg="#ffffff" p="$3" pb="0">
         {data && data.data?.university_ratings && data.data?.university_ratings.length > 0 ? (
           <ReviewList
             ListHeaderComponent={() => <View />}
             contentContainerStyle={{ paddingTop: 16 }}
             showsVerticalScrollIndicator={true}
-            data={data.data.university_ratings} // Pass reviews to ReviewList
+            data={data.data.university_ratings}
           />
         ) : (
           <NotFound description="Reviews Not Found" />
         )}
       </View>
-
-      {/* Floating Action Button */}
       <TouchableOpacity
         style={{
           position: 'absolute',
@@ -142,7 +132,7 @@ export default function UniversityScreen() {
           justifyContent: 'center',
           alignItems: 'center',
         }}
-        onPress={() => router.push('/review/rate-university')}
+        onPress={() => router.push('/university/rate-university')}
       >
         <FontAwesome name="plus" size={24} color="#FFFFFF" />
       </TouchableOpacity>

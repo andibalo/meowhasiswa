@@ -1,4 +1,4 @@
 export * from './auth'
 export * from './common'
 export * from './thread'
-export * from './review'
+export * from './university'

@@ -1,14 +1,14 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQuery } from "./baseQuery";
-import { IFetchReviewListQueryParams } from "types/request/review";
-import { FetchReviewListAPIResponse } from "types/response/review";
+import { IFetchUniversityReviewListQueryParams } from "types/request/university";
+import { FetchUniversityReviewListAPIResponse } from "types/response/university";
 
-export const reviewApi = createApi({
+export const universityApi = createApi({
     reducerPath: "university_ratings",
     baseQuery: baseQuery,
     tagTypes: ["Review"],
     endpoints: (builder) => ({
-      fetchReviewList: builder.query<FetchReviewListAPIResponse, IFetchReviewListQueryParams>({
+      fetchUniversityReviewList: builder.query<FetchUniversityReviewListAPIResponse, IFetchUniversityReviewListQueryParams>({
         providesTags: ["Review"],
         query: (qParams) => {
           let params: Record<string, any> = {};
@@ -53,4 +53,4 @@ export const reviewApi = createApi({
     }),
   });
 
-  export const { useFetchReviewListQuery } = reviewApi;
+  export const { useFetchUniversityReviewListQuery } = universityApi;

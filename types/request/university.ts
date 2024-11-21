@@ -1,9 +1,9 @@
-export interface IFetchReviewListQueryParams {
+export interface IFetchUniversityReviewListQueryParams {
     limit?: number;   
     cursor?: string;  
 }
 
-export interface ICreateReviewRequest {
+export interface ICreateUniversityReviewRequest {
     title: string;
     content: string;
     university_major: string;

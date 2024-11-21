@@ -1,9 +1,9 @@
 import { IReview } from "types/model";
 import { APIResponse, IPaginationMeta } from "./common";
 
-interface IFetchReviewListData {
+interface IFetchUniversityReviewListData {
     university_ratings: IReview[];
     meta: IPaginationMeta;
 }
 
-export type FetchReviewListAPIResponse = APIResponse<IFetchReviewListData>;
+export type FetchUniversityReviewListAPIResponse = APIResponse<IFetchUniversityReviewListData>;
