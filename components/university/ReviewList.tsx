@@ -1,9 +1,9 @@
 import { FlatList } from 'react-native';
 import { ReviewItem } from './ReviewItem';
-import { IReview } from '../../types/model';
+import { IUniversityReview } from '../../types/model';
 
-interface IReviewListProps {
-  data: IReview[]; // Corrected the prop name to match the usual plural form
+interface IUniversityReviewListProps {
+  data: IUniversityReview[]; // Corrected the prop name to match the usual plural form
   ListHeaderComponent?: React.ComponentType | null; // Made optional for flexibility
   contentContainerStyle?: object;
   showsVerticalScrollIndicator?: boolean;
@@ -14,9 +14,9 @@ export function ReviewList({
   ListHeaderComponent,
   contentContainerStyle,
   showsVerticalScrollIndicator = false, // Default is false to hide scroll bar
-}: IReviewListProps) {
+}: IUniversityReviewListProps) {
   // Sample reviews data moved into ReviewList with updated created_at
-  const testData: IReview[] = [
+  const testData: IUniversityReview[] = [
     {
       id: "e0b2e510-0492-479c-abb4-f1c9a044806a",
       user_id: "user123",

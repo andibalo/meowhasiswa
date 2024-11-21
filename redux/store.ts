@@ -2,7 +2,7 @@ import devToolsEnhancer from 'redux-devtools-expo-dev-plugin';
 import { configureStore } from '@reduxjs/toolkit'
 import { useDispatch } from 'react-redux';
 import authReducer from './slice/auth'
-import { threadsApi, userApi, universityApi} from './api';
+import { threadsApi, userApi, universityApi } from './api';
 import { setupListeners } from '@reduxjs/toolkit/query';
 
 export const store = configureStore({

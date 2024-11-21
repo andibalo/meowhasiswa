@@ -1,16 +1,16 @@
 import { View, Text, Avatar } from 'tamagui';
-import { IReview } from '../../types/model';
+import { IUniversityReview } from '../../types/model';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { StarRating } from 'components/common';
 
 dayjs.extend(relativeTime);
 
-interface ReviewItemProps {
-    review: IReview;
+interface IUniversityReviewItemProps {
+    review: IUniversityReview;
 }
 
-export const ReviewItem = (props: ReviewItemProps) => { 
+export const ReviewItem = (props: IUniversityReviewItemProps) => { 
     const review = props.review
     const timeAgo = dayjs(review.created_at).fromNow();
 

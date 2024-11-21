@@ -1,5 +1,4 @@
 export * from './thread'
 export * from './subthread'
-export * from './reviews'
 export * from './university'
 export * from './user'

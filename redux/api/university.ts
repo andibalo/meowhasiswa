@@ -4,12 +4,12 @@ import { IFetchUniversityReviewListQueryParams } from "types/request/university"
 import { FetchUniversityReviewListAPIResponse } from "types/response/university";
 
 export const universityApi = createApi({
-    reducerPath: "university_ratings",
+    reducerPath: "university",
     baseQuery: baseQuery,
-    tagTypes: ["Review"],
+    tagTypes: ["University"],
     endpoints: (builder) => ({
       fetchUniversityReviewList: builder.query<FetchUniversityReviewListAPIResponse, IFetchUniversityReviewListQueryParams>({
-        providesTags: ["Review"],
+        providesTags: ["University"],
         query: (qParams) => {
           let params: Record<string, any> = {};
 
