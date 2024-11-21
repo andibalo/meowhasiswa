@@ -7,18 +7,20 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import { RootState, useAppDispatch } from 'redux/store'
 import { useSelector } from 'react-redux'
 import { useEffect } from 'react'
+import * as LocalAuthentication from 'expo-local-authentication'
 import * as SecureStore from 'expo-secure-store'
-import { JWT_TOKEN_KEY } from 'constants/common'
-import { setToken } from 'redux/slice/auth'
+import { ENABLE_BIOMETRIC_AUTH_KEY, JWT_TOKEN_KEY } from 'constants/common'
+import { setIsBiometricAuthEnabled, setIsBiometricAuthenticated, setToken } from 'redux/slice/auth'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function TabLayout() {
 
   const theme = useTheme()
   const router = useRouter()
   const dispatch = useAppDispatch()
-  const token = useSelector((state: RootState) => state.auth.token)
+  const { token, isBiometricAuthEnabled, isBiometricAuthenticated } = useSelector((state: RootState) => state.auth)
   const enableAuthentication = process.env.EXPO_PUBLIC_ENABLE_AUTHENTICATION
-  
+
   const getUserTokenFromStorage = async () => {
     let result = SecureStore.getItem(JWT_TOKEN_KEY);
 
@@ -27,14 +29,45 @@ export default function TabLayout() {
     }
   };
 
+  const getIsBiometricAuthEnabledFromStorage = async () => {
+    let result = await AsyncStorage.getItem(ENABLE_BIOMETRIC_AUTH_KEY);
+
+    if (result) {
+      dispatch(setIsBiometricAuthEnabled({
+        isEnabled: result === "true"
+      }))
+    }
+  };
+
+  const triggerBiometricLogin = async () => {
+    try {
+
+      const results = await LocalAuthentication.authenticateAsync();
+      if (!results.success) {
+        return triggerBiometricLogin()
+      }
+
+      if (results.success) {
+        dispatch(setIsBiometricAuthenticated(true))
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
     getUserTokenFromStorage();
+    getIsBiometricAuthEnabledFromStorage()
   }, [])
 
-  if(enableAuthentication == "1") {
+  if (enableAuthentication == "1") {
     if (token === "") {
       return <Redirect href="/login" />;
     }
+  }
+
+  if (isBiometricAuthEnabled && token !== "" && !isBiometricAuthenticated) {
+    triggerBiometricLogin()
   }
 
   return (
@@ -56,7 +89,7 @@ export default function TabLayout() {
               theme={theme.name}
               backgroundColor="white"
               borderRadius={8}
-              paddingHorizontal={10}   
+              paddingHorizontal={10}
               style={{
                 backgroundColor: 'white',
                 borderWidth: 0,

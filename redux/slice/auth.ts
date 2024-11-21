@@ -4,7 +4,9 @@ import { ILoginRequest, IRegisterRequest } from "types/request/auth";
 import { APIResponse } from "types/response/common";
 
 const initialState = {
-	token: ""
+	token: "",
+	isBiometricAuthEnabled: false,
+	isBiometricAuthenticated: false,
 }
 
 export const register = createAsyncThunk(
@@ -60,6 +62,10 @@ export const login = createAsyncThunk(
 	}
 );
 
+interface ISetIsBiometricAuthEnabledPayload {
+	isEnabled: boolean
+	shouldAuthenticate?: boolean
+}
 
 const authSlice = createSlice({
 	name: "auth",
@@ -67,6 +73,16 @@ const authSlice = createSlice({
 	reducers: {
 		setToken: (state, action: PayloadAction<string>) => {
 			state.token = action.payload
+		},
+		setIsBiometricAuthEnabled: (state, action: PayloadAction<ISetIsBiometricAuthEnabledPayload>) => {
+			state.isBiometricAuthEnabled = action.payload.isEnabled
+			
+			if(action.payload.shouldAuthenticate){
+				state.isBiometricAuthenticated = true
+			}
+		},
+		setIsBiometricAuthenticated: (state, action: PayloadAction<boolean>) => {
+			state.isBiometricAuthenticated = action.payload
 		}
 	},
 	extraReducers: (builder) => {
@@ -84,6 +100,6 @@ const authSlice = createSlice({
 	},
 })
 
-export const { setToken } = authSlice.actions
+export const { setToken, setIsBiometricAuthEnabled, setIsBiometricAuthenticated } = authSlice.actions
 
 export default authSlice.reducer
