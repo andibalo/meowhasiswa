@@ -2,6 +2,9 @@ export interface IFetchThreadListQueryParams {
     limit?: number;
     cursor?: string;
     user_id?: string;
+    _q?: string
+    isTrending?: boolean
+    isUserFollowing?: boolean
 }
 
 export interface ICreateThreadRequest {
