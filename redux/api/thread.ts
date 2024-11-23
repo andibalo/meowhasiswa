@@ -22,9 +22,14 @@ export const threadsApi = createApi({
             providesTags: ['Thread'],
             query: (qParams) => {
                 let params: Record<string, any> = {}
+
                 if (qParams.cursor) params.cursor = qParams.cursor;
                 if (qParams.limit) params.limit = qParams.limit;
                 if (qParams.user_id) params.user_id = qParams.user_id;
+                if (qParams._q) params._q = qParams._q;
+                if (qParams.isTrending) params.is_trending = qParams.isTrending;
+                if (qParams.isUserFollowing) params.is_user_following = qParams.isUserFollowing;
+
                 return {
                     url: "/v1/thread",
                     params,

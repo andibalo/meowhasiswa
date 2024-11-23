@@ -91,6 +91,7 @@ export default function Register() {
               bg="$backgroundSoft"
               padding="$3"
               borderRadius="$2"
+              autoCapitalize="none"
             />
           )}
           name="username"
@@ -112,6 +113,7 @@ export default function Register() {
               bg="$backgroundSoft"
               padding="$3"
               borderRadius="$2"
+              autoCapitalize="none"
             />
           )}
           name="email"
