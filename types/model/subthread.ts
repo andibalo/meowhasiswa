@@ -6,7 +6,7 @@ export interface ISubThread {
     image_url: string;
     label_color: string;
     university_id: string | null;
-    is_university_subthread: string,
+    is_university_subthread: boolean,
     created_by: string;
     created_at: string;
     updated_by: string | null;
