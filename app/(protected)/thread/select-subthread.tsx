@@ -1,65 +1,69 @@
+import { Error, Loading, NotFound } from 'components/common'
+import { SelectSubThreadList } from 'components/subthread'
 import { useNavigation } from 'expo-router'
-import { Pressable } from 'react-native'
-import { Avatar, Separator, Text, View, XStack } from 'tamagui'
-import { ISubThreadItem } from 'types/model'
+import { useState } from 'react'
+import { useFetchSubThreadListQuery } from 'redux/api'
+import { View } from 'tamagui'
+import { ISubThread } from 'types/model'
 
-const testData: ISubThreadItem[] = [
-    {
-        id: "c1a2f145-d7cb-4c2a-80e4-937de53697c1",
-        name: "LoveLife",
-        imageUrl: "https://registrasi.untar.ac.id/assets/images/logo_untar.png",
-        followersCount: 123
-    },
-    {
-        id: "7a1311cd-a25e-4270-84e7-7d37774502cf",
-        name: "Perkuliahan",
-        imageUrl: "https://registrasi.untar.ac.id/assets/images/logo_untar.png",
-        followersCount: 123
-    }
-]
 
 export default function SelectSubThreadScreen() {
-
     const navigation = useNavigation()
+    const [cursor, setCursor] = useState("");
 
-    const handleOnPressItem = (subthread: ISubThreadItem) => {
+    const { data, error, isLoading, refetch } = useFetchSubThreadListQuery({
+        cursor: cursor,
+        limit: 10,
+        includeUniversitySubthread: true,
+    });
+
+    const subthreads = data?.data?.subthreads
+
+    const onRefresh = () => {
+        refetch()
+    };
+
+    const handleLoadMore = () => {
+        if (data?.data) {
+            let nextCursor = data.data.meta.next_cursor;
+
+            if (nextCursor !== "") {
+                setCursor(nextCursor);
+            }
+        }
+    };
+
+    const handleOnPressItem = (subthread: ISubThread) => {
         //@ts-ignore
         navigation.navigate("thread/create-thread", {
-            ...subthread
+            id: subthread.id,
+            name: subthread.name,
+            imageUrl: subthread.image_url,
+            followersCount: subthread.followers_count
         })
+    }
+
+    if (isLoading) {
+        return <Loading />
+    }
+
+    if (error) {
+        return <Error />
+    }
+
+    if (!subthreads || (subthreads && subthreads.length === 0)) {
+        return <NotFound description='SubMeow Not Found' />
     }
 
     return (
         <View flex={1} p={'$3'} pb="0" bg="$background">
-            {
-                testData.map(subthread => (
-                    <View key={subthread.id}>
-                        <Pressable onPress={() => handleOnPressItem(subthread)}>
-                            <XStack alignItems="center">
-                                <Avatar
-                                    borderRadius={"$2"}
-                                    borderWidth="$1"
-                                    borderColor="$primary"
-                                    marginRight="$2"
-                                    size="$4"
-                                >
-                                    <Avatar.Image
-                                        accessibilityLabel="Cam"
-                                        src={subthread.imageUrl}
-                                        objectFit="contain"
-                                    />
-                                    <Avatar.Fallback backgroundColor="$secondary" />
-                                </Avatar>
-                                <View>
-                                    <Text fontWeight="bold">m/{subthread.name}</Text>
-                                    <Text>{subthread.followersCount} followers</Text>
-                                </View>
-                            </XStack>
-                        </Pressable>
-                        <Separator my="$2" />
-                    </View>
-                ))
-            }
+            <SelectSubThreadList
+                data={subthreads}
+                handleLoadMore={handleLoadMore}
+                isLoading={isLoading}
+                onRefresh={onRefresh}
+                onItemPress={handleOnPressItem}
+            />
         </View>
     )
 }

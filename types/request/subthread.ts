@@ -12,6 +12,6 @@ export interface ICreateSubThreadRequest {
     description: string;
     image_url: string;
     label_color: string;
-    is_university_subthread: boolean;
-    university_id: string
+    is_university_subthread?: boolean;
+    university_id?: string
 }

@@ -13,7 +13,7 @@ export const subThreadsApi = createApi({
             invalidatesTags: ['SubThread'],
             query: (body) => {
                 return {
-                    url: "/v1/thread",
+                    url: "/v1/subthread",
                     method: "POST",
                     body
                 }

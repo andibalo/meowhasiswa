@@ -6,18 +6,74 @@ import ColorPicker, { Panel1, Swatches, OpacitySlider, HueSlider, PreviewText, c
 import * as ImagePicker from 'expo-image-picker';
 import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import type { returnedResults } from 'reanimated-color-picker';
+import * as yup from 'yup';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useCreateSubThreadMutation } from "redux/api";
+
+type ICreateSubThreadFormData = {
+    title: string
+    description: string
+    labelColor: string
+    imageUrl: string
+}
+
+const createSubThreadSchema = yup.object().shape({
+    title: yup.
+        string().
+        required('Title is required'),
+    description: yup.
+        string().
+        required('Description is required'),
+    labelColor: yup.
+        string().
+        required('Label Color is required'),
+    imageUrl: yup.
+        string().
+        required('Image is required'),
+});
 
 export default function CreateSubthreadScreen() {
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
     const navigation = useNavigation();
     const [showmodal, setShowmodal] = useState(false);
     const [selectedColor, setSelectedColor] = useState('');
     const [image, setImage] = useState<string | null>(null);
 
-    const handleSubthread = () => {
-        console.log("Title:", title, "Description:", description, "label_color:", selectedColor, "image_url", image);
-        navigation.goBack();
+    const [createSubThread, results] = useCreateSubThreadMutation()
+
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+        setValue
+    } = useForm<ICreateSubThreadFormData>({
+        resolver: yupResolver(createSubThreadSchema),
+        defaultValues: {
+            title: '',
+            description: '',
+            labelColor: '',
+            imageUrl: ''
+        },
+    });
+
+    // TODO: REMOVE AFTER UPLOAD IMAGE INTEGRATION
+    setValue("imageUrl", "amazon.com/images/I/51y8GUVKJoL._AC_UF894,1000_QL80_.jpg")
+
+    const handleCreateSubthread = async (formData: ICreateSubThreadFormData) => {
+        try {
+
+            await createSubThread({
+                name: formData.title,
+                description: formData.description,
+                image_url: formData.imageUrl,
+                label_color: formData.labelColor
+            }).unwrap()
+
+            navigation.goBack()
+
+        } catch (error) {
+            console.log("CREATE SUBTHREAD ERR:", error)
+        }
     };
 
     const customSwatches = new Array(6).fill('#fff').map(() => colorKit.randomRgbColor().hex());
@@ -33,6 +89,7 @@ export default function CreateSubthreadScreen() {
     const onSelectColor = () => {
         setSelectedColor(colorPickerValue.value)
         setShowmodal(false)
+        setValue("labelColor", colorPickerValue.value)
     };
 
     const pickImage = async () => {
@@ -58,25 +115,46 @@ export default function CreateSubthreadScreen() {
                         <Text color="$color" fontWeight="bold" mb="$2">
                             Title
                         </Text>
-                        <Input
-                            value={title}
-                            onChangeText={setTitle}
-                            bg="$backgroundSoft"
-                            borderRadius="$2"
+                        <Controller
+                            control={control}
+                            rules={{
+                                required: true,
+                            }}
+                            render={({ field: { onChange, value } }) => (
+                                <Input
+                                    value={value}
+                                    onChangeText={onChange}
+                                    bg="$backgroundSoft"
+                                    borderRadius="$2"
+                                    maxLength={100}
+                                />
+                            )}
+                            name="title"
                         />
+                        {errors.title && <Text color="$red10" fontSize={12}>{errors.title.message}</Text>}
                     </View>
                     <View>
                         <Text color="$color" fontWeight="bold" mb="$2">
                             Description
                         </Text>
-                        <TextArea
-                            value={description}
-                            onChangeText={setDescription}
-                            bg="$backgroundSoft"
-                            borderRadius="$2"
-                            verticalAlign="top"
-                            maxLength={255}
+                        <Controller
+                            control={control}
+                            rules={{
+                                required: true,
+                            }}
+                            render={({ field: { onChange, value } }) => (
+                                <TextArea
+                                    value={value}
+                                    onChangeText={onChange}
+                                    bg="$backgroundSoft"
+                                    borderRadius="$2"
+                                    verticalAlign="top"
+                                    maxLength={255}
+                                />
+                            )}
+                            name="description"
                         />
+                        {errors.description && <Text color="$red10" fontSize={12}>{errors.description.message}</Text>}
                     </View>
                     <View>
                         <Text color="$color" fontWeight="bold" mb="$2">
@@ -87,6 +165,7 @@ export default function CreateSubthreadScreen() {
                                 Choose Label Color
                             </Text>
                         </Button>
+                        {errors.labelColor && <Text color="$red10" fontSize={12}>{errors.labelColor.message}</Text>}
                     </View>
                     <View>
                         <Modal visible={showmodal} animationType='slide'>
@@ -120,11 +199,11 @@ export default function CreateSubthreadScreen() {
                         <Button onPress={pickImage}>
                             <Text> Pick an image from camera roll </Text>
                         </Button>
+                        {errors.imageUrl && <Text color="$red10" fontSize={12}>{errors.imageUrl.message}</Text>}
                     </View>
-
                     {image && <Image source={{ uri: image }} width={200} height={200} />}
                     <Button
-                        onPress={handleSubthread}
+                        onPress={handleSubmit(handleCreateSubthread)}
                         bg="$primary"
                         color="white"
                     >
