@@ -1,9 +1,11 @@
-import React, { useState } from "react";
-import { Button, Input, Stack, Text, YStack, XStack, ScrollView, Image } from "tamagui";
-import { Modal, } from 'react-native';
+import { useState } from "react";
+import { Button, Input, Text, YStack, ScrollView, Image, View, TextArea } from "tamagui";
+import { Modal, StyleSheet, } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
-import ColorPicker, { Panel1, Swatches, Preview, OpacitySlider, HueSlider } from 'reanimated-color-picker';
+import ColorPicker, { Panel1, Swatches, OpacitySlider, HueSlider, PreviewText, colorKit } from 'reanimated-color-picker';
 import * as ImagePicker from 'expo-image-picker';
+import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import type { returnedResults } from 'reanimated-color-picker';
 
 export default function CreateSubthreadScreen() {
     const [title, setTitle] = useState("");
@@ -18,8 +20,19 @@ export default function CreateSubthreadScreen() {
         navigation.goBack();
     };
 
-    const onSelectColor = ({ hex }) => {
-        setSelectedColor(hex);
+    const customSwatches = new Array(6).fill('#fff').map(() => colorKit.randomRgbColor().hex());
+
+    const colorPickerValue = useSharedValue(customSwatches[0]);
+    const backgroundColorStyle = useAnimatedStyle(() => ({ backgroundColor: colorPickerValue.value }));
+
+    const onColorPickerSelect = (color: returnedResults) => {
+        'worklet';
+        colorPickerValue.value = color.hex;
+    };
+
+    const onSelectColor = () => {
+        setSelectedColor(colorPickerValue.value)
+        setShowmodal(false)
     };
 
     const pickImage = async () => {
@@ -38,78 +51,161 @@ export default function CreateSubthreadScreen() {
     };
 
     return (
-        <ScrollView>
-            <YStack f={1} padding="$4" bg="$background">
-                <Text fontSize="$8" fontWeight="bold" color="$color" mb="$5">
-                    Create your own Submeow
-                </Text>
-                <Stack gap="$2">
-                    <Text fontSize="$3" color="$color" mb="$1">
-                        Input Submeow Title
-                    </Text>
-                    <Input
-                        placeholder="Enter Title"
-                        value={title}
-                        onChangeText={setTitle}
-                        bg="$backgroundSoft"
-                        padding="$3"
-                        borderRadius="$2"
-                    />
-                    <Text fontSize="$3" color="$color" mt="$3" >
-                        Input Submeow Description
-                    </Text>
-                    <Input
-                        placeholder="Enter Description"
-                        value={description}
-                        onChangeText={setDescription}
-                        bg="$backgroundSoft"
-                        height={90}
-                        padding="$2"
-                        borderRadius="$2"
-                        verticalAlign="top"
-                    />
-                    <Text fontSize="$3" color="$color" mb="$1">
-                        Select Label Color
-                    </Text>
-                    <Button bg={selectedColor ? selectedColor : "$backgroundSoft"} padding="$1" borderRadius="$3" onPress={() => setShowmodal(true)}>
-                        <Text fontSize="$2"> {selectedColor} </Text>
-                    </Button>
-                    <Modal visible={showmodal} animationType='slide'>
-                        <XStack jc="center">
-                        <ColorPicker style={{ width: '70%' }} value='red' onComplete={onSelectColor}>
-                            <Preview />
-                            <Panel1 />
-                            <HueSlider />
-                            <OpacitySlider />
-                            <Swatches />
-                        </ColorPicker>
-                        </XStack>
-                        <Button onPress={() => setShowmodal(false)} >
-                            <Text fontSize="$3"> Select Color </Text>
+        <ScrollView flex={1} backgroundColor="$background">
+            <View flex={1} padding="$3" >
+                <YStack gap="$3">
+                    <View>
+                        <Text color="$color" fontWeight="bold" mb="$2">
+                            Title
+                        </Text>
+                        <Input
+                            value={title}
+                            onChangeText={setTitle}
+                            bg="$backgroundSoft"
+                            borderRadius="$2"
+                        />
+                    </View>
+                    <View>
+                        <Text color="$color" fontWeight="bold" mb="$2">
+                            Description
+                        </Text>
+                        <TextArea
+                            value={description}
+                            onChangeText={setDescription}
+                            bg="$backgroundSoft"
+                            borderRadius="$2"
+                            verticalAlign="top"
+                            maxLength={255}
+                        />
+                    </View>
+                    <View>
+                        <Text color="$color" fontWeight="bold" mb="$2">
+                            Select Label Color
+                        </Text>
+                        <Button bg={selectedColor ? selectedColor : "$backgroundSoft"} padding="$1" borderRadius="$3" onPress={() => setShowmodal(true)}>
+                            <Text color={"$primary"}>
+                                Choose Label Color
+                            </Text>
                         </Button>
-                    </Modal>
-                    <Text fontSize="$3" color="$color" mb="$1">
-                        Select Submeow Profile
-                    </Text>
-                    <Button onPress={pickImage}>
-                        <Text> Pick an image from camera roll </Text>
-                    </Button>
-                    {image && <Image source={{ uri: image }} width={200} height={200} />}
+                    </View>
+                    <View>
+                        <Modal visible={showmodal} animationType='slide'>
+                            <Animated.View style={[styles.container, backgroundColorStyle]}>
+                                <View p="$5">
+                                    <ColorPicker
+                                        value={colorPickerValue.value}
+                                        sliderThickness={25}
+                                        thumbSize={24}
+                                        thumbShape='circle'
+                                        onChange={onColorPickerSelect}
+                                        boundedThumb
+                                    >
+                                        <Panel1 style={styles.panelStyle} />
+                                        <HueSlider style={styles.sliderStyle} />
+                                        <OpacitySlider style={styles.sliderStyle} />
+                                        <Swatches style={styles.swatchesContainer} swatchStyle={styles.swatchStyle} />
+                                        <View style={styles.previewTxtContainer}>
+                                            <PreviewText style={{ color: '#707070' }} />
+                                        </View>
+                                    </ColorPicker>
+                                    <Button bg="$primary" color="white" mt='$3' onPress={() => onSelectColor()}>
+                                        Select Color
+                                    </Button>
+                                </View>
+                            </Animated.View>
+                        </Modal>
+                        <Text color="$color" fontWeight="bold" mb="$2">
+                            Select Profile Picture
+                        </Text>
+                        <Button onPress={pickImage}>
+                            <Text> Pick an image from camera roll </Text>
+                        </Button>
+                    </View>
 
+                    {image && <Image source={{ uri: image }} width={200} height={200} />}
                     <Button
                         onPress={handleSubthread}
-                        bg="$backgroundSoft"
-                        padding="$3"
-                        borderRadius="$3"
-                        ai="center"
-                        jc="center"
+                        bg="$primary"
+                        color="white"
                     >
-                        <Text fontSize="$4" fontWeight="bold" color="$color">
-                            Submit
-                        </Text>
+                        Submit
                     </Button>
-                </Stack>
-            </YStack>
-        </ScrollView>
+                </YStack>
+            </View >
+        </ScrollView >
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignContent: 'center',
+    },
+    pickerContainer: {
+        alignSelf: 'center',
+        backgroundColor: '#fff',
+        padding: 20,
+        borderRadius: 20,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 5,
+        },
+        shadowOpacity: 0.34,
+        shadowRadius: 6.27,
+
+        elevation: 10,
+    },
+    panelStyle: {
+        borderRadius: 16,
+
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+
+        elevation: 5,
+    },
+    sliderStyle: {
+        borderRadius: 20,
+        marginTop: 20,
+
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+
+        elevation: 5,
+    },
+    previewTxtContainer: {
+        paddingTop: 20,
+        marginTop: 20,
+        borderTopWidth: 1,
+        borderColor: '#bebdbe',
+    },
+    swatchesContainer: {
+        paddingTop: 20,
+        marginTop: 20,
+        borderTopWidth: 1,
+        borderColor: '#bebdbe',
+        alignItems: 'center',
+        flexWrap: 'nowrap',
+        gap: 10,
+    },
+    swatchStyle: {
+        borderRadius: 20,
+        height: 30,
+        width: 30,
+        margin: 0,
+        marginBottom: 0,
+        marginHorizontal: 0,
+        marginVertical: 0,
+    },
+});
