@@ -24,8 +24,8 @@ const renderScene = ({ query, index }) => SceneMap({
   second: () => <TabItem title='Newest' query={query} isTrending={index === 0} />,
 });
 
+// TODO: Improve user experience, still lagging and need to show spinner
 const TabItem = (props: ITabItemProps) => {
-  console.log(props, "DWAD")
   const [cursor, setCursor] = useState("");
 
   const { data, error, isLoading, refetch } = useFetchThreadListQuery({
