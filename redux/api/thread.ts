@@ -31,11 +31,9 @@ export const threadsApi = createApi({
                     method: "GET"
                 }
             },
-            // Only have one cache entry because the arg always maps to one string
             serializeQueryArgs: ({ endpointName }) => {
                 return endpointName;
             },
-            // Always merge incoming data to the cache entry
             merge: (currentCache, newItems, { arg }) => {
                 if (arg.cursor === "") {
                     return newItems;
@@ -45,7 +43,6 @@ export const threadsApi = createApi({
                     currentCache.data.meta = newItems.data.meta;
                 }
             },
-            // Refetch when the page arg changes
             forceRefetch({ currentArg, previousArg }) {
                 return currentArg !== previousArg;
             }
@@ -71,7 +68,31 @@ export const threadsApi = createApi({
                 };
             }
         }),
+        deleteThread: builder.mutation<APIResponse<{ success: boolean }>, string>({
+            invalidatesTags: (result, error, threadId) => [{ type: 'Thread', id: threadId }],
+            query: (threadId) => ({
+                url: `/v1/thread/${threadId}`,
+                method: "DELETE",
+            }),
+        }),
+        updateThread: builder.mutation<APIResponse<any>, { threadId: string, updatedData: ICreateThreadRequest }>({
+            invalidatesTags: (result, error, { threadId }) => [{ type: 'Thread', id: threadId }],
+            query: ({ threadId, updatedData }) => {
+                return {
+                    url: `/v1/thread/${threadId}`,
+                    method: "PATCH",
+                    body: updatedData
+                };
+            }
+        }),
     }),
 });
 
-export const { useFetchThreadListQuery, useFetchThreadByIdQuery, useCreateThreadMutation, usePostCommentMutation } = threadsApi;
+export const { 
+    useFetchThreadListQuery, 
+    useFetchThreadByIdQuery, 
+    useCreateThreadMutation, 
+    usePostCommentMutation,
+    useDeleteThreadMutation,
+    useUpdateThreadMutation,
+} = threadsApi;

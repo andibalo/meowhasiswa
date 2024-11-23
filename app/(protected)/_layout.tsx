@@ -40,6 +40,12 @@ export default function ProtectedLayout() {
                 }}
             />
             <Stack.Screen
+                name="thread/edit-thread"
+                options={{
+                    headerTitle: "Edit Thread",
+                }}
+            />
+            <Stack.Screen
                 name="thread/select-subthread"
                 options={{
                     headerTitle: "Select Subthread",

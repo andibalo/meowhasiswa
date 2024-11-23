@@ -5,7 +5,7 @@ import { ThreadList } from 'components/home';
 import { useFetchThreadListQuery } from 'redux/api';
 
 interface UserThreadTabProps {
-  user_id: string;
+  user_id: string; // ID of the user whose threads are being displayed
 }
 
 export const UserThreadTab: React.FC<UserThreadTabProps> = ({ user_id }) => {
@@ -18,7 +18,7 @@ export const UserThreadTab: React.FC<UserThreadTabProps> = ({ user_id }) => {
   });
 
   const onRefresh = () => {
-    setCursor("");
+    setCursor(""); // Reset cursor to refresh the list
   };
 
   const handleLoadMore = () => {
@@ -49,6 +49,7 @@ export const UserThreadTab: React.FC<UserThreadTabProps> = ({ user_id }) => {
           handleLoadMore={handleLoadMore}
           data={threads}
           onRefresh={onRefresh}
+          currentUserId={user_id} // Pass the current user's ID
         />
       ) : (
         <NotFound description="No posts found for this user" />
