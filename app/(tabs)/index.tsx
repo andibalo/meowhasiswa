@@ -5,7 +5,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { View } from 'tamagui';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { Error, Loading, NotFound, SearchBar, TopTabBar } from 'components/common';
-import { useFetchThreadListQuery, useFetchUserProfileQuery } from 'redux/api';
+import { useFetchThreadListQuery } from 'redux/api';
 import { IThread } from 'types/model';
 import { useRouter } from 'expo-router';
 
@@ -44,7 +44,6 @@ const renderScene = SceneMap({
 });
 
 const TabItem = (props: { title: string }) => {
-  const { data: userProfileData, error: userProfileError, isLoading: isUserProfileLoading } = useFetchUserProfileQuery();
   const [cursor, setCursor] = useState("");
 
   const enableAPIIntegration = process.env.EXPO_PUBLIC_ENABLE_API_INTEGRATION;
@@ -59,7 +58,6 @@ const TabItem = (props: { title: string }) => {
           data={testData}
           isRefreshing={false}
           onRefresh={() => null}
-          currentUserId={String(userProfileData?.data?.id)}
         />
       </View>
     );
@@ -101,7 +99,6 @@ const TabItem = (props: { title: string }) => {
           handleLoadMore={handleLoadMore}
           data={data.data.threads}
           onRefresh={onRefresh}
-          currentUserId={String(userProfileData?.data?.id)}
         />
       ) : (
         <NotFound description="Threads Not Found" />

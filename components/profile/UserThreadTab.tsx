@@ -18,7 +18,7 @@ export const UserThreadTab: React.FC<UserThreadTabProps> = ({ user_id }) => {
   });
 
   const onRefresh = () => {
-    setCursor(""); // Reset cursor to refresh the list
+    setCursor("");
   };
 
   const handleLoadMore = () => {

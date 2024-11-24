@@ -3,30 +3,33 @@ import { Text, View, XStack, YStack, Avatar, Separator } from 'tamagui';
 import { IThread } from 'types/model/thread';
 import dayjs from 'dayjs';
 import { Pressable, Alert } from 'react-native';
-import { useRouter, useNavigation } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useDeleteThreadMutation } from 'redux/api/thread';
 
 interface ThreadItemProps {
     thread: IThread;
-    currentUserId: string;
+    currentUserId?: string;
 }
 
 export const ThreadItem = ({ thread, currentUserId }: ThreadItemProps) => {
     const router = useRouter();
     const [deleteThread] = useDeleteThreadMutation();
-    const [isLongPressMenuVisible, setLongPressMenuVisible] = useState(false);
 
     const handleLongPress = () => {
-        if (thread.user_id === currentUserId) {
+        if ( currentUserId && thread.user_id === currentUserId) {
             Alert.alert(
                 'Thread Actions',
                 'Choose an action for your thread:',
                 [
                     { text: 'Cancel', style: 'cancel' },
-                    { text: 'Edit', onPress: () => router.push({
-                        pathname: '/thread/edit-thread',
-                        params: { id: thread.id } })
+                    {
+                        text: 'Edit',
+                        onPress: () =>
+                            router.push({
+                                pathname: '/thread/edit-thread',
+                                params: { id: thread.id },
+                            }),
                     },
                     { text: 'Delete', onPress: handleDelete },
                 ],
@@ -34,13 +37,15 @@ export const ThreadItem = ({ thread, currentUserId }: ThreadItemProps) => {
             );
         }
     };
+
     const handleDelete = async () => {
         Alert.alert(
             'Confirm Deletion',
             'Are you sure you want to delete this thread? This action cannot be undone.',
             [
                 { text: 'Cancel', style: 'cancel' },
-                { text: 'Delete',
+                {
+                    text: 'Delete',
                     style: 'destructive',
                     onPress: async () => {
                         try {
@@ -55,7 +60,6 @@ export const ThreadItem = ({ thread, currentUserId }: ThreadItemProps) => {
             { cancelable: true }
         );
     };
-    
 
     return (
         <Pressable
