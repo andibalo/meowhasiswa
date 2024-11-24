@@ -7749,6 +7749,7 @@ __metadata:
     react-native-get-random-values: "npm:^1.11.0"
     react-native-gifted-chat: "npm:^2.6.4"
     react-native-modal-dropdown: "npm:^1.0.2"
+    react-native-otp-entry: "npm:^1.7.3"
     react-native-pager-view: "npm:6.3.0"
     react-native-ratings: "npm:^8.1.0"
     react-native-reanimated: "npm:3.10.1"
@@ -12002,6 +12003,16 @@ __metadata:
   dependencies:
     prop-types: "npm:^15.6.0"
   checksum: 6cabaa2fd578a88e086b4af323c3b6c20afc6be4557b0b3815cb3bcd54a2bd467fa3b0fb42c53ab34d42a382a76ed7a5402491feead9bcad08176979e08d00c6
+  languageName: node
+  linkType: hard
+
+"react-native-otp-entry@npm:^1.7.3":
+  version: 1.7.3
+  resolution: "react-native-otp-entry@npm:1.7.3"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 308e15ea473906d3d293a23b3fad353c9b8ffa835d601d578bafa340e0952827139918877ae47250f90e1637fe4de334279cb68e00b337604377a24c9731ce53
   languageName: node
   linkType: hard
 

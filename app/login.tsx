@@ -1,33 +1,30 @@
 import { Button, Input, Stack, Text, YStack, XStack, Image } from "tamagui";
 import { FontAwesome } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import * as yup from 'yup';
-import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from "yup";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { login } from "redux/slice/auth";
 import { useAppDispatch } from "redux/store";
-import * as SecureStore from 'expo-secure-store'
+import * as SecureStore from "expo-secure-store";
 import { JWT_TOKEN_KEY } from "constants/common";
 
 type LoginFormData = {
-  email: string
-  password: string
-}
+  email: string;
+  password: string;
+};
 
 const loginSchema = yup.object().shape({
-  email: yup.
-    string().
-    required('Email is required').
-    email("Invalid email format"),
-  password: yup.
-    string().
-    required('Password is required'),
+  email: yup
+    .string()
+    .required("Email is required")
+    .email("Invalid email format"),
+  password: yup.string().required("Password is required"),
 });
 
 export default function Login() {
-
   const navigation = useNavigation();
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
   const {
     control,
@@ -36,32 +33,33 @@ export default function Login() {
   } = useForm<LoginFormData>({
     resolver: yupResolver(loginSchema),
     defaultValues: {
-      email: '',
-      password: ''
+      email: "",
+      password: "",
     },
   });
 
   const handleLogin = async (formData: LoginFormData) => {
-
     //TODO: add error handling and success/fail toast
     try {
-      const res = await dispatch(login({
-        email: formData.email,
-        password: formData.password
-      })).unwrap()
+      const res = await dispatch(
+        login({
+          email: formData.email,
+          password: formData.password,
+        })
+      ).unwrap();
 
       if (!res?.data) {
-        throw new Error("unable to login")
+        throw new Error("unable to login");
       }
 
       await SecureStore.setItemAsync(JWT_TOKEN_KEY, res.data);
 
       // @ts-ignore
-      navigation.navigate("(tabs)")
+      navigation.navigate("(tabs)");
     } catch (error) {
-      console.log(error, "LOGIN FORM")
+      console.log(error, "LOGIN FORM");
     }
-  }
+  };
 
   return (
     <YStack f={1} jc="center" ai="center" padding="$4" bg="$background">
@@ -100,7 +98,11 @@ export default function Login() {
           )}
           name="email"
         />
-        {errors.email && <Text color="$red10" fontSize={12}>{errors.email.message}</Text>}
+        {errors.email && (
+          <Text color="$red10" fontSize={12}>
+            {errors.email.message}
+          </Text>
+        )}
         <Text fontSize="$3" color="$color" mt="$3">
           Password
         </Text>
@@ -122,24 +124,25 @@ export default function Login() {
           )}
           name="password"
         />
-        {errors.password && <Text color="$red10" fontSize={12}>{errors.password.message}</Text>}
+        {errors.password && (
+          <Text color="$red10" fontSize={12}>
+            {errors.password.message}
+          </Text>
+        )}
+       <XStack jc="flex-end" mt="$2" width="100%">
+          <Text
+            fontSize="$2"
+            color="$secondary"
+            style={{ textDecorationLine: "underline" }}
+            onPress={() => {
+              // @ts-ignore
+              navigation.navigate("forgot-password"); // Replace with your target screen name
+            }}
+          >
+            Forgot Password?
+          </Text>
+        </XStack>
       </Stack>
-      <XStack mt="$3" ai="center">
-        <Text fontSize="$3" color="$color">
-          Don't have an account?
-        </Text>
-        <Text
-          fontWeight="bold"
-          onPress={() => {
-            // @ts-ignore
-            navigation.navigate("register")
-          }}
-          style={{ textDecorationLine: "underline" }}
-          ml="$2"
-        >
-          Register
-        </Text>
-      </XStack>
       <XStack width="80%" jc="flex-end" mt="$5">
         <Button
           onPress={handleSubmit(handleLogin)}
@@ -153,6 +156,22 @@ export default function Login() {
         >
           <FontAwesome name="arrow-right" size={20} color="#fff" />
         </Button>
+      </XStack>
+      <XStack mt="$7" ai="center">
+        <Text fontSize="$3" color="$color">
+          Don't have an account?
+        </Text>
+        <Text
+          fontWeight="bold"
+          onPress={() => {
+            // @ts-ignore
+            navigation.navigate("register");
+          }}
+          style={{ textDecorationLine: "underline" }}
+          ml="$2"
+        >
+          Register
+        </Text>
       </XStack>
     </YStack>
   );
