@@ -5,19 +5,24 @@ import dayjs from 'dayjs';
 import { Pressable, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { useDeleteThreadMutation } from 'redux/api/thread';
+import { useLikeThreadMutation, useDislikeThreadMutation, useDeleteThreadMutation } from 'redux/api/thread';
 
 interface ThreadItemProps {
     thread: IThread;
     currentUserId?: string;
+    inDetailScreen?: boolean;
 }
 
-export const ThreadItem = ({ thread, currentUserId }: ThreadItemProps) => {
+export const ThreadItem = ({ thread, currentUserId, inDetailScreen }: ThreadItemProps) => {
     const router = useRouter();
     const [deleteThread] = useDeleteThreadMutation();
+    const [likeThread] = useLikeThreadMutation();
+    const [dislikeThread] = useDislikeThreadMutation();
+    const [liked, setLiked] = useState(false);
+    const [disliked, setDisliked] = useState(false);
 
     const handleLongPress = () => {
-        if ( currentUserId && thread.user_id === currentUserId) {
+        if (currentUserId && thread.user_id === currentUserId) {
             Alert.alert(
                 'Thread Actions',
                 'Choose an action for your thread:',
@@ -60,6 +65,35 @@ export const ThreadItem = ({ thread, currentUserId }: ThreadItemProps) => {
             { cancelable: true }
         );
     };
+
+    const handleLike = async () => {
+        if (disliked) {
+            setDisliked(false);
+            await dislikeThread({ threadId: thread.id, dislike_count: Math.max(0, thread.dislike_count - 1) });
+        }
+        if (!liked) {
+            setLiked(true);
+            await likeThread({ threadId: thread.id, like_count: thread.like_count + 1 });
+        } else {
+            setLiked(false);
+            await likeThread({ threadId: thread.id, like_count: Math.max(0, thread.like_count - 1) });
+        }
+    };
+    
+    const handleDislike = async () => {
+        if (liked) {
+            setLiked(false);
+            await likeThread({ threadId: thread.id, like_count: Math.max(0, thread.like_count - 1) });
+        }
+        if (!disliked) {
+            setDisliked(true);
+            await dislikeThread({ threadId: thread.id, dislike_count: thread.dislike_count + 1 });
+        } else {
+            setDisliked(false);
+            await dislikeThread({ threadId: thread.id, dislike_count: Math.max(0, thread.dislike_count - 1) });
+        }
+    };
+    
 
     return (
         <Pressable
@@ -119,16 +153,18 @@ export const ThreadItem = ({ thread, currentUserId }: ThreadItemProps) => {
                     </View>
                     <XStack pl={'$3'} pr={'$3'} pb={'$3'} gap={'$5'}>
                         <XStack ai={'center'}>
-                            <ThumbsUp />
+                            <ThumbsUp
+                                onPress={inDetailScreen ? handleLike : undefined}
+                                color={liked ? 'green' : 'gray'}
+                            />
                             <Text ml={'$2'}>{thread.like_count}</Text>
                         </XStack>
                         <XStack ai={'center'}>
-                            <ThumbsDown />
+                            <ThumbsDown
+                                onPress={inDetailScreen ? handleDislike : undefined}
+                                color={disliked ? 'red' : 'gray'}
+                            />
                             <Text ml={'$2'}>{thread.dislike_count}</Text>
-                        </XStack>
-                        <XStack ai={'center'}>
-                            <MessageSquare />
-                            <Text ml={'$2'}>{thread.comment_count}</Text>
                         </XStack>
                     </XStack>
                 </YStack>

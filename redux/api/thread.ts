@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from './baseQuery';
-import { ICreateThreadRequest, IFetchThreadListQueryParams, IPostCommentRequest } from 'types/request/thread';
+import { ICreateThreadRequest, IFetchThreadListQueryParams, IPostCommentRequest, ILikeThreadRequest, IDislikeThreadRequest } from 'types/request/thread';
 import { APIResponse, FetchThreadByIdAPIResponse, FetchThreadListAPIResponse } from 'types/response';
 
 export const threadsApi = createApi({
@@ -93,6 +93,26 @@ export const threadsApi = createApi({
                 };
             }
         }),
+        likeThread: builder.mutation<APIResponse<any>, ILikeThreadRequest>({
+            invalidatesTags: ['Thread'],
+            query: ({ threadId, like_count }) => {
+                return {
+                    url: `/v1/thread/like/${threadId}`,
+                    method: "PATCH",
+                    body: like_count
+                };
+            }
+        }),
+        dislikeThread: builder.mutation<APIResponse<any>, IDislikeThreadRequest>({
+            invalidatesTags: ['Thread'],
+            query: ({ threadId, dislike_count }) => {
+                return {
+                    url: `/v1/thread/dislike/${threadId}`,
+                    method: "PATCH",
+                    body: dislike_count
+                };
+            }
+        }),
     }),
 });
 
@@ -103,4 +123,6 @@ export const {
     usePostCommentMutation,
     useDeleteThreadMutation,
     useUpdateThreadMutation,
+    useLikeThreadMutation,
+    useDislikeThreadMutation,
 } = threadsApi;

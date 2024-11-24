@@ -47,7 +47,7 @@ export default function ThreadDetailScreen() {
         data?.data?.thread ?
             <View flex={1} backgroundColor="$background">
                 <ScrollView ref={scrollViewRef}>
-                    <ThreadItem thread={data.data.thread} />
+                    <ThreadItem thread={data.data.thread} inDetailScreen />
                     <View>
                         <Separator mb="$2" />
                     </View>

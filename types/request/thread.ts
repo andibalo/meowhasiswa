@@ -18,3 +18,13 @@ export interface IPostCommentRequest {
     threadId: string;
     content: string;
 }
+
+export interface ILikeThreadRequest {
+    threadId: string;
+    like_count: number;
+}
+
+export interface IDislikeThreadRequest {
+    threadId: string;
+    dislike_count: number;
+}
