@@ -1,15 +1,15 @@
-import { SubThreadItem } from './SubThreadItem';
 import { FlatList, RefreshControl } from 'react-native';
 import { ISubThread } from '../../types/model'
-import { Spinner } from 'tamagui';
+import { Separator, Spinner, View } from 'tamagui';
+import { SelectSubThreadItem } from './SelectSubThreadItem';
 
-interface ISubThreadListProps {
-    title: string
+interface ISelectSubThreadListProps {
     data: ISubThread[] | undefined
     handleLoadMore: () => void
     isLoading: boolean
     onRefresh: () => void
     isRefreshing?: boolean
+    onItemPress: (subthread: ISubThread) => void
 }
 
 const renderFooterLoading = (loadingMore) => {
@@ -20,17 +20,20 @@ const renderFooterLoading = (loadingMore) => {
     return <Spinner size="large" color="$primary" mb="$3" />;
 };
 
-export const SubThreadList = (props: ISubThreadListProps) => {
+export const SelectSubThreadList = (props: ISelectSubThreadListProps) => {
 
     const renderPost = ({ item }) => (
-        <SubThreadItem subthread={item} isFollowing={props.title === "Following"} />
+        <View>
+            <SelectSubThreadItem subthread={item} onPress={props.onItemPress} />
+            <Separator my="$2" />
+        </View>
     );
 
     return (
         <FlatList
             data={props.data}
             renderItem={renderPost}
-            keyExtractor={(item, index) => `subthread-${props.title}-${item.id}`}
+            keyExtractor={(item, index) => `subthread-${item.id}`}
             onEndReachedThreshold={0.5}
             scrollEventThrottle={16}
             showsVerticalScrollIndicator={false}
