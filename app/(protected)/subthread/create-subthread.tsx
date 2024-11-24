@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Input, Text, YStack, ScrollView, Image, View, TextArea } from "tamagui";
+import { Button, Input, Text, YStack, ScrollView, Image, View, TextArea, XStack } from "tamagui";
 import { Modal, StyleSheet, } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import ColorPicker, { Panel1, Swatches, OpacitySlider, HueSlider, PreviewText, colorKit } from 'reanimated-color-picker';
@@ -10,6 +10,9 @@ import * as yup from 'yup';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useCreateSubThreadMutation } from "redux/api";
+import { bytesToMegaBytes } from "utils";
+import { useToast } from "hooks";
+import { useUploadImageMutation } from "redux/api/image";
 
 type ICreateSubThreadFormData = {
     title: string
@@ -39,7 +42,10 @@ export default function CreateSubthreadScreen() {
     const [selectedColor, setSelectedColor] = useState('');
     const [image, setImage] = useState<string | null>(null);
 
-    const [createSubThread, results] = useCreateSubThreadMutation()
+    const toast = useToast()
+
+    const [createSubThread] = useCreateSubThreadMutation()
+    const [uploadImage] = useUploadImageMutation()
 
     const {
         control,
@@ -100,9 +106,23 @@ export default function CreateSubthreadScreen() {
             quality: 1,
         });
 
+
         console.log(result);
 
         if (!result.canceled) {
+            if (result.assets[0].fileSize) {
+                if (bytesToMegaBytes(result.assets[0].fileSize) > 3) {
+                    toast.showToastError("File Too Big", "Image size must be less than 3 MB")
+                    return
+                }
+            }
+
+            const uploadResp = await uploadImage({
+                uri: result.assets[0].uri,
+            }).unwrap()
+
+            console.log(uploadResp, "UPLOAD RESP")
+
             setImage(result.assets[0].uri);
         }
     };
@@ -201,7 +221,9 @@ export default function CreateSubthreadScreen() {
                         </Button>
                         {errors.imageUrl && <Text color="$red10" fontSize={12}>{errors.imageUrl.message}</Text>}
                     </View>
-                    {image && <Image source={{ uri: image }} width={200} height={200} />}
+                    <XStack justifyContent="center" >
+                        {image && <Image source={{ uri: image }} width={200} height={200} />}
+                    </XStack>
                     <Button
                         onPress={handleSubmit(handleCreateSubthread)}
                         bg="$primary"
