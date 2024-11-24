@@ -1,15 +1,11 @@
 import { Button, Input, Stack, Text, YStack, XStack, Image } from "tamagui";
-import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { OtpInput } from "react-native-otp-entry";
 import { useState } from "react";
 
-export default function passwordResetScreen() {
-  const navigation = useNavigation();
+export default function PasswordResetScreen() {
   const router = useRouter();
-
   const [otp, setOtp] = useState("");
-
   const handleOtpFilled = (otpText: string) => {
     setOtp(otpText);
   };
@@ -30,7 +26,6 @@ export default function passwordResetScreen() {
       <Text fontSize="$3" color="$secondary" mb="$5">
         We send a code to your email.
       </Text>
-
       <Stack gap="$2" width="80%">
         <OtpInput
           secureTextEntry
@@ -49,7 +44,6 @@ export default function passwordResetScreen() {
           }}
         />
       </Stack>
-
       <XStack width="80%" jc="center" mt="$5">
         <Button
           onPress={() => router.push("/set-new-password")}
@@ -66,7 +60,6 @@ export default function passwordResetScreen() {
           </Text>
         </Button>
       </XStack>
-
       <XStack mt="$3" ai="center">
         <Text fontSize="$3" color="$color">
           Back to
@@ -75,7 +68,7 @@ export default function passwordResetScreen() {
           fontWeight="bold"
           onPress={() => {
             // @ts-ignore
-            navigation.navigate("login");
+            router.push("/login");
           }}
           style={{ textDecorationLine: "underline" }}
           ml="$2"

@@ -136,7 +136,7 @@ export default function Login() {
             style={{ textDecorationLine: "underline" }}
             onPress={() => {
               // @ts-ignore
-              navigation.navigate("forgot-password"); // Replace with your target screen name
+              navigation.navigate("forgot-password");
             }}
           >
             Forgot Password?

@@ -1,9 +1,7 @@
 import { Button, Input, Stack, Text, YStack, XStack, Image } from "tamagui";
-import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 
-export default function setNewPasswordScreen() {
-  const navigation = useNavigation();
+export default function SetNewPasswordScreen() {
   const router = useRouter();
 
   return (
@@ -19,7 +17,6 @@ export default function setNewPasswordScreen() {
       <Text fontSize="$9" fontWeight="bold" color="$color" mb="$5">
         Set New Password
       </Text>
-  
       <Stack gap="$2" width="80%">
         <Text fontSize="$3" color="$color" mt="$3">
           Password
@@ -32,7 +29,6 @@ export default function setNewPasswordScreen() {
           borderRadius="$2"
         />
       </Stack>
-
       <Stack gap="$2" width="80%">
         <Text fontSize="$3" color="$color" mt="$3">
           Confirm Password
@@ -45,10 +41,9 @@ export default function setNewPasswordScreen() {
           borderRadius="$2"
         />
       </Stack>
-
       <XStack width="80%" jc="center" mt="$5">
         <Button
-          onPress={() => router.push("/all-done")}
+          onPress={() => router.push("/forgot-password-complete")}
           bg="$primary"
           padding="$3"
           borderRadius="$3"
@@ -62,7 +57,6 @@ export default function setNewPasswordScreen() {
           </Text>
         </Button>
       </XStack>
-
       <XStack mt="$3" ai="center">
         <Text fontSize="$3" color="$color">
           Back to
@@ -71,7 +65,7 @@ export default function setNewPasswordScreen() {
           fontWeight="bold"
           onPress={() => {
             // @ts-ignore
-            navigation.navigate("login");
+            router.push("/login");
           }}
           style={{ textDecorationLine: "underline" }}
           ml="$2"

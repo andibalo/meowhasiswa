@@ -107,7 +107,7 @@ function RootLayoutNav() {
             }}
           />
           <Stack.Screen
-            name="all-done"
+            name="forgot-password-complete"
             options={{
               headerShown: false,
             }}
