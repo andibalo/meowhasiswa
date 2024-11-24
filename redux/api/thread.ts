@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from './baseQuery';
-import { ICreateThreadRequest, IFetchThreadListQueryParams, IPostCommentRequest } from 'types/request/thread';
+import { ICreateThreadRequest, IFetchThreadListQueryParams, IPostCommentRequest, IUpdateThreadRequest } from 'types/request/thread';
 import { APIResponse, FetchThreadByIdAPIResponse, FetchThreadListAPIResponse } from 'types/response';
 
 export const threadsApi = createApi({
@@ -76,7 +76,51 @@ export const threadsApi = createApi({
                 };
             }
         }),
+        deleteThread: builder.mutation<APIResponse<{ success: boolean }>, string>({
+            invalidatesTags: ['Thread'],
+            query: (threadId) => ({
+                url: `/v1/thread/${threadId}`,
+                method: "DELETE",
+            }),
+        }),
+        updateThread: builder.mutation<APIResponse<any>, { threadId: string, updatedData: IUpdateThreadRequest }>({
+            invalidatesTags: ['Thread'],
+            query: ({ threadId, updatedData }) => {
+                return {
+                    url: `/v1/thread/${threadId}`,
+                    method: "PATCH",
+                    body: updatedData
+                };
+            }
+        }),
+        likeThread: builder.mutation<APIResponse<any>, string>({
+            invalidatesTags: ['Thread'],
+            query: (threadId) => {
+                return {
+                    url: `/v1/thread/like/${threadId}`,
+                    method: "PATCH"
+                };
+            }
+        }),
+        dislikeThread: builder.mutation<APIResponse<any>, string>({
+            invalidatesTags: ['Thread'],
+            query: (threadId) => {
+                return {
+                    url: `/v1/thread/dislike/${threadId}`,
+                    method: "PATCH"
+                };
+            }
+        }),
     }),
 });
 
-export const { useFetchThreadListQuery, useFetchThreadByIdQuery, useCreateThreadMutation, usePostCommentMutation } = threadsApi;
+export const {
+    useFetchThreadListQuery,
+    useFetchThreadByIdQuery,
+    useCreateThreadMutation,
+    usePostCommentMutation,
+    useDeleteThreadMutation,
+    useUpdateThreadMutation,
+    useLikeThreadMutation,
+    useDislikeThreadMutation,
+} = threadsApi;
