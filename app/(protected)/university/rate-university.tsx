@@ -1,4 +1,13 @@
-import { Text,Input,TextArea,Button,YStack,View,Select,ScrollView, } from "tamagui";
+import {
+  Text,
+  Input,
+  TextArea,
+  Button,
+  YStack,
+  View,
+  Select,
+  ScrollView,
+} from "tamagui";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "expo-router";
 import * as yup from "yup";
@@ -6,16 +15,19 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ChevronDown } from "@tamagui/lucide-icons";
 import { useState } from "react";
+import { useCreateUniversityReviewMutation } from "redux/api";
+import { useFetchUserProfileQuery } from "redux/api";
+import { Error, NotFound } from "components/common";
 
 type RateUniversityFormData = {
   title: string;
   content: string;
-  universityMajor: string;
-  facilityRating: string;
-  studentOrganizationRating: string;
-  socialEnvironmentRating: string;
-  educationQualityRating: string;
-  priceToValueRating: string;
+  facility_rating: number;
+  student_organization_rating: number;
+  university_major: string;
+  social_environment_rating: number;
+  education_quality_rating: number;
+  price_to_value_rating: number;
   pros: string[];
   cons: string[];
 };
@@ -23,12 +35,32 @@ type RateUniversityFormData = {
 const rateUniversitySchema = yup.object().shape({
   title: yup.string().required("Title is required"),
   content: yup.string().required("Content is required"),
-  universityMajor: yup.string().required("Select a university major"),
-  facilityRating: yup.string().required("Select a facility rating"),
-  studentOrganizationRating: yup.string().required("Select a student organization rating"),
-  socialEnvironmentRating: yup.string().required("Select a social environment rating"),
-  educationQualityRating: yup.string().required("Select a education quality rating"),
-  priceToValueRating: yup.string().required("Select a price to value rating"),
+  university_major: yup.string().required("Select a university major"),
+  facility_rating: yup
+    .number()
+    .required("Select a facility rating")
+    .min(1, "Minimum rating is 1")
+    .max(5, "Maximum rating is 5"),
+  student_organization_rating: yup
+    .number()
+    .required("Select a student organization rating")
+    .min(1, "Minimum rating is 1")
+    .max(5, "Maximum rating is 5"),
+  social_environment_rating: yup
+    .number()
+    .required("Select a social environment rating")
+    .min(1, "Minimum rating is 1")
+    .max(5, "Maximum rating is 5"),
+  education_quality_rating: yup
+    .number()
+    .required("Select an education quality rating")
+    .min(1, "Minimum rating is 1")
+    .max(5, "Maximum rating is 5"),
+  price_to_value_rating: yup
+    .number()
+    .required("Select a price-to-value rating")
+    .min(1, "Minimum rating is 1")
+    .max(5, "Maximum rating is 5"),
   pros: yup
     .array()
     .of(yup.string())
@@ -51,12 +83,19 @@ const rateUniversitySchema = yup.object().shape({
 
 export default function RateUniversityScreen() {
   const navigation = useNavigation();
+  const { data, error, isLoading } = useFetchUserProfileQuery();
+  const [createUniversityReview] = useCreateUniversityReviewMutation(); // Use mutation hook
   const [isMajorDropdownVisible, setIsMajorDropdownVisible] = useState(false);
-  const [isFRatingDropdownVisible, setIsFRatingDropdownVisible] = useState(false);
-  const [isSoRatingDropdownVisible, setIsSoRatingDropdownVisible] = useState(false);
-  const [isSeRatingDropdownVisible, setIsSeRatingDropdownVisible] = useState(false);
-  const [isEqRatingDropdownVisible, setIsEqRatingDropdownVisible] = useState(false);
-  const [isPtvRatingDropdownVisible, setIsPtvRatingDropdownVisible] = useState(false);
+  const [isFRatingDropdownVisible, setIsFRatingDropdownVisible] =
+    useState(false);
+  const [isSoRatingDropdownVisible, setIsSoRatingDropdownVisible] =
+    useState(false);
+  const [isSeRatingDropdownVisible, setIsSeRatingDropdownVisible] =
+    useState(false);
+  const [isEqRatingDropdownVisible, setIsEqRatingDropdownVisible] =
+    useState(false);
+  const [isPtvRatingDropdownVisible, setIsPtvRatingDropdownVisible] =
+    useState(false);
 
   const {
     control,
@@ -68,20 +107,39 @@ export default function RateUniversityScreen() {
     defaultValues: {
       title: "",
       content: "",
-      universityMajor: "",
-      facilityRating: "",
-      studentOrganizationRating: "",
-      socialEnvironmentRating: "",
-      educationQualityRating: "",
-      priceToValueRating: "",
+      university_major: "",
+      facility_rating: 0,
+      student_organization_rating: 0,
+      social_environment_rating: 0,
+      education_quality_rating: 0,
+      price_to_value_rating: 0,
       pros: ["", "", ""],
       cons: ["", "", ""],
     },
   });
 
+  if (error) {
+    return <Error />;
+  }
+
+  const userProfile = data?.data;
+
+  if (!userProfile) {
+    return <NotFound description="User Not Found" />;
+  }
+
   const handleRateUniversity = async (formData: RateUniversityFormData) => {
-    console.log("Form Data:", formData);
-    navigation.goBack(); 
+    console.log(formData);
+    try {
+      const result = await createUniversityReview({
+        university_id: userProfile.university_id!,
+        ...formData,
+      }).unwrap(); // Call the mutation
+      console.log("Review created successfully:", result);
+      navigation.goBack(); // Navigate back on success
+    } catch (err) {
+      console.error("Error creating review:", err);
+    }
   };
 
   const toggleMajorDropdown = () => setIsMajorDropdownVisible((prev) => !prev);
@@ -98,27 +156,27 @@ export default function RateUniversityScreen() {
 
   const closeMajorDropdown = (value: string) => {
     setIsMajorDropdownVisible(false);
-    setValue("universityMajor", value);
+    setValue("university_major", value);
   };
   const closeFRatingDropdown = (value: string) => {
     setIsFRatingDropdownVisible(false);
-    setValue("facilityRating", value);
+    setValue("facility_rating", Number(value));
   };
   const closeSoRatingDropdown = (value: string) => {
     setIsSoRatingDropdownVisible(false);
-    setValue("studentOrganizationRating", value);
+    setValue("student_organization_rating", Number(value));
   };
   const closeSeRatingDropdown = (value: string) => {
     setIsSeRatingDropdownVisible(false);
-    setValue("socialEnvironmentRating", value);
+    setValue("social_environment_rating", Number(value));
   };
   const closeEqRatingDropdown = (value: string) => {
     setIsEqRatingDropdownVisible(false);
-    setValue("educationQualityRating", value);
+    setValue("education_quality_rating", Number(value));
   };
   const closePtvRatingDropdown = (value: string) => {
     setIsPtvRatingDropdownVisible(false);
-    setValue("priceToValueRating", value);
+    setValue("price_to_value_rating", Number(value));
   };
 
   return (
@@ -170,7 +228,7 @@ export default function RateUniversityScreen() {
           </Text>
           <Controller
             control={control}
-            name="universityMajor"
+            name="university_major"
             render={({ field: { onChange, value } }) => (
               <>
                 <TouchableOpacity onPress={toggleMajorDropdown}>
@@ -197,18 +255,26 @@ export default function RateUniversityScreen() {
                       closeMajorDropdown(selectedValue)
                     }
                   >
-                    <Select.Item value="Engineering">Engineering</Select.Item>
-                    <Select.Item value="Business">Business</Select.Item>
-                    <Select.Item value="Arts">Arts</Select.Item>
-                    <Select.Item value="Sciences">Sciences</Select.Item>
+                    <Select.Item value="Engineering" index={1}>
+                      Engineering
+                    </Select.Item>
+                    <Select.Item value="Business" index={2}>
+                      Business
+                    </Select.Item>
+                    <Select.Item value="Arts" index={3}>
+                      Arts
+                    </Select.Item>
+                    <Select.Item value="Sciences" index={4}>
+                      Sciences
+                    </Select.Item>
                   </Select>
                 )}
               </>
             )}
           />
-          {errors.universityMajor && (
+          {errors.university_major && (
             <Text color="$red10" fontSize={12}>
-              {errors.universityMajor.message}
+              {errors.university_major.message}
             </Text>
           )}
         </View>
@@ -218,12 +284,12 @@ export default function RateUniversityScreen() {
           </Text>
           <Controller
             control={control}
-            name="facilityRating"
+            name="facility_rating"
             render={({ field: { onChange, value } }) => (
               <>
                 <TouchableOpacity onPress={toggleFRatingDropdown}>
                   <Input
-                    value={value}
+                    value={String(value)}
                     editable={false}
                     pointerEvents="none"
                     borderRadius="$2"
@@ -240,24 +306,34 @@ export default function RateUniversityScreen() {
                 </TouchableOpacity>
                 {isFRatingDropdownVisible && (
                   <Select
-                    value={value}
+                    value={String(value)}
                     onValueChange={(selectedValue) =>
                       closeFRatingDropdown(selectedValue)
                     }
                   >
-                    <Select.Item value="1">1</Select.Item>
-                    <Select.Item value="2">2</Select.Item>
-                    <Select.Item value="3">3</Select.Item>
-                    <Select.Item value="4">4</Select.Item>
-                    <Select.Item value="5">5</Select.Item>
+                    <Select.Item value="1" index={1}>
+                      1
+                    </Select.Item>
+                    <Select.Item value="2" index={2}>
+                      2
+                    </Select.Item>
+                    <Select.Item value="3" index={3}>
+                      3
+                    </Select.Item>
+                    <Select.Item value="4" index={4}>
+                      4
+                    </Select.Item>
+                    <Select.Item value="5" index={5}>
+                      5
+                    </Select.Item>
                   </Select>
                 )}
               </>
             )}
           />
-          {errors.facilityRating && (
+          {errors.facility_rating && (
             <Text color="$red10" fontSize={12}>
-              {errors.facilityRating.message}
+              {errors.facility_rating.message}
             </Text>
           )}
         </View>
@@ -267,12 +343,12 @@ export default function RateUniversityScreen() {
           </Text>
           <Controller
             control={control}
-            name="studentOrganizationRating"
+            name="student_organization_rating"
             render={({ field: { onChange, value } }) => (
               <>
                 <TouchableOpacity onPress={toggleSoRatingDropdown}>
                   <Input
-                    value={value}
+                    value={String(value)}
                     editable={false}
                     pointerEvents="none"
                     borderRadius="$2"
@@ -289,24 +365,34 @@ export default function RateUniversityScreen() {
                 </TouchableOpacity>
                 {isSoRatingDropdownVisible && (
                   <Select
-                    value={value}
+                    value={String(value)}
                     onValueChange={(selectedValue) =>
                       closeSoRatingDropdown(selectedValue)
                     }
                   >
-                    <Select.Item value="1">1</Select.Item>
-                    <Select.Item value="2">2</Select.Item>
-                    <Select.Item value="3">3</Select.Item>
-                    <Select.Item value="4">4</Select.Item>
-                    <Select.Item value="5">5</Select.Item>
+                    <Select.Item value="1" index={1}>
+                      1
+                    </Select.Item>
+                    <Select.Item value="2" index={2}>
+                      2
+                    </Select.Item>
+                    <Select.Item value="3" index={3}>
+                      3
+                    </Select.Item>
+                    <Select.Item value="4" index={4}>
+                      4
+                    </Select.Item>
+                    <Select.Item value="5" index={5}>
+                      5
+                    </Select.Item>
                   </Select>
                 )}
               </>
             )}
           />
-          {errors.studentOrganizationRating && (
+          {errors.student_organization_rating && (
             <Text color="$red10" fontSize={12}>
-              {errors.studentOrganizationRating.message}
+              {errors.student_organization_rating.message}
             </Text>
           )}
         </View>
@@ -316,12 +402,12 @@ export default function RateUniversityScreen() {
           </Text>
           <Controller
             control={control}
-            name="socialEnvironmentRating"
+            name="social_environment_rating"
             render={({ field: { onChange, value } }) => (
               <>
                 <TouchableOpacity onPress={toggleSeRatingDropdown}>
                   <Input
-                    value={value}
+                    value={String(value)}
                     editable={false}
                     pointerEvents="none"
                     borderRadius="$2"
@@ -338,24 +424,34 @@ export default function RateUniversityScreen() {
                 </TouchableOpacity>
                 {isSeRatingDropdownVisible && (
                   <Select
-                    value={value}
+                    value={String(value)}
                     onValueChange={(selectedValue) =>
                       closeSeRatingDropdown(selectedValue)
                     }
                   >
-                    <Select.Item value="1">1</Select.Item>
-                    <Select.Item value="2">2</Select.Item>
-                    <Select.Item value="3">3</Select.Item>
-                    <Select.Item value="4">4</Select.Item>
-                    <Select.Item value="5">5</Select.Item>
+                    <Select.Item value="1" index={1}>
+                      1
+                    </Select.Item>
+                    <Select.Item value="2" index={2}>
+                      2
+                    </Select.Item>
+                    <Select.Item value="3" index={3}>
+                      3
+                    </Select.Item>
+                    <Select.Item value="4" index={4}>
+                      4
+                    </Select.Item>
+                    <Select.Item value="5" index={5}>
+                      5
+                    </Select.Item>
                   </Select>
                 )}
               </>
             )}
           />
-          {errors.socialEnvironmentRating && (
+          {errors.social_environment_rating && (
             <Text color="$red10" fontSize={12}>
-              {errors.socialEnvironmentRating.message}
+              {errors.social_environment_rating.message}
             </Text>
           )}
         </View>
@@ -365,12 +461,12 @@ export default function RateUniversityScreen() {
           </Text>
           <Controller
             control={control}
-            name="educationQualityRating"
+            name="education_quality_rating"
             render={({ field: { onChange, value } }) => (
               <>
                 <TouchableOpacity onPress={toggleEqRatingDropdown}>
                   <Input
-                    value={value}
+                    value={String(value)}
                     editable={false}
                     pointerEvents="none"
                     borderRadius="$2"
@@ -387,24 +483,34 @@ export default function RateUniversityScreen() {
                 </TouchableOpacity>
                 {isEqRatingDropdownVisible && (
                   <Select
-                    value={value}
+                    value={String(value)}
                     onValueChange={(selectedValue) =>
                       closeEqRatingDropdown(selectedValue)
                     }
                   >
-                    <Select.Item value="1">1</Select.Item>
-                    <Select.Item value="2">2</Select.Item>
-                    <Select.Item value="3">3</Select.Item>
-                    <Select.Item value="4">4</Select.Item>
-                    <Select.Item value="5">5</Select.Item>
+                    <Select.Item value="1" index={1}>
+                      1
+                    </Select.Item>
+                    <Select.Item value="2" index={2}>
+                      2
+                    </Select.Item>
+                    <Select.Item value="3" index={3}>
+                      3
+                    </Select.Item>
+                    <Select.Item value="4" index={4}>
+                      4
+                    </Select.Item>
+                    <Select.Item value="5" index={5}>
+                      5
+                    </Select.Item>
                   </Select>
                 )}
               </>
             )}
           />
-          {errors.educationQualityRating && (
+          {errors.education_quality_rating && (
             <Text color="$red10" fontSize={12}>
-              {errors.educationQualityRating.message}
+              {errors.education_quality_rating.message}
             </Text>
           )}
         </View>
@@ -414,12 +520,12 @@ export default function RateUniversityScreen() {
           </Text>
           <Controller
             control={control}
-            name="priceToValueRating"
+            name="price_to_value_rating"
             render={({ field: { onChange, value } }) => (
               <>
                 <TouchableOpacity onPress={togglePtvRatingDropdown}>
                   <Input
-                    value={value}
+                    value={String(value)}
                     editable={false}
                     pointerEvents="none"
                     borderRadius="$2"
@@ -436,24 +542,34 @@ export default function RateUniversityScreen() {
                 </TouchableOpacity>
                 {isPtvRatingDropdownVisible && (
                   <Select
-                    value={value}
+                    value={String(value)}
                     onValueChange={(selectedValue) =>
                       closePtvRatingDropdown(selectedValue)
                     }
                   >
-                    <Select.Item value="1">1</Select.Item>
-                    <Select.Item value="2">2</Select.Item>
-                    <Select.Item value="3">3</Select.Item>
-                    <Select.Item value="4">4</Select.Item>
-                    <Select.Item value="5">5</Select.Item>
+                    <Select.Item value="1" index={1}>
+                      1
+                    </Select.Item>
+                    <Select.Item value="2" index={2}>
+                      2
+                    </Select.Item>
+                    <Select.Item value="3" index={3}>
+                      3
+                    </Select.Item>
+                    <Select.Item value="4" index={4}>
+                      4
+                    </Select.Item>
+                    <Select.Item value="5" index={5}>
+                      5
+                    </Select.Item>
                   </Select>
                 )}
               </>
             )}
           />
-          {errors.priceToValueRating && (
+          {errors.price_to_value_rating && (
             <Text color="$red10" fontSize={12}>
-              {errors.priceToValueRating.message}
+              {errors.price_to_value_rating.message}
             </Text>
           )}
         </View>
@@ -476,14 +592,9 @@ export default function RateUniversityScreen() {
                   />
                 )}
               />
-              {errors.pros?.[index]?.message && (
-                <Text color="$red10" fontSize={12}>
-                  {errors.pros[index].message}
-                </Text>
-              )}
             </View>
           ))}
-          {errors.pros?.message && (
+          {errors.pros && (
             <Text color="$red10" fontSize={12}>
               {errors.pros.message}
             </Text>
@@ -508,16 +619,11 @@ export default function RateUniversityScreen() {
                   />
                 )}
               />
-              {errors.cons?.[index]?.message && (
-                <Text color="$red10" fontSize={12}>
-                  {errors.cons[index].message}
-                </Text>
-              )}
             </View>
           ))}
-          {errors.cons?.message && (
+          { errors.cons?.[0] && (
             <Text color="$red10" fontSize={12}>
-              {errors.cons.message}
+              {errors.cons[0].message}
             </Text>
           )}
         </View>

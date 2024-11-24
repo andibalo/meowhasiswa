@@ -5,13 +5,13 @@ import { TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useFetchUniversityReviewListQuery } from 'redux/api';
 import { useRouter } from 'expo-router';
-import { IReview } from 'types/model';
+import { IUniversityReview } from 'types/model';
 
 const enableAPIIntegration = process.env.EXPO_PUBLIC_ENABLE_API_INTEGRATION;
 
 export default function UniversityScreen() {
   const router = useRouter();
-  const testData: IReview[] = [
+  const testData: IUniversityReview[] = [
     {
       id: "e0b2e510-0492-479c-abb4-f1c9a044806a",
       user_id: "user123",

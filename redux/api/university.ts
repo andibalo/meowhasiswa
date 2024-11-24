@@ -1,13 +1,35 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQuery } from "./baseQuery";
-import { IFetchUniversityReviewListQueryParams } from "types/request/university";
+import { IFetchUniversityReviewListQueryParams, ICreateUniversityReviewRequest } from "types/request/university";
 import { FetchUniversityReviewListAPIResponse } from "types/response/university";
+import { APIResponse } from "types/response";
 
 export const universityApi = createApi({
     reducerPath: "university",
     baseQuery: baseQuery,
     tagTypes: ["University"],
     endpoints: (builder) => ({
+      createUniversityReview: builder.mutation<APIResponse<any>, ICreateUniversityReviewRequest>({
+        invalidatesTags: ['University'],
+        query: (body) => {
+            return {
+                url: `/v1/university/rate/${body.university_id}`,
+                method: "POST",
+                body:{
+                  title:body.title,
+                  content:body.content,
+                  facility_rating:body.facility_rating,
+                  student_organization_rating:body.student_organization_rating,
+                  university_major:body.university_major,
+                  social_environment_rating:body.social_environment_rating,
+                  education_quality_rating:body.education_quality_rating,
+                  price_to_value_rating:body.price_to_value_rating,
+                  pros:body.pros,
+                  cons:body.cons
+                }
+            }
+        },
+      }),
       fetchUniversityReviewList: builder.query<FetchUniversityReviewListAPIResponse, IFetchUniversityReviewListQueryParams>({
         providesTags: ["University"],
         query: (qParams) => {
@@ -53,4 +75,4 @@ export const universityApi = createApi({
     }),
   });
 
-  export const { useFetchUniversityReviewListQuery } = universityApi;
+  export const { useFetchUniversityReviewListQuery, useCreateUniversityReviewMutation } = universityApi;
