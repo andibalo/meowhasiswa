@@ -95,6 +95,7 @@ export default function Login() {
               bg="$backgroundSoft"
               padding="$3"
               borderRadius="$2"
+              autoCapitalize="none"
             />
           )}
           name="email"

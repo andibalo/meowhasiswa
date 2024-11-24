@@ -55,7 +55,7 @@ export default function ProtectedLayout() {
             <Stack.Screen
                 name="subthread/create-subthread"
                 options={{
-                    headerTitle: "Create Subthread",
+                    headerTitle: "Create Submeow",
                 }}
             />
             <Stack.Screen

@@ -12,12 +12,14 @@ export const SearchBar = (props: ISearchBarProps) => {
             <Input
                 value={props.value}
                 onChangeText={props.onChangeText}
+                onSubmitEditing={props.onSubmitEditing}
                 backgroundColor="transparent"
                 flex={1}
                 borderWidth={0}
                 color='white'
                 placeholder={props.placeholder}
                 placeholderTextColor="white"
+                autoCapitalize="none"
             />
             <Button disabled chromeless padding="$3" icon={<Search color="white" size="$1.5" />} />
         </XStack>

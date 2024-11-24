@@ -64,7 +64,7 @@ export default function CreateThreadScreen() {
     }
 
     return (
-        <YStack gap="$3" flex={1} backgroundColor="$backgroundSoft" padding={'$3'}>
+        <YStack gap="$3" flex={1} backgroundColor="$background" padding={'$3'}>
             <View>
                 <Text color="$color" fontWeight="bold" mb="$2">
                     Submeow
