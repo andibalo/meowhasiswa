@@ -5,22 +5,9 @@ import * as yup from 'yup';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useFetchThreadByIdQuery, useUpdateThreadMutation } from 'redux/api/thread';
-import { ISubThreadItem } from 'types/model';
-
-const testData: ISubThreadItem[] = [
-    {
-        id: "c1a2f145-d7cb-4c2a-80e4-937de53697c1",
-        name: "LoveLife",
-        imageUrl: "https://registrasi.untar.ac.id/assets/images/logo_untar.png",
-        followersCount: 123
-    },
-    {
-        id: "7a1311cd-a25e-4270-84e7-7d37774502cf",
-        name: "Perkuliahan",
-        imageUrl: "https://registrasi.untar.ac.id/assets/images/logo_untar.png",
-        followersCount: 123
-    }
-];
+import { useFetchSubThreadListQuery } from 'redux/api/subthread';
+import { useToast } from 'hooks'
+import { Error, Loading, NotFound, SearchBar, TopTabBar } from 'components/common';
 
 type EditThreadFormData = {
     title: string;
@@ -36,7 +23,20 @@ const editThreadSchema = yup.object().shape({
 
 export default function EditThreadScreen() {
     const navigation = useNavigation();
+    const toast = useToast()
     const { id: threadID } = useLocalSearchParams<{ id: string }>();
+    const { data: threadResponse, isLoading, error } = useFetchThreadByIdQuery(threadID);
+    const userLimit = undefined;
+    const { data: subData, isLoading: isLoadingSub, error: errorSub } = useFetchSubThreadListQuery({
+        cursor: '',
+        limit: userLimit,
+        _q: '',
+        isFollowing: true,
+        includeUniversitySubthread: true,
+        shouldExcludeFollowing: false,
+    });
+
+    const subthreadID = threadResponse?.data?.thread?.subthread_id;
 
     const {
         control,
@@ -52,7 +52,6 @@ export default function EditThreadScreen() {
         },
     });
 
-    const { data: threadResponse, isLoading, error } = useFetchThreadByIdQuery(threadID);
     const [updateThread] = useUpdateThreadMutation();
 
     useEffect(() => {
@@ -63,30 +62,43 @@ export default function EditThreadScreen() {
         }
     }, [threadResponse, setValue]);
 
-    const subthreadID = threadResponse?.data?.thread?.subthread_id;
-    const subthread = testData.find((item) => item.id === subthreadID);
-
     const handleEditThread = async (formData: EditThreadFormData) => {
+        
         if (!subthreadID) {
-            console.error("No subthread ID available.");
+            toast.showToastWarn("No subthread ID available.")
             return;
         }
 
-        await updateThread({
-            threadId: threadID,
-            updatedData: {
-                subthread_id: subthreadID,
-                title: formData.title,
-                content: formData.content,
-                content_summary: formData.summary,
-            },
-        }).unwrap();
+        try {
+            await updateThread({
+                threadId: threadID || "",
+                updatedData: {
+                    subthread_id: subthreadID,
+                    title: formData.title,
+                    content: formData.content,
+                    content_summary: formData.summary,
+                },
+            }).unwrap();
 
-        navigation.goBack();
+            navigation.goBack();
+        } catch (err) {
+            console.error("Error updating thread:", err);
+        }
     };
 
-    if (isLoading) return <Text>Loading...</Text>;
-    if (error) return <Text>Error loading thread</Text>;
+    if (isLoading || isLoadingSub) {
+        return <Loading />;
+    }
+
+    if (error || errorSub) {
+        return <Error />;
+    }
+
+    const subthread = subData?.data?.subthreads.find(
+        (sub) => sub.id === subthreadID
+    );
+
+    if (!subthread) return <Text>No matching subthread found</Text>;
 
     return (
         <YStack gap="$3" flex={1} backgroundColor="$backgroundSoft" padding={'$3'}>
@@ -95,30 +107,26 @@ export default function EditThreadScreen() {
                     Submeow
                 </Text>
                 <View>
-                    {subthread ? (
-                        <XStack alignItems="center" gap="$2">
-                            <Avatar
-                                borderRadius="$2"
-                                borderWidth="$1"
-                                borderColor="$primary"
-                                marginRight="$2"
-                                size="$4"
-                            >
-                                <Avatar.Image
-                                    accessibilityLabel="Subthread Avatar"
-                                    src={subthread.imageUrl}
-                                    objectFit="contain"
-                                />
-                                <Avatar.Fallback backgroundColor="$secondary" />
-                            </Avatar>
-                            <View>
-                                <Text fontWeight="bold">m/{subthread.name}</Text>
-                                <Text>{subthread.followersCount} followers</Text>
-                            </View>
-                        </XStack>
-                    ) : (
-                        <Text>No Submeow Selected</Text>
-                    )}
+                    <XStack alignItems="center" gap="$2">
+                        <Avatar
+                            borderRadius="$2"
+                            borderWidth="$1"
+                            borderColor="$primary"
+                            marginRight="$2"
+                            size="$4"
+                        >
+                            <Avatar.Image
+                                accessibilityLabel="Subthread Avatar"
+                                src={subthread.image_url}
+                                objectFit="contain"
+                            />
+                            <Avatar.Fallback backgroundColor="$secondary" />
+                        </Avatar>
+                        <View>
+                            <Text fontWeight="bold">m/{subthread.name}</Text>
+                            <Text>123 followers</Text>
+                        </View>
+                    </XStack>
                 </View>
             </View>
 
