@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Text, Input, TextArea, Button, YStack, View, Avatar, XStack } from 'tamagui';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import * as yup from 'yup';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useFetchThreadByIdQuery, useUpdateThreadMutation } from 'redux/api/thread';
-import { useFetchSubThreadListQuery } from 'redux/api/subthread';
+import { useFetchSubThreadByIdQuery } from 'redux/api/subthread';
 import { useToast } from 'hooks'
-import { Error, Loading, NotFound, SearchBar, TopTabBar } from 'components/common';
+import { Error, Loading, NotFound } from 'components/common';
 
 type EditThreadFormData = {
     title: string;
@@ -24,19 +24,14 @@ const editThreadSchema = yup.object().shape({
 export default function EditThreadScreen() {
     const navigation = useNavigation();
     const toast = useToast()
-    const { id: threadID } = useLocalSearchParams<{ id: string }>();
+    const { id: threadID, subThreadId } = useLocalSearchParams<{ id: string, subThreadId: string }>();
     const { data: threadResponse, isLoading, error } = useFetchThreadByIdQuery(threadID);
-    const userLimit = undefined;
-    const { data: subData, isLoading: isLoadingSub, error: errorSub } = useFetchSubThreadListQuery({
-        cursor: '',
-        limit: userLimit,
-        _q: '',
-        isFollowing: true,
-        includeUniversitySubthread: true,
-        shouldExcludeFollowing: false,
-    });
 
-    const subthreadID = threadResponse?.data?.thread?.subthread_id;
+    const {
+        data: subThreadResponse,
+        isLoading: isFetchSubThreadByIDLoading,
+        error: fetchSubthreadByIDError
+    } = useFetchSubThreadByIdQuery(subThreadId);
 
     const {
         control,
@@ -62,18 +57,30 @@ export default function EditThreadScreen() {
         }
     }, [threadResponse, setValue]);
 
+    if (isLoading || isFetchSubThreadByIDLoading) {
+        return <Loading />;
+    }
+
+    if (error || fetchSubthreadByIDError) {
+        return <Error />;
+    }
+
+    if (!threadResponse?.data?.thread) {
+        return <NotFound description='Thread Not Found' />
+    }
+
+    if (!subThreadResponse?.data?.subthread) {
+        return <NotFound description='SubThread Not Found' />
+    }
+
+    const subThread = subThreadResponse.data.subthread
+
     const handleEditThread = async (formData: EditThreadFormData) => {
-        
-        if (!subthreadID) {
-            toast.showToastWarn("No subthread ID available.")
-            return;
-        }
 
         try {
             await updateThread({
-                threadId: threadID || "",
+                threadId: threadID,
                 updatedData: {
-                    subthread_id: subthreadID,
                     title: formData.title,
                     content: formData.content,
                     content_summary: formData.summary,
@@ -82,23 +89,9 @@ export default function EditThreadScreen() {
 
             navigation.goBack();
         } catch (err) {
-            console.error("Error updating thread:", err);
+            toast.showToastError("Error Updating Thread", err)
         }
     };
-
-    if (isLoading || isLoadingSub) {
-        return <Loading />;
-    }
-
-    if (error || errorSub) {
-        return <Error />;
-    }
-
-    const subthread = subData?.data?.subthreads.find(
-        (sub) => sub.id === subthreadID
-    );
-
-    if (!subthread) return <Text>No matching subthread found</Text>;
 
     return (
         <YStack gap="$3" flex={1} backgroundColor="$backgroundSoft" padding={'$3'}>
@@ -117,14 +110,14 @@ export default function EditThreadScreen() {
                         >
                             <Avatar.Image
                                 accessibilityLabel="Subthread Avatar"
-                                src={subthread.image_url}
+                                src={subThread.image_url}
                                 objectFit="contain"
                             />
                             <Avatar.Fallback backgroundColor="$secondary" />
                         </Avatar>
                         <View>
-                            <Text fontWeight="bold">m/{subthread.name}</Text>
-                            <Text>123 followers</Text>
+                            <Text fontWeight="bold">m/{subThread.name}</Text>
+                            <Text>{subThread.followers_count} followers</Text>
                         </View>
                     </XStack>
                 </View>

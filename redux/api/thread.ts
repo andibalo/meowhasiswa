@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from './baseQuery';
-import { ICreateThreadRequest, IFetchThreadListQueryParams, IPostCommentRequest, ILikeThreadRequest, IDislikeThreadRequest } from 'types/request/thread';
+import { ICreateThreadRequest, IFetchThreadListQueryParams, IPostCommentRequest, IUpdateThreadRequest } from 'types/request/thread';
 import { APIResponse, FetchThreadByIdAPIResponse, FetchThreadListAPIResponse } from 'types/response';
 
 export const threadsApi = createApi({
@@ -83,7 +83,7 @@ export const threadsApi = createApi({
                 method: "DELETE",
             }),
         }),
-        updateThread: builder.mutation<APIResponse<any>, { threadId: string, updatedData: ICreateThreadRequest }>({
+        updateThread: builder.mutation<APIResponse<any>, { threadId: string, updatedData: IUpdateThreadRequest }>({
             invalidatesTags: ['Thread'],
             query: ({ threadId, updatedData }) => {
                 return {
@@ -93,33 +93,31 @@ export const threadsApi = createApi({
                 };
             }
         }),
-        likeThread: builder.mutation<APIResponse<any>, ILikeThreadRequest>({
+        likeThread: builder.mutation<APIResponse<any>, string>({
             invalidatesTags: ['Thread'],
-            query: ({ threadId, like_count }) => {
+            query: (threadId) => {
                 return {
                     url: `/v1/thread/like/${threadId}`,
-                    method: "PATCH",
-                    body: like_count
+                    method: "PATCH"
                 };
             }
         }),
-        dislikeThread: builder.mutation<APIResponse<any>, IDislikeThreadRequest>({
+        dislikeThread: builder.mutation<APIResponse<any>, string>({
             invalidatesTags: ['Thread'],
-            query: ({ threadId, dislike_count }) => {
+            query: (threadId) => {
                 return {
                     url: `/v1/thread/dislike/${threadId}`,
-                    method: "PATCH",
-                    body: dislike_count
+                    method: "PATCH"
                 };
             }
         }),
     }),
 });
 
-export const { 
-    useFetchThreadListQuery, 
-    useFetchThreadByIdQuery, 
-    useCreateThreadMutation, 
+export const {
+    useFetchThreadListQuery,
+    useFetchThreadByIdQuery,
+    useCreateThreadMutation,
     usePostCommentMutation,
     useDeleteThreadMutation,
     useUpdateThreadMutation,

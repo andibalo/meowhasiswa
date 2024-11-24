@@ -11,6 +11,7 @@ interface IThreadListProps {
     onRefresh: () => void;
     isRefreshing?: boolean;
     currentUserId?: string;
+    enableEditItem?: boolean
 }
 
 const renderFooterLoading = (loadingMore: boolean) => {
@@ -29,10 +30,11 @@ export const ThreadList = ({
     onRefresh,
     isRefreshing,
     currentUserId,
+    enableEditItem
 }: IThreadListProps) => {
     const renderPost = ({ item }: { item: IThread }) => (
         <View>
-            <ThreadItem thread={item} currentUserId={currentUserId} />
+            <ThreadItem thread={item} currentUserId={currentUserId} enableEditItem={enableEditItem}/>
             <View my="$2" />
         </View>
     );

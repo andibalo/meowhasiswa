@@ -50,6 +50,7 @@ export const UserThreadTab: React.FC<UserThreadTabProps> = ({ user_id }) => {
           data={threads}
           onRefresh={onRefresh}
           currentUserId={user_id}
+          enableEditItem={true}
         />
       ) : (
         <NotFound description="No posts found for this user" />
