@@ -5,14 +5,53 @@ import { TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useFetchUniversityReviewListQuery } from 'redux/api';
 import { useRouter } from 'expo-router';
+import { useFetchUserProfileQuery } from "redux/api";
+import { Text } from 'tamagui';
 
 export default function UniversityScreen() {
   const router = useRouter();
+
+  // Fetch the user profile
+  const { data: userProfileData, error: userProfileError, isLoading: isUserProfileLoading } = useFetchUserProfileQuery();
 
   const { data, error, isLoading } = useFetchUniversityReviewListQuery({
     cursor: '',
     limit: 10,
   });
+
+  // If user profile data is still loading, show loading indicator
+  if (isUserProfileLoading) {
+    return <Loading />;
+  }
+
+  const userProfile = userProfileData?.data;
+
+  // If there is an error fetching user profile data, show error
+  if (userProfileError) {
+    return <Error />;
+  }
+
+  // Check the user profile fields
+  const university_id = userProfile?.university_id;
+  const has_rate_university = userProfile?.has_rate_university;
+
+  // If the university_id is empty, show a message to register with a university email
+  if (!university_id) {
+    return (
+      <View flex={1} justifyContent="center" alignItems="center">
+        <Text>Please register with your university email first.</Text>
+      </View>
+    );
+  }
+
+  // If the user has not rated the university, show a message to rate the university
+  if (!has_rate_university) {
+    return (
+      <View flex={1} justifyContent="center" alignItems="center">
+        <Text>Please rate your university first.</Text>
+      </View>
+    );
+  }
 
   if (isLoading) {
     return <Loading />;
