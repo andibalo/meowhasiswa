@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { APP_NAME } from 'constants/common'
-// import AsyncStorage from '@react-native-community/async-storage'
+import { APP_NAME, JWT_TOKEN_KEY } from 'constants/common'
+import * as SecureStore from 'expo-secure-store'
 
 const axiosInstance = axios.create({
   baseURL: process.env.EXPO_PUBLIC_CORE_SERVICE_API_URL,
@@ -8,16 +8,16 @@ const axiosInstance = axios.create({
   headers: {'X-Client-Id': APP_NAME},
 })
 
-// instanceAxios.interceptors.request.use(
-//   async config => {
-//     const token = await AsyncStorage.getItem('token')
-//     config.headers.Authorization = `Bearer ${token}`
-//     return config
-//   },
-//   error => {
-//     return Promise.reject(error)
-//   }
-// )
+axiosInstance.interceptors.request.use(
+  async config => {
+    const token = await SecureStore.getItem(JWT_TOKEN_KEY);
+    config.headers.Authorization = `Bearer ${token}`
+    return config
+  },
+  error => {
+    return Promise.reject(error)
+  }
+)
 
 // instanceAxios.interceptors.response.use(
 //   response => {

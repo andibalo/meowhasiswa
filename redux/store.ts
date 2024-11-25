@@ -11,7 +11,7 @@ export const store = configureStore({
         [threadsApi.reducerPath]: threadsApi.reducer,
         [userApi.reducerPath]: userApi.reducer,
         [universityApi.reducerPath]: universityApi.reducer,
-        [subThreadsApi.reducerPath]: subThreadsApi.reducer
+        [subThreadsApi.reducerPath]: subThreadsApi.reducer,
     },
     middleware: (getDefaultMiddleware) => {
         return getDefaultMiddleware().

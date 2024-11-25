@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Input, Text, YStack, ScrollView, Image, View, TextArea } from "tamagui";
+import { Button, Input, Text, YStack, ScrollView, Image, View, TextArea, XStack } from "tamagui";
 import { Modal, StyleSheet, } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import ColorPicker, { Panel1, Swatches, OpacitySlider, HueSlider, PreviewText, colorKit } from 'reanimated-color-picker';
@@ -10,6 +10,9 @@ import * as yup from 'yup';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useCreateSubThreadMutation } from "redux/api";
+import { bytesToMegaBytes } from "utils";
+import { useToast } from "hooks";
+import { uploadImage } from "services/image";
 
 type ICreateSubThreadFormData = {
     title: string
@@ -39,7 +42,9 @@ export default function CreateSubthreadScreen() {
     const [selectedColor, setSelectedColor] = useState('');
     const [image, setImage] = useState<string | null>(null);
 
-    const [createSubThread, results] = useCreateSubThreadMutation()
+    const toast = useToast()
+
+    const [createSubThread] = useCreateSubThreadMutation()
 
     const {
         control,
@@ -56,9 +61,6 @@ export default function CreateSubthreadScreen() {
         },
     });
 
-    // TODO: REMOVE AFTER UPLOAD IMAGE INTEGRATION
-    setValue("imageUrl", "amazon.com/images/I/51y8GUVKJoL._AC_UF894,1000_QL80_.jpg")
-
     const handleCreateSubthread = async (formData: ICreateSubThreadFormData) => {
         try {
 
@@ -72,7 +74,7 @@ export default function CreateSubthreadScreen() {
             navigation.goBack()
 
         } catch (error) {
-            console.log("CREATE SUBTHREAD ERR:", error)
+            toast.showToastError("Error Creating Submeow", error)
         }
     };
 
@@ -93,17 +95,39 @@ export default function CreateSubthreadScreen() {
     };
 
     const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [3, 3],
-            quality: 1,
-        });
+        try {
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [3, 3],
+                quality: 1,
+            });
 
-        console.log(result);
+            if (!result.canceled) {
+                if (result.assets[0].fileSize) {
+                    if (bytesToMegaBytes(result.assets[0].fileSize) > 3) {
+                        toast.showToastError("File Too Big", "Image size must be less than 3 MB")
+                        return
+                    }
+                }
 
-        if (!result.canceled) {
-            setImage(result.assets[0].uri);
+                const uploadResp = await uploadImage({
+                    uri: result.assets[0].uri,
+                    fileName: result.assets[0].fileName,
+                    type: result.assets[0].mimeType,
+                })
+
+                if (!uploadResp?.data?.data?.URL) {
+                    toast.showToastError("Image URL not found")
+                    return
+                }
+
+                setValue("imageUrl", uploadResp.data.data.URL)
+
+                setImage(result.assets[0].uri);
+            }
+        } catch (error) {
+            toast.showToastError("Something Went Wrong", error)
         }
     };
 
@@ -201,7 +225,9 @@ export default function CreateSubthreadScreen() {
                         </Button>
                         {errors.imageUrl && <Text color="$red10" fontSize={12}>{errors.imageUrl.message}</Text>}
                     </View>
-                    {image && <Image source={{ uri: image }} width={200} height={200} />}
+                    <XStack justifyContent="center" >
+                        {image && <Image source={{ uri: image }} width={200} height={200} />}
+                    </XStack>
                     <Button
                         onPress={handleSubmit(handleCreateSubthread)}
                         bg="$primary"
