@@ -2,6 +2,6 @@
 
 export interface IUploadImageRequest {
     uri: string;
-    fileName?: string;
-    type: string;
+    fileName?: string | null;
+    type?: string;
 }

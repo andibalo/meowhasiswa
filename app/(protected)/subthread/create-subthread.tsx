@@ -12,7 +12,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useCreateSubThreadMutation } from "redux/api";
 import { bytesToMegaBytes } from "utils";
 import { useToast } from "hooks";
-import { useUploadImageMutation } from "redux/api/image";
+import { uploadImage } from "services/image";
 
 type ICreateSubThreadFormData = {
     title: string
@@ -45,7 +45,6 @@ export default function CreateSubthreadScreen() {
     const toast = useToast()
 
     const [createSubThread] = useCreateSubThreadMutation()
-    const [uploadImage] = useUploadImageMutation()
 
     const {
         control,
@@ -62,9 +61,6 @@ export default function CreateSubthreadScreen() {
         },
     });
 
-    // TODO: REMOVE AFTER UPLOAD IMAGE INTEGRATION
-    setValue("imageUrl", "amazon.com/images/I/51y8GUVKJoL._AC_UF894,1000_QL80_.jpg")
-
     const handleCreateSubthread = async (formData: ICreateSubThreadFormData) => {
         try {
 
@@ -78,7 +74,7 @@ export default function CreateSubthreadScreen() {
             navigation.goBack()
 
         } catch (error) {
-            console.log("CREATE SUBTHREAD ERR:", error)
+            toast.showToastError("Error Creating Submeow", error)
         }
     };
 
@@ -99,31 +95,39 @@ export default function CreateSubthreadScreen() {
     };
 
     const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [3, 3],
-            quality: 1,
-        });
+        try {
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [3, 3],
+                quality: 1,
+            });
 
+            if (!result.canceled) {
+                if (result.assets[0].fileSize) {
+                    if (bytesToMegaBytes(result.assets[0].fileSize) > 3) {
+                        toast.showToastError("File Too Big", "Image size must be less than 3 MB")
+                        return
+                    }
+                }
 
-        console.log(result);
+                const uploadResp = await uploadImage({
+                    uri: result.assets[0].uri,
+                    fileName: result.assets[0].fileName,
+                    type: result.assets[0].mimeType,
+                })
 
-        if (!result.canceled) {
-            if (result.assets[0].fileSize) {
-                if (bytesToMegaBytes(result.assets[0].fileSize) > 3) {
-                    toast.showToastError("File Too Big", "Image size must be less than 3 MB")
+                if (!uploadResp?.data?.data?.URL) {
+                    toast.showToastError("Image URL not found")
                     return
                 }
+
+                setValue("imageUrl", uploadResp.data.data.URL)
+
+                setImage(result.assets[0].uri);
             }
-
-            const uploadResp = await uploadImage({
-                uri: result.assets[0].uri,
-            }).unwrap()
-
-            console.log(uploadResp, "UPLOAD RESP")
-
-            setImage(result.assets[0].uri);
+        } catch (error) {
+            toast.showToastError("Something Went Wrong", error)
         }
     };
 
