@@ -10,22 +10,27 @@ import {
 import { useRouter } from "expo-router";
 
 export default function UniversityScreen() {
+
   const router = useRouter();
   const {
     data: userProfile,
     isLoading: isUserProfileLoading,
     error: errorUserProfile,
   } = useFetchUserProfileQuery();
+
   const { data, error, isLoading } = useFetchUniversityReviewListQuery({
     cursor: "",
     limit: 10,
   });
+
   if (isLoading || isUserProfileLoading) {
     return <Loading />;
   }
+
   if (error || errorUserProfile) {
     return <Error />;
   }
+
   const hasRateUniversity = userProfile?.data?.has_rate_university;
   const universityId = userProfile?.data?.university_id;
 
@@ -63,22 +68,24 @@ export default function UniversityScreen() {
           <NotFound description="Reviews Not Found" />
         )}
       </View>
-      <TouchableOpacity
-        style={{
-          position: "absolute",
-          bottom: 20,
-          right: 20,
-          backgroundColor: "#000000",
-          width: 60,
-          height: 60,
-          borderRadius: 30,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-        onPress={() => router.push("/university/rate-university")}
-      >
-        <FontAwesome name="plus" size={24} color="#FFFFFF" />
-      </TouchableOpacity>
+      {universityId && !hasRateUniversity &&
+        <TouchableOpacity
+          style={{
+            position: "absolute",
+            bottom: 20,
+            right: 20,
+            backgroundColor: "#000000",
+            width: 60,
+            height: 60,
+            borderRadius: 30,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          onPress={() => router.push("/university/rate-university")}
+        >
+          <FontAwesome name="plus" size={24} color="#FFFFFF" />
+        </TouchableOpacity>
+      }
     </View>
   );
 }
