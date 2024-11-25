@@ -51,27 +51,26 @@ const TabItem = (props: ITabItemProps) => {
   };
 
   if (isLoading) {
-    return <Loading />
+    return <Loading />;
   }
 
   if (error) {
-    return <Error />
+    return <Error />;
   }
 
   return (
     <View flex={1}>
-      {
-        data && data.data?.threads && data.data?.threads.length > 0 ?
-          <ThreadList
-            title={props.title}
-            isLoading={isLoading}
-            handleLoadMore={handleLoadMore}
-            data={data.data.threads}
-            onRefresh={onRefresh}
-          />
-          :
-          <NotFound description='Threads Not Found' />
-      }
+      {data && data.data?.threads && data.data?.threads.length > 0 ? (
+        <ThreadList
+          title={props.title}
+          isLoading={isLoading}
+          handleLoadMore={handleLoadMore}
+          data={data.data.threads}
+          onRefresh={onRefresh}
+        />
+      ) : (
+        <NotFound description="Threads Not Found" />
+      )}
     </View>
   );
 };
@@ -97,7 +96,7 @@ export default function HomeScreen() {
   }
 
   return (
-    <View flex={1} p={'$3'} pb="0" bg="$backgroundSoft">
+    <View flex={1} p="$3" pb="0" bg="$backgroundSoft">
       <View mb="$3">
         <SearchBar
           placeholder="Search Thread"

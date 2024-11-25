@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from './baseQuery';
-import { FetchSubThreadListAPIResponse } from 'types/response/subthread';
+import { FetchSubThreadByIdAPIResponse, FetchSubThreadListAPIResponse } from 'types/response/subthread';
 import { ICreateSubThreadRequest, IFetchSubThreadListQueryParams } from 'types/request/subthread';
 import { APIResponse } from 'types/response';
 
@@ -56,7 +56,18 @@ export const subThreadsApi = createApi({
                 return currentArg !== previousArg;
             }
         }),
+        fetchSubThreadById: builder.query<FetchSubThreadByIdAPIResponse, string>({
+            providesTags: (result, error, subThreadId) => {
+                return [{ type: "SubThread", id: subThreadId }];
+            },
+            query: (subThreadId) => {
+                return {
+                    url: `/v1/subthread/${subThreadId}`,
+                    method: "GET"
+                };
+            },
+        }),
     }),
 });
 
-export const { useFetchSubThreadListQuery, useCreateSubThreadMutation } = subThreadsApi;
+export const { useFetchSubThreadListQuery, useFetchSubThreadByIdQuery, useCreateSubThreadMutation } = subThreadsApi;

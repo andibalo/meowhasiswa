@@ -84,7 +84,7 @@ const rateUniversitySchema = yup.object().shape({
 export default function RateUniversityScreen() {
   const navigation = useNavigation();
   const { data, error, isLoading } = useFetchUserProfileQuery();
-  const [createUniversityReview] = useCreateUniversityReviewMutation(); // Use mutation hook
+  const [createUniversityReview] = useCreateUniversityReviewMutation();
   const [isMajorDropdownVisible, setIsMajorDropdownVisible] = useState(false);
   const [isFRatingDropdownVisible, setIsFRatingDropdownVisible] =
     useState(false);
@@ -134,9 +134,9 @@ export default function RateUniversityScreen() {
       const result = await createUniversityReview({
         university_id: userProfile.university_id!,
         ...formData,
-      }).unwrap(); // Call the mutation
+      }).unwrap();
       console.log("Review created successfully:", result);
-      navigation.goBack(); // Navigate back on success
+      navigation.goBack();
     } catch (err) {
       console.error("Error creating review:", err);
     }
@@ -621,7 +621,7 @@ export default function RateUniversityScreen() {
               />
             </View>
           ))}
-          { errors.cons?.[0] && (
+          {errors.cons?.[0] && (
             <Text color="$red10" fontSize={12}>
               {errors.cons[0].message}
             </Text>

@@ -7,3 +7,9 @@ interface IFetchSubThreadListData {
 }
 
 export type FetchSubThreadListAPIResponse = APIResponse<IFetchSubThreadListData>;
+
+interface IFetchSubThreadByIdData {
+    subthread: ISubThread;
+}
+
+export type FetchSubThreadByIdAPIResponse = APIResponse<IFetchSubThreadByIdData>;
