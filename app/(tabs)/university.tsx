@@ -26,9 +26,6 @@ export default function UniversityScreen() {
   if (error || errorUserProfile) {
     return <Error />;
   }
-  if (error) {
-    return <Error />;
-  }
   const hasRateUniversity = userProfile?.data?.has_rate_university;
   const universityId = userProfile?.data?.university_id;
 
@@ -41,13 +38,13 @@ export default function UniversityScreen() {
         {universityId && !hasRateUniversity ? (
           <View
             flex={1}
-            justifyContent="center"
-            alignItems="center"
-            paddingHorizontal={20}
+            jc="center"
+            ai="center"
+            px="$5"
           >
             <FontAwesome name="exclamation-circle" size={40} color="$primary" />
-            <View style={{ marginTop: 16 }}>
-              <Text style={{ fontSize: 18, textAlign: "center" }}>
+            <View mt="$2">
+              <Text fontSize="$5" textAlign="center">
                 You must review your university first before accessing this
                 screen.
               </Text>
