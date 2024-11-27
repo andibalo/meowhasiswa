@@ -5,6 +5,7 @@ import { APIResponse } from "types/response/common";
 
 const initialState = {
 	token: "",
+	isLoadingAuthInit: true,
 	isBiometricAuthEnabled: false,
 	isBiometricAuthenticated: false,
 }
@@ -71,13 +72,16 @@ const authSlice = createSlice({
 	name: "auth",
 	initialState,
 	reducers: {
+		setIsLoadingAuthInit: (state, action: PayloadAction<boolean>) => {
+			state.isLoadingAuthInit = action.payload
+		},
 		setToken: (state, action: PayloadAction<string>) => {
 			state.token = action.payload
 		},
 		setIsBiometricAuthEnabled: (state, action: PayloadAction<ISetIsBiometricAuthEnabledPayload>) => {
 			state.isBiometricAuthEnabled = action.payload.isEnabled
-			
-			if(action.payload.shouldAuthenticate){
+
+			if (action.payload.shouldAuthenticate) {
 				state.isBiometricAuthenticated = true
 			}
 		},
@@ -100,6 +104,6 @@ const authSlice = createSlice({
 	},
 })
 
-export const { setToken, setIsBiometricAuthEnabled, setIsBiometricAuthenticated } = authSlice.actions
+export const { setToken, setIsBiometricAuthEnabled, setIsBiometricAuthenticated, setIsLoadingAuthInit } = authSlice.actions
 
 export default authSlice.reducer

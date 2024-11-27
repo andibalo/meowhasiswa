@@ -5,7 +5,6 @@ import { Platform } from "react-native";
 import { useEffect, useRef, useState } from "react";
 import { Subscription } from "expo-modules-core";
 import * as TaskManager from "expo-task-manager";
-import { useRouter } from "expo-router";
 
 const BACKGROUND_NOTIFICATION_TASK = "BACKGROUND-NOTIFICATION-TASK";
 const DEFAULT_NOTIFICATION_ROUTE = "/"
@@ -66,8 +65,10 @@ export const useNotifications = () => {
 
     const notificationListener = useRef<Subscription>();
     const responseListener = useRef<Subscription>();
-    const router = useRouter()
     const [pushToken, setPushToken] = useState('')
+    const [notifRoute, setNotifRoute] = useState('')
+
+    const lastNotificationResponse = Notifications.useLastNotificationResponse()
 
     TaskManager.defineTask(
         BACKGROUND_NOTIFICATION_TASK,
@@ -104,6 +105,11 @@ export const useNotifications = () => {
                     JSON.stringify(response.notification.request.content.data, null, 2)
                 );
                 // Handle the notification response here
+                const notifRouteData = response.notification.request.content.data.route
+
+                const route: any = notifRouteData ? String(notifRouteData) : DEFAULT_NOTIFICATION_ROUTE
+
+                setNotifRoute(route)
             });
 
         return () => {
@@ -121,29 +127,18 @@ export const useNotifications = () => {
         };
     }, []);
 
-    useEffect(() => {
-        let isMounted = true;
+    // useEffect(() => {
+    //     if (lastNotificationResponse) {
+    //         const notifRouteData = lastNotificationResponse.notification.request.content.data.route
 
-        Notifications.getLastNotificationResponseAsync()
-            .then(response => {
-                if (!isMounted || !response?.notification) {
-                    return;
-                }
+    //         const route: any = notifRouteData ? String(notifRouteData) : DEFAULT_NOTIFICATION_ROUTE
 
-                const notifRouteData = response.notification.request.content.data.route
-
-                const route: any = notifRouteData ? String(notifRouteData) : DEFAULT_NOTIFICATION_ROUTE
-                router.push(route)
-            });
-
-
-        return () => {
-            isMounted = false;
-        };
-    }, []);
-
+    //         setNotifRoute(route)
+    //     }
+    // }, [lastNotificationResponse]);
 
     return {
-        pushToken
+        pushToken,
+        notifRoute
     }
 };

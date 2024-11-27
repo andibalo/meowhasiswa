@@ -1,5 +1,5 @@
-import { Redirect, Tabs } from 'expo-router'
-import { useTheme } from 'tamagui'
+import { Href, Redirect, Tabs } from 'expo-router'
+import { Spinner, useTheme } from 'tamagui'
 import { Home, School, User, MessagesSquare } from '@tamagui/lucide-icons'
 import { useRouter } from 'expo-router'
 import { Button } from 'tamagui'
@@ -11,7 +11,7 @@ import * as LocalAuthentication from 'expo-local-authentication'
 import * as SecureStore from 'expo-secure-store'
 import * as Device from 'expo-device';
 import { ENABLE_BIOMETRIC_AUTH_KEY, JWT_TOKEN_KEY } from 'constants/common'
-import { setIsBiometricAuthEnabled, setIsBiometricAuthenticated, setToken } from 'redux/slice/auth'
+import { setIsBiometricAuthEnabled, setIsBiometricAuthenticated, setIsLoadingAuthInit, setToken } from 'redux/slice/auth'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useNotifications, useToast } from 'hooks'
 import { getUserDevice, saveUserDevice } from 'services/user'
@@ -26,9 +26,8 @@ export default function TabLayout() {
   const router = useRouter()
   const toast = useToast()
   const dispatch = useAppDispatch()
-  const { token, isBiometricAuthEnabled, isBiometricAuthenticated } = useSelector((state: RootState) => state.auth)
-
-  const { pushToken } = useNotifications()
+  const { token, isBiometricAuthEnabled, isBiometricAuthenticated, isLoadingAuthInit } = useSelector((state: RootState) => state.auth)
+  const { pushToken, notifRoute } = useNotifications()
 
   // @ts-ignore
   const { data: userData, error: fetchUserProfileError } = useFetchUserProfileQuery(null, {
@@ -37,7 +36,7 @@ export default function TabLayout() {
 
   const enableAuthentication = process.env.EXPO_PUBLIC_ENABLE_AUTHENTICATION
 
-  const saveUserDeviceData = async (pushToken : string, payload: ICreateUserDeviceRequest) => {
+  const saveUserDeviceData = async (pushToken: string, payload: ICreateUserDeviceRequest) => {
 
     try {
       const getUserDeviceResp = await getUserDevice({ notification_token: pushToken })
@@ -52,12 +51,15 @@ export default function TabLayout() {
     }
   };
 
-  const getUserTokenFromStorage = async () => {
+  const getUserTokenFromStorage = () => {
+  
     let result = SecureStore.getItem(JWT_TOKEN_KEY);
 
     if (result) {
       dispatch(setToken(result))
     }
+
+    dispatch(setIsLoadingAuthInit(false))
   };
 
   const getIsBiometricAuthEnabledFromStorage = async () => {
@@ -92,7 +94,7 @@ export default function TabLayout() {
   }, [])
 
   useEffect(() => {
-    if(token !== "" && pushToken !== "" && userData?.data?.id){
+    if (token !== "" && pushToken !== "" && userData?.data?.id) {
 
       const payload = {
         userId: userData.data.id,
@@ -107,10 +109,18 @@ export default function TabLayout() {
     }
   }, [token, pushToken])
 
+  if (isLoadingAuthInit) {
+    return <Spinner />;
+  }
+
   if (enableAuthentication == "1") {
     if (token === "") {
       return <Redirect href="/login" />;
     }
+  }
+
+  if (token && notifRoute) {
+    return <Redirect href={notifRoute as Href} />;
   }
 
   if (fetchUserProfileError) {
