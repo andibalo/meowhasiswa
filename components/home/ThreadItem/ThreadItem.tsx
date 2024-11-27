@@ -1,11 +1,12 @@
-import { Edit3, MessageSquare, ThumbsDown, ThumbsUp } from '@tamagui/lucide-icons';
+import { Edit3, MessageSquare } from '@tamagui/lucide-icons';
 import { Text, View, XStack, YStack, Avatar, Separator } from 'tamagui';
 import { IThread } from 'types/model/thread';
-import dayjs from 'dayjs';
 import { Pressable, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useLikeThreadMutation, useDislikeThreadMutation, useDeleteThreadMutation } from 'redux/api/thread';
 import { useToast } from 'hooks';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { formateDateWithDaysAgoThreshold } from 'utils';
 
 interface ThreadItemProps {
     thread: IThread;
@@ -123,9 +124,9 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                                     </XStack>
                                     <XStack gap="$2" alignItems="center">
                                         <Text color="$primary" fontSize="$3">
-                                            {dayjs(thread.created_at).format('YYYY-MM-DD')}
+                                            {formateDateWithDaysAgoThreshold(thread.created_at, 3)}
                                         </Text>
-                                        <View bg="#4E96EB" px="$2" py="$1" borderRadius="$1">
+                                        <View bg={thread.subthread_color ? thread.subthread_color : "$primary"} px="$2" py="$1" borderRadius="$1">
                                             <Text color="white" fontSize="$2">{`m/${thread.subthread_name}`}</Text>
                                         </View>
                                     </XStack>
@@ -159,14 +160,20 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                     </View>
                     <XStack pl={'$3'} pr={'$3'} pb={'$3'} gap={'$5'}>
                         <XStack ai={'center'}>
-                            <ThumbsUp
+                            <Ionicons
+                                name={thread.is_liked ? "paw" : "paw-outline"}
                                 onPress={inDetailScreen ? handleLike : () => null}
+                                size={26}
+                                color="black"
                             />
                             <Text ml={'$2'}>{thread.like_count}</Text>
                         </XStack>
                         <XStack ai={'center'}>
-                            <ThumbsDown
+                            <Ionicons
+                                name={thread.is_disliked ? "thumbs-down" : "thumbs-down-outline"}
                                 onPress={inDetailScreen ? handleDislike : () => null}
+                                size={26}
+                                color="black"
                             />
                             <Text ml={'$2'}>{thread.dislike_count}</Text>
                         </XStack>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { View, Text, Avatar } from 'tamagui';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { useWindowDimensions } from 'react-native';
