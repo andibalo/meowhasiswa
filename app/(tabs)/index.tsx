@@ -92,6 +92,7 @@ export default function HomeScreen() {
     limit: 10,
     isTrending: index === 0,
     isUserFollowing: true,
+    includeUserActivity: true,
     _q: query
   });
 

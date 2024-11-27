@@ -5,6 +5,7 @@ export interface IFetchThreadListQueryParams {
     _q?: string
     isTrending?: boolean
     isUserFollowing?: boolean
+    includeUserActivity?: boolean
 }
 
 export interface ICreateThreadRequest {

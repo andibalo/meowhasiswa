@@ -29,6 +29,7 @@ export const threadsApi = createApi({
                 if (qParams._q) params._q = qParams._q;
                 if (qParams.isTrending) params.is_trending = qParams.isTrending;
                 if (qParams.isUserFollowing) params.is_user_following = qParams.isUserFollowing;
+                if (qParams.includeUserActivity) params.include_user_activity = qParams.includeUserActivity;
 
                 return {
                     url: "/v1/thread",
