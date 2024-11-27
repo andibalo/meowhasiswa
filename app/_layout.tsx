@@ -7,7 +7,6 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
 import { Provider } from './Provider';
-import { useNotifications } from 'hooks';
 import * as Notifications from "expo-notifications";
 export { ErrorBoundary } from 'expo-router';
 
@@ -48,8 +47,6 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
-
-  useNotifications()
 
   return (
     <Provider>

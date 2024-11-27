@@ -76,7 +76,7 @@ export const threadsApi = createApi({
                 };
             }
         }),
-        deleteThread: builder.mutation<APIResponse<{ success: boolean }>, string>({
+        deleteThread: builder.mutation<APIResponse<any>, string>({
             invalidatesTags: ['Thread'],
             query: (threadId) => ({
                 url: `/v1/thread/${threadId}`,
