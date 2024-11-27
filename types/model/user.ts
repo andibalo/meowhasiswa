@@ -16,3 +16,17 @@ export interface IUser {
     updated_by: string | null;
     updated_at: string | null;
 }
+
+export interface IUserDevice {
+    id: string;
+    user_id: string;
+    brand: string;
+    type: string;
+    model: string;
+    notification_token: string;
+    is_notification_active: boolean;
+    created_by: string;
+    created_at: string;
+    updated_by: string | null;
+    updated_at: string | null;
+}
