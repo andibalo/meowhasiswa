@@ -1,10 +1,9 @@
 import { SubThreadList } from 'components/subthread'
 import { useState } from 'react';
-import { useWindowDimensions, TouchableOpacity } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
+import { useWindowDimensions } from 'react-native';
 import { View } from 'tamagui'
 import { TabView, SceneMap } from 'react-native-tab-view';
-import { Error, Loading, NotFound, SearchBar, TopTabBar } from 'components/common';
+import { Error, Fab, Loading, NotFound, SearchBar, TopTabBar } from 'components/common';
 import { useRouter } from 'expo-router';
 import { useFetchSubThreadListQuery } from 'redux/api/subthread';
 import { ISubThread } from 'types/model';
@@ -158,22 +157,7 @@ export default function SubThreadScreen() {
         initialLayout={{ width: layout.width }}
       />
       {
-        userData?.data?.role === ROLE_ADMIN && <TouchableOpacity
-          style={{
-            position: 'absolute',
-            bottom: 20,
-            right: 20,
-            backgroundColor: '#000000',
-            width: 60,
-            height: 60,
-            borderRadius: 30,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-          onPress={() => router.push('/subthread/create-subthread')}
-        >
-          <FontAwesome name="plus" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
+        userData?.data?.role === ROLE_ADMIN && <Fab onPress={() => router.push('/subthread/create-subthread')} />
       }
     </View>
   )

@@ -1,17 +1,30 @@
 import { ThreadList } from 'components/home';
 import { useState } from 'react';
-import { useWindowDimensions, TouchableOpacity } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
+import { useWindowDimensions } from 'react-native';
 import { View } from 'tamagui';
 import { TabView, SceneMap } from 'react-native-tab-view';
-import { Error, Loading, NotFound, SearchBar, TopTabBar } from 'components/common';
+import { Error, Fab, Loading, NotFound, SearchBar, TopTabBar } from 'components/common';
 import { useFetchThreadListQuery } from 'redux/api/thread';
 import { useRouter } from 'expo-router';
+import { IThread } from 'types/model';
 
 interface ITabItemProps {
   title: string;
-  query: string;
-  isTrending: boolean
+  data: IThread[] | undefined
+  handleLoadMore: () => void
+  isLoading: boolean
+  onRefresh: () => void
+  isRefreshing?: boolean
+  error: any
+}
+
+interface IRenderSceneProps {
+  data: IThread[] | undefined
+  handleLoadMore: () => void
+  isLoading: boolean
+  onRefresh: () => void
+  isRefreshing?: boolean
+  error: any
 }
 
 const routes = [
@@ -19,22 +32,70 @@ const routes = [
   { key: 'second', title: 'Latest' },
 ];
 
-const renderScene = ({ query, index }) => SceneMap({
-  first: () => <TabItem title='Trending' query={query} isTrending={index === 0} />,
-  second: () => <TabItem title='Newest' query={query} isTrending={index === 0} />,
+const renderScene = (props: IRenderSceneProps) => SceneMap({
+  first: () => <TabItem title='Trending'
+    data={props.data}
+    handleLoadMore={props.handleLoadMore}
+    isLoading={props.isLoading}
+    onRefresh={props.onRefresh}
+    isRefreshing={props.isRefreshing}
+    error={props.error}
+  />,
+  second: () => <TabItem title='Newest'
+    data={props.data}
+    handleLoadMore={props.handleLoadMore}
+    isLoading={props.isLoading}
+    onRefresh={props.onRefresh}
+    isRefreshing={props.isRefreshing}
+    error={props.error}
+  />,
 });
 
 // TODO: Improve user experience, still lagging and need to show spinner
 const TabItem = (props: ITabItemProps) => {
+
+  if (props.isLoading) {
+    return <Loading />;
+  }
+
+  if (props.error) {
+    return <Error />;
+  }
+
+  if (!props.data || (props.data && props.data.length === 0)) {
+    return <NotFound description='Threads Not Found' />
+  }
+
+  return (
+    <View flex={1}>
+      <ThreadList
+        title={props.title}
+        data={props.data}
+        handleLoadMore={props.handleLoadMore}
+        isLoading={props.isLoading}
+        onRefresh={props.onRefresh}
+        isRefreshing={props.isRefreshing}
+      />
+    </View>
+  );
+};
+
+export default function HomeScreen() {
+  const layout = useWindowDimensions();
+  const [index, setIndex] = useState(0);
+  const [searchInput, setSearchInput] = useState("")
+  const [query, setQuery] = useState("")
   const [cursor, setCursor] = useState("");
 
   const { data, error, isLoading, refetch } = useFetchThreadListQuery({
     cursor: cursor,
     limit: 10,
-    isTrending: props.isTrending,
+    isTrending: index === 0,
     isUserFollowing: true,
-    _q: props.query
+    _q: query
   });
+
+  const router = useRouter();
 
   const onRefresh = () => {
     refetch()
@@ -50,43 +111,6 @@ const TabItem = (props: ITabItemProps) => {
     }
   };
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
-  if (error) {
-    return <Error />;
-  }
-
-  return (
-    <View flex={1}>
-      {data && data.data?.threads && data.data?.threads.length > 0 ? (
-        <ThreadList
-          title={props.title}
-          isLoading={isLoading}
-          handleLoadMore={handleLoadMore}
-          data={data.data.threads}
-          onRefresh={onRefresh}
-        />
-      ) : (
-        <NotFound description="Threads Not Found" />
-      )}
-    </View>
-  );
-};
-
-export default function HomeScreen() {
-  const layout = useWindowDimensions();
-  const [index, setIndex] = useState(0);
-  const [searchInput, setSearchInput] = useState("")
-  const [query, setQuery] = useState("")
-
-  const router = useRouter();
-
-  const renderTabBar = (props) => (
-    <TopTabBar {...props} />
-  );
-
   const handleSubmitSearch = () => {
     setQuery(searchInput)
   }
@@ -94,6 +118,10 @@ export default function HomeScreen() {
   const onChangeText = (data) => {
     setSearchInput(data)
   }
+
+  const renderTabBar = (props) => (
+    <TopTabBar {...props} />
+  );
 
   return (
     <View flex={1} p="$3" pb="0" bg="$backgroundSoft">
@@ -109,26 +137,17 @@ export default function HomeScreen() {
         lazy
         renderTabBar={renderTabBar}
         navigationState={{ index, routes }}
-        renderScene={renderScene({ query, index })}
+        renderScene={renderScene({
+          data: data?.data?.threads,
+          handleLoadMore,
+          isLoading,
+          onRefresh,
+          error
+        })}
         onIndexChange={setIndex}
         initialLayout={{ width: layout.width }}
       />
-      <TouchableOpacity
-        style={{
-          position: 'absolute',
-          bottom: 20,
-          right: 20,
-          backgroundColor: '#000000',
-          width: 60,
-          height: 60,
-          borderRadius: 30,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-        onPress={() => router.push('/thread/create-thread')}
-      >
-        <FontAwesome name="plus" size={24} color="#FFFFFF" />
-      </TouchableOpacity>
+      <Fab onPress={() => router.push('/thread/create-thread')} />
     </View>
   );
 }
