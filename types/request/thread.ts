@@ -26,3 +26,15 @@ export interface IPostCommentRequest {
     threadId: string;
     content: string;
 }
+
+export interface ILikeCommentRequest {
+    commentId: string;
+    threadId: string;
+    isReply: boolean;
+}
+
+export interface IDislikeCommentRequest {
+    commentId: string;
+    threadId: string;
+    isReply: boolean;
+}
