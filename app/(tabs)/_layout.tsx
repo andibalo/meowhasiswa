@@ -37,7 +37,7 @@ export default function TabLayout() {
 
   const enableAuthentication = process.env.EXPO_PUBLIC_ENABLE_AUTHENTICATION
 
-  const saveUserDeviceData = async (pushToken : string, payload: ICreateUserDeviceRequest) => {
+  /* const saveUserDeviceData = async (pushToken : string, payload: ICreateUserDeviceRequest) => {
 
     try {
       const getUserDeviceResp = await getUserDevice({ notification_token: pushToken })
@@ -50,7 +50,7 @@ export default function TabLayout() {
     } catch (error) {
       toast.showToastError("Something Went Wrong", error)
     }
-  };
+  }; */
 
   const getUserTokenFromStorage = async () => {
     let result = SecureStore.getItem(JWT_TOKEN_KEY);
@@ -103,7 +103,7 @@ export default function TabLayout() {
         is_notification_active: true,
       }
 
-      saveUserDeviceData(pushToken, payload)
+      //saveUserDeviceData(pushToken, payload)
     }
   }, [token, pushToken])
 

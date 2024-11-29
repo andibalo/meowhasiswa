@@ -1,8 +1,10 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { GiftedChat, Bubble, Day, Time } from "react-native-gifted-chat";
 import { useRoute } from "@react-navigation/native";
 import { Avatar } from "tamagui";
 import { View } from "react-native";
+import { firestore } from "../firebase"; // Adjust the path to your firebase.ts file
+import { collection, addDoc, query, orderBy, onSnapshot } from "firebase/firestore"; 
 
 export default function ChatDetailScreen() {
   const route = useRoute();
@@ -21,12 +23,41 @@ export default function ChatDetailScreen() {
     },
   ]);
 
-  const onSend = useCallback((newMessages = []) => {
-    setMessages((previousMessages) => {
-      const updatedMessages = [...previousMessages, ...newMessages];
-      return updatedMessages;
+  // Fetch messages from Firestore
+  useEffect(() => {
+    const messagesRef = collection(firestore, 'chats', message.id, 'messages');
+    const q = query(messagesRef, orderBy('createdAt', 'desc'));
+    
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const newMessages = snapshot.docs.map(doc => ({
+        _id: doc.id,
+        text: doc.data().text,
+        createdAt: doc.data().createdAt.toDate(),
+        user: {
+          _id: doc.data().userId,
+          name: doc.data().username,
+          avatar: doc.data().profilePic,
+        },
+      }));
+      setMessages(newMessages);
     });
-  }, []);
+
+    return () => unsubscribe();
+  }, [message.id]);
+
+  const onSend = useCallback(async (newMessages = []) => {
+    const writes = newMessages.map(m =>
+      addDoc(collection(firestore, 'chats', message.id, 'messages'), {
+        text: m.text,
+        createdAt: new Date(),
+        userId: 1, // Replace with the actual user ID
+        username: 'Current User', // Replace with actual username
+        profilePic: 'profile-pic-url', // Replace with actual profile picture URL
+      })
+    );
+    await Promise.all(writes);
+    setMessages(previousMessages => GiftedChat.append(previousMessages, newMessages));
+  }, [message.id]);
 
   const renderBubble = (props) => (
     <Bubble
