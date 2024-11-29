@@ -1,16 +1,18 @@
-import { ThumbsDown, ThumbsUp, Reply } from '@tamagui/lucide-icons'
+import { Reply } from '@tamagui/lucide-icons'
 import { Text, View, XStack, YStack, Avatar } from 'tamagui'
-import { IComment } from 'types/model/thread'
-import dayjs from 'dayjs'
+import { IComment, ICommentReply } from 'types/model/thread'
 import { Pressable } from 'react-native'
+import { formateDateWithDaysAgoThreshold } from 'utils'
+import { Ionicons } from '@expo/vector-icons'
 
 interface CommentItemProps {
-    comment: IComment;
-    canReply?: boolean;
+    comment: IComment | ICommentReply;
+    isReply?: boolean;
+    onLikePress: () => void
+    onDislikePress: () => void
 }
 
-export const CommentItem = ({ comment, canReply = true }: CommentItemProps) => {
-
+export const CommentItem = ({ comment, isReply = false, onDislikePress, onLikePress }: CommentItemProps) => {
 
     return (
         <View mb={'$3'} bg={'$white1'} borderRadius={'$radius.4'}>
@@ -35,7 +37,7 @@ export const CommentItem = ({ comment, canReply = true }: CommentItemProps) => {
                                         <Text color="$secondary">{comment.username}</Text>
                                     </XStack>
                                     <XStack gap="$2" alignItems="center">
-                                        <Text color="$primary" fontSize="$3">{dayjs(comment.created_at).format("YYYY-MM-DD")}</Text>
+                                        <Text color="$primary" fontSize="$3">{formateDateWithDaysAgoThreshold(comment.created_at, 3)}</Text>
                                     </XStack>
                                 </YStack>
                             </XStack>
@@ -49,15 +51,25 @@ export const CommentItem = ({ comment, canReply = true }: CommentItemProps) => {
                 </View>
                 <XStack gap={'$5'}>
                     <XStack ai={'center'}>
-                        <ThumbsUp />
+                        <Ionicons
+                            name={comment.is_liked ? "paw" : "paw-outline"}
+                            onPress={onLikePress}
+                            size={26}
+                            color="black"
+                        />
                         <Text ml={'$2'}>{comment.like_count}</Text>
                     </XStack>
                     <XStack ai={'center'}>
-                        <ThumbsDown />
+                        <Ionicons
+                            name={comment.is_disliked ? "thumbs-down" : "thumbs-down-outline"}
+                            onPress={onDislikePress}
+                            size={26}
+                            color="black"
+                        />
                         <Text ml={'$2'}>{comment.dislike_count}</Text>
                     </XStack>
                     {
-                        canReply && <Pressable onPress={() => console.log("REPLY")} >
+                        !isReply && <Pressable onPress={() => console.log("REPLY")} >
                             <XStack ai={'center'}>
                                 <Reply />
                                 <Text ml={'$2'}>Reply</Text>

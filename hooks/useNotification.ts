@@ -2,7 +2,7 @@ import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
 import { Platform } from "react-native";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Subscription } from "expo-modules-core";
 import * as TaskManager from "expo-task-manager";
 import { useRouter } from "expo-router";
@@ -67,6 +67,7 @@ export const useNotifications = () => {
     const notificationListener = useRef<Subscription>();
     const responseListener = useRef<Subscription>();
     const router = useRouter()
+    const [pushToken, setPushToken] = useState('')
 
     TaskManager.defineTask(
         BACKGROUND_NOTIFICATION_TASK,
@@ -82,7 +83,9 @@ export const useNotifications = () => {
 
     useEffect(() => {
         registerForPushNotificationsAsync().
-            then((token) => console.log("TOKEN", token)).
+            then((token) => {
+                setPushToken(token)
+            }).
             catch(err => console.log("ERROR", err))
 
         Notifications.registerTaskAsync(BACKGROUND_NOTIFICATION_TASK)
@@ -138,4 +141,9 @@ export const useNotifications = () => {
             isMounted = false;
         };
     }, []);
+
+
+    return {
+        pushToken
+    }
 };

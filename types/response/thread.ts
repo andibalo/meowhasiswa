@@ -1,4 +1,4 @@
-import { IThread } from "types/model";
+import { IComment, IThread } from "types/model";
 import { APIResponse, IPaginationMeta } from "./common";
 
 interface IFetchThreadListData {
@@ -14,3 +14,9 @@ interface IFetchThreadByIdData {
 }
 
 export type FetchThreadByIdAPIResponse = APIResponse<IFetchThreadByIdData>;
+
+interface IFetchThreadCommentsData {
+    thread_comments: IComment[];
+}
+
+export type FetchThreadCommentsAPIResponse = APIResponse<IFetchThreadCommentsData>;

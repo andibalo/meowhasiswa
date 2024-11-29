@@ -3,7 +3,7 @@ import { View, Image, YStack, Text } from 'tamagui'
 export const Error = () => {
 
     return (
-        <View flex={1} bg="$background" alignItems="center" justifyContent="center" >
+        <View flex={1} bg="$background" alignItems="center" >
             <YStack gap="$3" justifyContent="center" >
                 <Image
                     source={require("../../assets/images/error.jpg")}

@@ -1,6 +1,7 @@
 export interface IFetchUniversityReviewListQueryParams {
     limit?: number;   
     cursor?: string;  
+    _q?: string
 }
 
 export interface ICreateUniversityReviewRequest {

@@ -5,6 +5,7 @@ export interface IFetchThreadListQueryParams {
     _q?: string
     isTrending?: boolean
     isUserFollowing?: boolean
+    includeUserActivity?: boolean
 }
 
 export interface ICreateThreadRequest {
@@ -24,4 +25,16 @@ export interface IUpdateThreadRequest {
 export interface IPostCommentRequest {
     threadId: string;
     content: string;
+}
+
+export interface ILikeCommentRequest {
+    commentId: string;
+    threadId: string;
+    isReply: boolean;
+}
+
+export interface IDislikeCommentRequest {
+    commentId: string;
+    threadId: string;
+    isReply: boolean;
 }

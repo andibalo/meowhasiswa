@@ -1,12 +1,12 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from './baseQuery';
-import { ICreateThreadRequest, IFetchThreadListQueryParams, IPostCommentRequest, IUpdateThreadRequest } from 'types/request/thread';
-import { APIResponse, FetchThreadByIdAPIResponse, FetchThreadListAPIResponse } from 'types/response';
+import { ICreateThreadRequest, IDislikeCommentRequest, IFetchThreadListQueryParams, ILikeCommentRequest, IPostCommentRequest, IUpdateThreadRequest } from 'types/request/thread';
+import { APIResponse, FetchThreadByIdAPIResponse, FetchThreadCommentsAPIResponse, FetchThreadListAPIResponse } from 'types/response';
 
 export const threadsApi = createApi({
     reducerPath: "threads",
     baseQuery: baseQuery,
-    tagTypes: ['Thread'],
+    tagTypes: ['Thread', "Comment"],
     endpoints: (builder) => ({
         createThread: builder.mutation<APIResponse<any>, ICreateThreadRequest>({
             invalidatesTags: ['Thread'],
@@ -29,6 +29,7 @@ export const threadsApi = createApi({
                 if (qParams._q) params._q = qParams._q;
                 if (qParams.isTrending) params.is_trending = qParams.isTrending;
                 if (qParams.isUserFollowing) params.is_user_following = qParams.isUserFollowing;
+                if (qParams.includeUserActivity) params.include_user_activity = qParams.includeUserActivity;
 
                 return {
                     url: "/v1/thread",
@@ -66,8 +67,20 @@ export const threadsApi = createApi({
                 };
             },
         }),
+        fetchThreadComments: builder.query<FetchThreadCommentsAPIResponse, string>({
+            providesTags: (result, error, threadId) => {
+                return [{ type: "Comment", id: threadId }];
+            },
+            query: (threadId) => {
+
+                return {
+                    url: `/v1/thread/comment/${threadId}`,
+                    method: "GET"
+                }
+            },
+        }),
         postComment: builder.mutation<APIResponse<any>, IPostCommentRequest>({
-            invalidatesTags: (result, error, { threadId }) => [{ type: 'Thread', id: threadId }],
+            invalidatesTags: (result, error, { threadId }) => [{ type: "Thread" }, { type: "Comment", id: threadId }],
             query: ({ threadId, content }) => {
                 return {
                     url: `/v1/thread/comment/${threadId}`,
@@ -76,7 +89,7 @@ export const threadsApi = createApi({
                 };
             }
         }),
-        deleteThread: builder.mutation<APIResponse<{ success: boolean }>, string>({
+        deleteThread: builder.mutation<APIResponse<any>, string>({
             invalidatesTags: ['Thread'],
             query: (threadId) => ({
                 url: `/v1/thread/${threadId}`,
@@ -94,7 +107,9 @@ export const threadsApi = createApi({
             }
         }),
         likeThread: builder.mutation<APIResponse<any>, string>({
-            invalidatesTags: ['Thread'],
+            invalidatesTags: (result, error, threadId) => {
+                return [{ type: "Thread", id: threadId }];
+            },
             query: (threadId) => {
                 return {
                     url: `/v1/thread/like/${threadId}`,
@@ -103,10 +118,38 @@ export const threadsApi = createApi({
             }
         }),
         dislikeThread: builder.mutation<APIResponse<any>, string>({
-            invalidatesTags: ['Thread'],
+            invalidatesTags: (result, error, threadId) => {
+                return [{ type: "Thread", id: threadId }];
+            },
             query: (threadId) => {
                 return {
                     url: `/v1/thread/dislike/${threadId}`,
+                    method: "PATCH"
+                };
+            }
+        }),
+        likeComment: builder.mutation<APIResponse<any>, ILikeCommentRequest>({
+            invalidatesTags: (result, error, req) => [{ type: "Comment", id: req.threadId }],
+            query: (req) => {
+                return {
+                    url: `/v1/thread/comment/like/${req.commentId}`,
+                    body: {
+                        thread_id: req.threadId,
+                        is_reply: req.isReply
+                    },
+                    method: "PATCH"
+                };
+            }
+        }),
+        dislikeComment: builder.mutation<APIResponse<any>, IDislikeCommentRequest>({
+            invalidatesTags: (result, error, req) => [{ type: "Comment", id: req.threadId }],
+            query: (req) => {
+                return {
+                    url: `/v1/thread/comment/dislike/${req.commentId}`,
+                    body: {
+                        thread_id: req.threadId,
+                        is_reply: req.isReply
+                    },
                     method: "PATCH"
                 };
             }
@@ -117,10 +160,13 @@ export const threadsApi = createApi({
 export const {
     useFetchThreadListQuery,
     useFetchThreadByIdQuery,
+    useFetchThreadCommentsQuery,
     useCreateThreadMutation,
     usePostCommentMutation,
     useDeleteThreadMutation,
     useUpdateThreadMutation,
     useLikeThreadMutation,
     useDislikeThreadMutation,
+    useDislikeCommentMutation,
+    useLikeCommentMutation
 } = threadsApi;
