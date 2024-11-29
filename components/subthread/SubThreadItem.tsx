@@ -2,6 +2,7 @@ import { Button, Text, View, XStack, YStack, Avatar } from "tamagui";
 import { ISubThread } from "types/model/subthread";
 import { useFollowSubThreadMutation } from "redux/api";
 import { useFetchUserProfileQuery } from "redux/api";
+import { useUnFollowSubThreadMutation } from "redux/api";
 import { NotFound } from "components/common";
 import { useToast } from "hooks";
 
@@ -12,8 +13,9 @@ interface SubThreadItemProps {
 
 export const SubThreadItem = (props: SubThreadItemProps) => {
   const [followSubThread] = useFollowSubThreadMutation();
+  const [unFollowSubThread] = useUnFollowSubThreadMutation();
   const subthread = props.subthread;
-  const { data, error, isLoading } = useFetchUserProfileQuery();
+  const { data } = useFetchUserProfileQuery();
 
   const userProfile = data?.data;
 
@@ -31,6 +33,17 @@ export const SubThreadItem = (props: SubThreadItemProps) => {
       }).unwrap();
     } catch (error) {
       toast.showToastError("Error Following Submeow", error);
+    }
+  };
+
+  const handleUnfollowSubThread = async () => {
+    try {
+      await unFollowSubThread({
+        subthread_id: subthread.id,
+        user_id: userProfile.id,
+      }).unwrap();
+    } catch (error) {
+      toast.showToastError("Error unFollowing Submeow", error);
     }
   };
 
@@ -76,7 +89,7 @@ export const SubThreadItem = (props: SubThreadItemProps) => {
                   borderRadius="$3"
                   width={100}
                   height={24}
-                  onPress={()=>handleFollowSubThread()}
+                  onPress={()=>handleUnfollowSubThread()}
                 >
                   <Text color="white" fontSize="$2">
                     Followed
