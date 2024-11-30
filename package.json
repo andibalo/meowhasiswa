@@ -24,6 +24,7 @@
     "@tamagui/config": "^1.110.0",
     "@tamagui/lucide-icons": "^1.110.0",
     "@tamagui/toast": "^1.110.0",
+    "@tanstack/react-query": "^5.62.0",
     "add": "^2.0.6",
     "axios": "^1.7.7",
     "babel-preset-expo": "^11.0.6",
