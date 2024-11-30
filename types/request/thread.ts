@@ -15,7 +15,6 @@ export interface ICreateThreadRequest {
     content_summary: string;
 }
 
-
 export interface IUpdateThreadRequest {
     title: string;
     content: string;

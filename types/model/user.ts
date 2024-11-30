@@ -11,6 +11,7 @@ export interface IUser {
     is_email_verified: boolean;
     has_rate_university: boolean;
     reputation_points: number;
+    university_rating_id:  string | null;
     created_by: string;
     created_at: string;
     updated_by: string | null;
