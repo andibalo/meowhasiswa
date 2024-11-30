@@ -51,10 +51,6 @@ export const threadsApi = createApi({
                     currentCache.data.meta = newItems.data.meta;
                 }
             },
-            // Refetch when the page arg changes
-            forceRefetch({ currentArg, previousArg }) {
-                return currentArg !== previousArg;
-            }
         }),
         fetchThreadById: builder.query<FetchThreadByIdAPIResponse, string>({
             providesTags: (result, error, threadId) => {
