@@ -38,3 +38,9 @@ export interface IDislikeCommentRequest {
     threadId: string;
     isReply: boolean;
 }
+
+export interface IReplyCommentRequest {
+    commentId: string;
+    threadId: string;
+    content: string;
+}
