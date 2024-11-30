@@ -5,12 +5,6 @@ import { CurrentToast } from './CurrentToast'
 import { config } from '../tamagui.config'
 import { Provider as ReduxProvider } from 'react-redux'
 import { store } from 'redux/store'
-import {
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
-
-const queryClient = new QueryClient()
 
 export function Provider({ children, ...rest }: Omit<TamaguiProviderProps, 'config'>) {
   const colorScheme = useColorScheme()
@@ -21,7 +15,6 @@ export function Provider({ children, ...rest }: Omit<TamaguiProviderProps, 'conf
       defaultTheme={colorScheme === 'dark' ? 'dark' : 'light'}
       {...rest}
     >
-      <QueryClientProvider client={queryClient}>
         <ReduxProvider store={store}>
           <ToastProvider
             swipeDirection="horizontal"
@@ -38,7 +31,6 @@ export function Provider({ children, ...rest }: Omit<TamaguiProviderProps, 'conf
             <ToastViewport top="$8" left={0} right={0} />
           </ToastProvider>
         </ReduxProvider>
-      </QueryClientProvider>
     </TamaguiProvider>
   )
 }

@@ -62,11 +62,6 @@ export const universityApi = createApi({
           currentCache.data.meta = newItems.data.meta;
         }
       },
-
-      // Refetch when the page arg changes
-      forceRefetch({ currentArg, previousArg }) {
-        return currentArg !== previousArg;
-      },
     }),
   }),
 });

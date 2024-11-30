@@ -1,18 +1,30 @@
-import { FlatList } from 'react-native';
+import { FlatList, RefreshControl } from 'react-native';
 import { ReviewItem } from './ReviewItem';
 import { IUniversityReview } from '../../types/model';
-import { View } from 'tamagui';
+import { Spinner, View } from 'tamagui';
 
 interface IUniversityReviewListProps {
   data: IUniversityReview[];
-  contentContainerStyle?: object;
-  showsVerticalScrollIndicator?: boolean;
+  handleLoadMore: () => void
+  isLoadingMore: boolean
+  onRefresh: () => void
+  isRefreshing?: boolean
 }
+
+const renderFooterLoading = (loadingMore: boolean) => {
+  if (!loadingMore) {
+      return null;
+  }
+
+  return <Spinner size="large" color="$primary" mb="$3" />;
+};
 
 export function ReviewList({
   data,
-  contentContainerStyle,
-  showsVerticalScrollIndicator = false,
+  handleLoadMore,
+  isLoadingMore,
+  onRefresh,
+  isRefreshing
 }: IUniversityReviewListProps) {
 
   const renderUniversityReview = ({ item }: { item: IUniversityReview }) => (
@@ -27,8 +39,17 @@ export function ReviewList({
       data={data}
       renderItem={renderUniversityReview}
       keyExtractor={(item) => item.id}
-      contentContainerStyle={contentContainerStyle}
-      showsVerticalScrollIndicator={showsVerticalScrollIndicator}
+      onEndReachedThreshold={0.5}
+      scrollEventThrottle={16}
+      showsVerticalScrollIndicator={false}
+      onEndReached={handleLoadMore}
+      ListFooterComponent={renderFooterLoading(isLoadingMore)}
+      refreshControl={
+          <RefreshControl
+              refreshing={!!isRefreshing}
+              onRefresh={onRefresh}
+          />
+      }
     />
   );
 }

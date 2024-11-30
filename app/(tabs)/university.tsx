@@ -14,6 +14,7 @@ export default function UniversityScreen() {
   const router = useRouter();
   const [searchInput, setSearchInput] = useState("")
   const [query, setQuery] = useState("")
+  const [cursor, setCursor] = useState("");
 
   const {
     data: userProfile,
@@ -21,13 +22,43 @@ export default function UniversityScreen() {
     error: errorUserProfile,
   } = useFetchUserProfileQuery();
 
-  const { data, error, isLoading } = useFetchUniversityReviewListQuery({
-    cursor: "",
-    limit: 10,
+  const { data, error, isLoading, isFetching } = useFetchUniversityReviewListQuery({
+    cursor: cursor,
+    limit: 2,
     _q: query
+  }, {
+    refetchOnMountOrArgChange: true
   });
 
+  const onRefresh = () => {
+    if (isLoading || isFetching) {
+      return
+    }
+
+    setCursor("")
+  };
+
+  const handleLoadMore = () => {
+    if (isLoading || isFetching) {
+      return
+    }
+
+    if (data?.data) {
+      let nextCursor = data.data.meta.next_cursor;
+
+      if (nextCursor !== "") {
+        setCursor(nextCursor);
+      }
+    }
+  };
+
+
   const handleSubmitSearch = () => {
+    if (isLoading || isFetching) {
+      return
+    }
+
+    setCursor("")
     setQuery(searchInput)
   }
 
@@ -80,6 +111,9 @@ export default function UniversityScreen() {
       ) : (
         <ReviewList
           data={uniRatings}
+          handleLoadMore={handleLoadMore}
+          isLoadingMore={isFetching}
+          onRefresh={onRefresh}
         />
       )}
       {universityId && !hasRateUniversity &&
