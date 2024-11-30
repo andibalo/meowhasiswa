@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from './baseQuery';
-import { ICreateThreadRequest, IDislikeCommentRequest, IFetchThreadListQueryParams, ILikeCommentRequest, IPostCommentRequest, IUpdateThreadRequest } from 'types/request/thread';
+import { ICreateThreadRequest, IDislikeCommentRequest, IFetchThreadListQueryParams, ILikeCommentRequest, IPostCommentRequest, IReplyCommentRequest, IUpdateThreadRequest } from 'types/request/thread';
 import { APIResponse, FetchThreadByIdAPIResponse, FetchThreadCommentsAPIResponse, FetchThreadListAPIResponse } from 'types/response';
 
 export const threadsApi = createApi({
@@ -154,6 +154,19 @@ export const threadsApi = createApi({
                 };
             }
         }),
+       replyComment: builder.mutation<APIResponse<any>, IReplyCommentRequest>({
+            invalidatesTags: (result, error, req) => [{ type: "Comment", id: req.threadId }],
+            query: (req) => {
+                return {
+                    url: `/v1/thread/comment/reply/${req.commentId}`,
+                    body: {
+                        thread_id: req.threadId,
+                        content: req.content
+                    },
+                    method: "POST"
+                };
+            }
+        }),
     }),
 });
 
@@ -168,5 +181,6 @@ export const {
     useLikeThreadMutation,
     useDislikeThreadMutation,
     useDislikeCommentMutation,
-    useLikeCommentMutation
+    useLikeCommentMutation,
+    useReplyCommentMutation
 } = threadsApi;

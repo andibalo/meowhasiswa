@@ -1,11 +1,11 @@
-import { Separator, View, Text, YStack, ScrollView, Input, XStack, Button } from "tamagui";
+import { Separator, View, Text, YStack, ScrollView } from "tamagui";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useDislikeCommentMutation, useFetchThreadByIdQuery, useFetchThreadCommentsQuery, useLikeCommentMutation, usePostCommentMutation } from "redux/api/thread";
-import { CommentItem, ThreadItem } from "components/home";
+import { useDislikeCommentMutation, useFetchThreadByIdQuery, useFetchThreadCommentsQuery, useLikeCommentMutation, usePostCommentMutation, useReplyCommentMutation } from "redux/api/thread";
+import { CommentInput, CommentItem, ThreadItem } from "components/home";
 import { Error, Loading, NotFound } from "components/common";
-import { Send } from "@tamagui/lucide-icons";
 import { useState, useRef } from "react";
 import { useToast } from "hooks";
+import { IComment } from "types/model";
 
 export default function ThreadDetailScreen() {
     const navigation = useNavigation();
@@ -21,13 +21,15 @@ export default function ThreadDetailScreen() {
     const [postComment] = usePostCommentMutation();
     const [likeComment] = useLikeCommentMutation();
     const [dislikeComment] = useDislikeCommentMutation();
+    const [replyComment] = useReplyCommentMutation();
     const [comment, setComment] = useState("");
+    const [isReplying, setIsReplying] = useState(false)
+    const [replyCommentData, setReplyCommentData] = useState<IComment | null>(null)
     const scrollViewRef = useRef<ScrollView>(null);
     const toast = useToast()
 
     const threadComments = threadCommentsData?.data?.thread_comments
     const threadDetail = data?.data?.thread
-
 
     if (isLoading || isFetchingThreadComments) {
         return <Loading />;
@@ -39,6 +41,18 @@ export default function ThreadDetailScreen() {
 
     if (!threadDetail) {
         return <NotFound description="Thread Not Found" />
+    }
+
+    const onReplyClose = () => {
+        setIsReplying(false)
+        setReplyCommentData(null)
+        setComment("")
+    }
+
+    const onReplyPress = (commentData: IComment) => {
+        setIsReplying(true)
+        setReplyCommentData(commentData)
+        setComment(`**@${commentData.username}** `)
     }
 
     const onLikePress = async ({ threadId, isReply, commentId }) => {
@@ -57,19 +71,32 @@ export default function ThreadDetailScreen() {
         }
     }
 
-    const handlePostComment = async () => {
+    const handleSubmitComment = async () => {
         if (comment.trim() === "") return;
 
         try {
+            if (isReplying) {
+                if (!replyCommentData) {
+                    return
+                }
+
+                await replyComment({ threadId: id, content: comment, commentId: replyCommentData.id }).unwrap();
+                setComment("");
+                setIsReplying(false)
+                setReplyCommentData(null)
+                return
+            }
+
             await postComment({ threadId: id, content: comment }).unwrap();
             setComment("");
             setTimeout(() => {
                 scrollViewRef.current?.scrollToEnd({ animated: true });
             }, 200);
-        } catch (err) {
-            console.error("Error posting comment:", err);
+
+        } catch (error) {
+            toast.showToastError("Error submitting comment:", error);
         }
-    };
+    }
 
     return (
 
@@ -99,6 +126,7 @@ export default function ThreadDetailScreen() {
                                                 isReply: false,
                                                 commentId: comment.id
                                             })}
+                                            onReplyPress={() => onReplyPress(comment)}
                                         />
                                         <YStack pl="$5" mt='$2' gap="$2">
                                             {
@@ -129,32 +157,14 @@ export default function ThreadDetailScreen() {
                     <View height={50} />
                 </View>
             </ScrollView>
-            <XStack
-                borderTopWidth={1}
-                borderTopColor="$primary"
-                position="absolute"
-                height={50}
-                bottom={0}
-                left={0}
-                right={0}
-                bg="$background"
-                alignItems="center"
-                px="$2"
-                gap="$1"
-            >
-                <Input
-                    flex={1}
-                    placeholder="Write a comment..."
-                    value={comment}
-                    onChangeText={setComment}
-                />
-                <Button
-                    size="$3"
-                    chromeless
-                    icon={<Send color="$primary" size="$1.5" />}
-                    onPress={handlePostComment}
-                />
-            </XStack>
+            <CommentInput
+                comment={comment}
+                onChangeText={(val) => setComment(val)}
+                onSubmit={handleSubmitComment}
+                isReplying={isReplying}
+                onReplyClose={onReplyClose}
+                replyMention={replyCommentData && replyCommentData.username}
+            />
         </View>
     );
 }
