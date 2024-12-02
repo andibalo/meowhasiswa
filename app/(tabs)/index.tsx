@@ -1,10 +1,10 @@
 import { ThreadList } from 'components/home';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { View } from 'tamagui';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { Error, Fab, Loading, NotFound, SearchBar, TopTabBar } from 'components/common';
-import { useFetchThreadListQuery } from 'redux/api/thread';
+import { useFetchThreadListQuery, useFetchUserProfileQuery } from 'redux/api';
 import { useRouter } from 'expo-router';
 import { IThread } from 'types/model';
 
@@ -53,6 +53,7 @@ const renderScene = (props: IRenderSceneProps) => SceneMap({
 
 // TODO: Improve user experience, still lagging and need to show spinner
 const TabItem = (props: ITabItemProps) => {
+  const { data: profData, error, isLoading } = useFetchUserProfileQuery();
 
   if (props.isLoading) {
     return <Loading />;
@@ -75,6 +76,7 @@ const TabItem = (props: ITabItemProps) => {
         isLoading={props.isLoading}
         onRefresh={props.onRefresh}
         isRefreshing={props.isRefreshing}
+        currentUserId2={profData?.data?.id}
       />
     </View>
   );

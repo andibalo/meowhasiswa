@@ -1,35 +1,50 @@
+import { useEffect, useState } from "react";
 import { FlatList, Pressable } from "react-native";
 import { SizableText, XStack, YStack, Avatar } from "tamagui";
 import { useNavigation } from "@react-navigation/native";
-
-const messages = [
-  {
-    id: "1",
-    university: "UBM",
-    username: "tolecat",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vel augue nisl. Vestibulum pellentesque ante ex, eu molestie nulla malesuada eget. Nullam dapibus sit amet erat ac ornare.",
-    timestamp: "12/03/2024",
-    profilePic:
-      "https://pacificgarden.co.id/wp-content/uploads/2021/10/Logo-UBM-Universitas-Bunda-Mulia-Original-1024x744.png",
-  },
-  {
-    id: "2",
-    university: "Untar",
-    username: "catlover",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vel augue nisl. Vestibulum pellentesque ante ex, eu molestie nulla malesuada eget. Nullam dapibus sit amet erat ac ornare.",
-    timestamp: "12/03/2024",
-    profilePic: "https://registrasi.untar.ac.id/assets/images/logo_untar.png",
-  },
-];
+import { firestore } from "config/firebase";
+import { collection, getDocs } from "firebase/firestore";
+import { useFetchUserProfileQuery } from 'redux/api';
 
 export default function ChatListScreen() {
+  const { data, error, isLoading } = useFetchUserProfileQuery();
   const navigation = useNavigation();
+  const [chatRooms, setChatRooms] = useState<any[]>([]);
+  const userId = data?.data?.id;
+
+  useEffect(() => {
+    const fetchChatRooms = async () => {
+      try {
+        const roomsSnapshot = await getDocs(collection(firestore, "chatRooms"));
+        const rooms = roomsSnapshot.docs.map((doc) => {
+          const data = doc.data();
+          const chatRoomId = doc.id;
+          const [user1, user2] = chatRoomId.split("-");
+          if (user1 === userId || user2 === userId) {
+            return {
+              id: chatRoomId,
+              ...data,
+            };
+          }
+          return null;
+        }).filter(Boolean); 
+
+        setChatRooms(rooms);
+      } catch (error) {
+        console.error("Error fetching chat rooms:", error);
+      }
+    };
+
+    if (userId) {
+      fetchChatRooms();
+    }
+  }, [userId]);
 
   const renderItem = ({ item }) => (
     <Pressable
       onPress={() => {
         // @ts-ignore
-        navigation.navigate("chat/chat-detail", { message: item })
+        navigation.navigate("chat/chat-detail", { chatRoomId: item.id });
       }}
     >
       <XStack flex={1} padding="$1" marginBottom="$4" alignItems="center">
@@ -69,11 +84,10 @@ export default function ChatListScreen() {
     </Pressable>
   );
 
-
   return (
     <YStack flex={1} padding="$3" backgroundColor="$background">
       <FlatList
-        data={messages}
+        data={chatRooms}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
       />

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View, Text, Avatar } from 'tamagui';
-import { TabView, SceneMap } from 'react-native-tab-view';
+import { TabView } from 'react-native-tab-view';
 import { useWindowDimensions } from 'react-native';
 import { Error, Loading, NotFound, TopTabBar } from 'components/common';
 import { useFetchUserProfileQuery } from 'redux/api';
@@ -8,17 +8,10 @@ import dayjs from 'dayjs';
 import { SettingsTab, UserThreadTab } from 'components/profile';
 
 const routes = [
-  { key: 'first', title: 'Profile' },
-  { key: 'second', title: 'Post' },
-  { key: 'third', title: 'Settings' },
+  { key: 'profile', title: 'Profile' },
+  { key: 'posts', title: 'Posts' },
+  { key: 'settings', title: 'Settings' },
 ];
-
-const renderScene = (user_id: string) =>
-  SceneMap({
-    first: () => <Text>Profile Content</Text>,
-    second: () => <UserThreadTab user_id={user_id} />,
-    third: () => <SettingsTab />,
-  });
 
 export default function ProfileScreen() {
   const { width } = useWindowDimensions();
@@ -39,6 +32,19 @@ export default function ProfileScreen() {
   if (!userProfile) {
     return <NotFound description="User Not Found" />;
   }
+
+  const renderScene = ({ route }: { route: { key: string } }) => {
+    switch (route.key) {
+      case 'profile':
+        return <Text>Profile Content</Text>;
+      case 'posts':
+        return <UserThreadTab user_id={userProfile.id} />;
+      case 'settings':
+        return <SettingsTab />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <View flex={1} padding="$4" bg="$backgroundSoft">
@@ -86,7 +92,7 @@ export default function ProfileScreen() {
         lazy
         renderTabBar={(props) => <TopTabBar {...props} />}
         navigationState={{ index, routes }}
-        renderScene={renderScene(userProfile.id)}
+        renderScene={renderScene}
         onIndexChange={setIndex}
         initialLayout={{ width }}
       />
