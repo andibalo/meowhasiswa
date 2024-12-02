@@ -6,7 +6,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useAppDispatch } from "redux/store";
 import { register } from "redux/slice/auth";
 import { useRouter } from "expo-router";
-import { useRegisterUserMutation } from "redux/api";
 
 type RegisterFormData = {
   username: string;
@@ -26,7 +25,6 @@ const registerSchema = yup.object().shape({
 export default function Register() {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const [registerUser] = useRegisterUserMutation();
 
   const {
     control,
@@ -42,19 +40,12 @@ export default function Register() {
   });
 
   const handleRegister = async (formData: RegisterFormData) => {
-    //TODO: add error handling and success/fail toast
     try {
-      await registerUser({
+       await dispatch(register({
         username: formData.username,
         email: formData.email,
         password: formData.password,
-      }).unwrap();
-       await dispatch(
-        register({
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-        })
+       })
       ).unwrap();
 
       // @ts-ignore

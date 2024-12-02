@@ -3,7 +3,6 @@ import { useRouter } from "expo-router";
 import { OtpInput } from "react-native-otp-entry";
 import { useState, useCallback } from "react";
 import { useVerifyEmailMutation } from "redux/api";
-import { IVerifyEmailRequest } from "types/request/auth";
 import Animated, {
   Easing,
   runOnJS,
@@ -14,19 +13,8 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-interface VerifyEmailProps {
-  verifyemail: IVerifyEmailRequest;
-  is_email_verified?: boolean;
-}
-
-export default function VerifyEmailScreen({
-  verifyemail,
-  is_email_verified,
-}: VerifyEmailProps) {
-  //const { verifyemail } = props; // Access the prop
+export default function VerifyEmailScreen() {
   const router = useRouter();
-  const [otp, setOtp] = useState("");
-  const [attemptCount, setAttemptCount] = useState(0);
   const [isInputWrong, setIsInputWrong] = useState(false);
   const [verifyEmail] = useVerifyEmailMutation();
   const shakeTranslateX = useSharedValue(0);
@@ -54,30 +42,12 @@ export default function VerifyEmailScreen({
   }));
 
   const handleOtpFilled = async (otpText: string) => {
-    setOtp(otpText);
-
-    if (otpText === String(verifyemail.code)) {
-      try {
-        console.log("Submitting OTP verification with data:", {
-          email: verifyemail.email,
-          code: verifyemail.code,
-        });
-        await verifyEmail({
-          email: verifyemail.email,
-          code: verifyemail.code,
-        }).unwrap();
-        router.push("/login");
-      } catch (error) {
-        console.error("Verification error:", error);
-        setAttemptCount((prev) => prev + 1);
-        setIsInputWrong(true);
-        shake();
-      }
-    } else {
-      setAttemptCount((prev) => prev + 1);
-      setIsInputWrong(true);
-      shake();
+    if (otpText === String(verifyEmail)) {
+        setIsInputWrong(true)
+        shake()
+        return
     }
+    router.push("/login")
   };
 
   return (
@@ -128,22 +98,6 @@ export default function VerifyEmailScreen({
         >
           Click to resend
         </Text>
-      </XStack>
-      <XStack width="80%" jc="center" mt="$5">
-        <Button
-          onPress={() => router.push("/login")}
-          bg="$primary"
-          padding="$3"
-          borderRadius="$3"
-          width="100%"
-          height={45}
-          ai="center"
-          jc="center"
-        >
-          <Text color="#fff" fontWeight="bold" fontSize="$3">
-            Continue
-          </Text>
-        </Button>
       </XStack>
     </YStack>
   );
