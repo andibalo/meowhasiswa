@@ -15,7 +15,6 @@ export interface ICreateThreadRequest {
     content_summary: string;
 }
 
-
 export interface IUpdateThreadRequest {
     title: string;
     content: string;
@@ -37,4 +36,10 @@ export interface IDislikeCommentRequest {
     commentId: string;
     threadId: string;
     isReply: boolean;
+}
+
+export interface IReplyCommentRequest {
+    commentId: string;
+    threadId: string;
+    content: string;
 }

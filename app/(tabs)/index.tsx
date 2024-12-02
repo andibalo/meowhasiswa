@@ -1,30 +1,17 @@
 import { ThreadList } from 'components/home';
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { View } from 'tamagui';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { Error, Fab, Loading, NotFound, SearchBar, TopTabBar } from 'components/common';
-import { useFetchThreadListQuery } from 'redux/api/thread';
 import { useRouter } from 'expo-router';
 import { IThread } from 'types/model';
+import { fetchThreadList } from 'services/thread';
 
 interface ITabItemProps {
-  title: string;
-  data: IThread[] | undefined
-  handleLoadMore: () => void
-  isLoading: boolean
-  onRefresh: () => void
-  isRefreshing?: boolean
-  error: any
-}
-
-interface IRenderSceneProps {
-  data: IThread[] | undefined
-  handleLoadMore: () => void
-  isLoading: boolean
-  onRefresh: () => void
-  isRefreshing?: boolean
-  error: any
+  title: string
+  tabIndex: number
+  query: string
 }
 
 const routes = [
@@ -32,37 +19,86 @@ const routes = [
   { key: 'second', title: 'Latest' },
 ];
 
-const renderScene = (props: IRenderSceneProps) => SceneMap({
-  first: () => <TabItem title='Trending'
-    data={props.data}
-    handleLoadMore={props.handleLoadMore}
-    isLoading={props.isLoading}
-    onRefresh={props.onRefresh}
-    isRefreshing={props.isRefreshing}
-    error={props.error}
-  />,
-  second: () => <TabItem title='Newest'
-    data={props.data}
-    handleLoadMore={props.handleLoadMore}
-    isLoading={props.isLoading}
-    onRefresh={props.onRefresh}
-    isRefreshing={props.isRefreshing}
-    error={props.error}
-  />,
-});
-
-// TODO: Improve user experience, still lagging and need to show spinner
 const TabItem = (props: ITabItemProps) => {
+  const [cursor, setCursor] = useState("");
+  const [threads, setThreads] = useState<IThread[]>([])
+  const [endOfDataReached, setEndOfDataReached] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [error, setError] = useState("")
 
-  if (props.isLoading) {
+  const fetchThreads = async (cursor) => {
+    try {
+      const response = await fetchThreadList({
+        cursor: cursor,
+        limit: 5,
+        isTrending: props.tabIndex === 0,
+        isUserFollowing: true,
+        includeUserActivity: true,
+        _q: props.query
+      });
+
+      const respData = response?.data.data
+
+      if (respData) {
+
+        setThreads((prevItems) => [...prevItems, ...respData.threads]);
+
+        let nextCursor = respData.meta.next_cursor
+
+        if (!nextCursor) {
+          setEndOfDataReached(true)
+        }
+
+        if (nextCursor !== "") {
+          setCursor(nextCursor);
+        }
+      }
+
+    } catch (error) {
+      setError(error)
+    }
+  };
+
+  const loadInitialData = async () => {
+    setIsLoading(true)
+    await fetchThreads("")
+    setIsLoading(false)
+  }
+
+  useEffect(() => {
+    loadInitialData()
+  }, [props.query])
+
+  const onRefresh = async () => {
+    if (isLoading || isLoadingMore) {
+      return;
+    }
+
+    setEndOfDataReached(false)
+    setThreads([]);
+    fetchThreads("");
+  };
+
+  const handleLoadMore = async (cursor) => {
+    if (isLoading || isLoadingMore || endOfDataReached) {
+      return
+    }
+
+    setIsLoadingMore(true)
+    await fetchThreads(cursor)
+    setIsLoadingMore(false)
+  };
+
+  if (isLoading) {
     return <Loading />;
   }
 
-  if (props.error) {
+  if (error) {
     return <Error />;
   }
 
-  if (!props.data || (props.data && props.data.length === 0)) {
+  if (!threads || threads.length === 0) {
     return <NotFound description='Threads Not Found' />
   }
 
@@ -70,11 +106,10 @@ const TabItem = (props: ITabItemProps) => {
     <View flex={1}>
       <ThreadList
         title={props.title}
-        data={props.data}
-        handleLoadMore={props.handleLoadMore}
-        isLoading={props.isLoading}
-        onRefresh={props.onRefresh}
-        isRefreshing={props.isRefreshing}
+        data={threads}
+        handleLoadMore={() => handleLoadMore(cursor)}
+        isLoadingMore={isLoadingMore}
+        onRefresh={onRefresh}
       />
     </View>
   );
@@ -85,43 +120,28 @@ export default function HomeScreen() {
   const [index, setIndex] = useState(0);
   const [searchInput, setSearchInput] = useState("")
   const [query, setQuery] = useState("")
-  const [cursor, setCursor] = useState("");
-
-  const { data, error, isLoading, refetch } = useFetchThreadListQuery({
-    cursor: cursor,
-    limit: 10,
-    isTrending: index === 0,
-    isUserFollowing: true,
-    includeUserActivity: true,
-    _q: query
-  });
 
   const router = useRouter();
 
-  const onRefresh = () => {
-    refetch()
-  };
+  const renderTabBar = (props) => (
+    <TopTabBar {...props} />
+  );
 
-  const handleLoadMore = () => {
-    if (data?.data) {
-      let nextCursor = data.data.meta.next_cursor;
-
-      if (nextCursor !== "") {
-        setCursor(nextCursor);
-      }
-    }
-  };
-
-  const handleSubmitSearch = () => {
+  const handleSubmitSearch = useCallback(() => {
     setQuery(searchInput)
-  }
+  }, [searchInput])
 
   const onChangeText = (data) => {
     setSearchInput(data)
   }
 
-  const renderTabBar = (props) => (
-    <TopTabBar {...props} />
+  const renderScene = useMemo(
+    () =>
+      SceneMap({
+        first: () => <TabItem title="Trending" tabIndex={index} query={query} />,
+        second: () => <TabItem title="Latest" tabIndex={index} query={query} />,
+      }),
+    [index, query]
   );
 
   return (
@@ -138,13 +158,7 @@ export default function HomeScreen() {
         lazy
         renderTabBar={renderTabBar}
         navigationState={{ index, routes }}
-        renderScene={renderScene({
-          data: data?.data?.threads,
-          handleLoadMore,
-          isLoading,
-          onRefresh,
-          error
-        })}
+        renderScene={renderScene}
         onIndexChange={setIndex}
         initialLayout={{ width: layout.width }}
       />

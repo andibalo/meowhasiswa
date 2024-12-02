@@ -11,17 +11,27 @@ interface UserThreadTabProps {
 export const UserThreadTab: React.FC<UserThreadTabProps> = ({ user_id }) => {
   const [cursor, setCursor] = useState("");
 
-  const { data, error, isLoading } = useFetchThreadListQuery({
+  const { data, error, isLoading, isFetching } = useFetchThreadListQuery({
     cursor,
     limit: 10,
     user_id,
+  }, {
+    refetchOnMountOrArgChange: true
   });
 
   const onRefresh = () => {
+    if (isLoading || isFetching) {
+      return
+    }
+
     setCursor("");
   };
 
   const handleLoadMore = () => {
+    if (isLoading || isFetching) {
+      return
+    }
+
     if (data?.data) {
       const nextCursor = data.data.meta.next_cursor;
       if (nextCursor) {
@@ -45,7 +55,7 @@ export const UserThreadTab: React.FC<UserThreadTabProps> = ({ user_id }) => {
       {Array.isArray(threads) && threads.length > 0 ? (
         <ThreadList
           title="User's Posts"
-          isLoading={isLoading}
+          isLoadingMore={isLoading}
           handleLoadMore={handleLoadMore}
           data={threads}
           onRefresh={onRefresh}

@@ -15,3 +15,13 @@ export interface ICreateSubThreadRequest {
     is_university_subthread?: boolean;
     university_id?: string
 }
+
+export interface IFollowSubThreadRequest {
+    subthread_id: string;
+    user_id: string;
+}
+
+export interface IUnfollowSubThreadRequest {
+    subthread_id: string;
+    user_id: string;
+}

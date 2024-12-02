@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQuery } from "./baseQuery";
 import { IFetchUniversityReviewListQueryParams, ICreateUniversityReviewRequest } from "types/request/university";
-import { FetchUniversityReviewListAPIResponse } from "types/response/university";
+import { FetchUniversityReviewByIDAPIResponse, FetchUniversityReviewListAPIResponse } from "types/response/university";
 import { APIResponse } from "types/response";
 
 export const universityApi = createApi({
@@ -62,13 +62,23 @@ export const universityApi = createApi({
           currentCache.data.meta = newItems.data.meta;
         }
       },
-
-      // Refetch when the page arg changes
-      forceRefetch({ currentArg, previousArg }) {
-        return currentArg !== previousArg;
+    }),
+    fetchUniversityReviewById: builder.query<FetchUniversityReviewByIDAPIResponse, string>({
+      providesTags: (result, error, uniReviewId) => {
+        return [{ type: "University", id: uniReviewId }];
+      },
+      query: (uniReviewId) => {
+        return {
+          url: `/v1/university/rating/${uniReviewId}`,
+          method: "GET"
+        };
       },
     }),
   }),
 });
 
-export const { useFetchUniversityReviewListQuery, useCreateUniversityReviewMutation } = universityApi;
+export const {
+  useFetchUniversityReviewListQuery,
+  useCreateUniversityReviewMutation,
+  useFetchUniversityReviewByIdQuery,
+} = universityApi;

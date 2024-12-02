@@ -7,7 +7,7 @@ interface ISubThreadListProps {
     title: string
     data: ISubThread[] | undefined
     handleLoadMore: () => void
-    isLoading: boolean
+    isLoadingMore: boolean
     onRefresh: () => void
     isRefreshing?: boolean
 }
@@ -35,7 +35,7 @@ export const SubThreadList = (props: ISubThreadListProps) => {
             scrollEventThrottle={16}
             showsVerticalScrollIndicator={false}
             onEndReached={props.handleLoadMore}
-            ListFooterComponent={renderFooterLoading(props.isLoading)}
+            ListFooterComponent={renderFooterLoading(props.isLoadingMore)}
             refreshControl={
                 <RefreshControl
                     refreshing={!!props.isRefreshing}

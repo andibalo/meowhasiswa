@@ -5,7 +5,7 @@ import { useWindowDimensions } from 'react-native';
 import { Error, Loading, NotFound, TopTabBar } from 'components/common';
 import { useFetchUserProfileQuery } from 'redux/api';
 import dayjs from 'dayjs';
-import { SettingsTab, UserThreadTab } from 'components/profile';
+import { ProfileTab, SettingsTab, UserThreadTab } from 'components/profile';
 
 const routes = [
   { key: 'first', title: 'Profile' },
@@ -15,7 +15,7 @@ const routes = [
 
 const renderScene = (user_id: string) =>
   SceneMap({
-    first: () => <Text>Profile Content</Text>,
+    first: () => <ProfileTab/>,
     second: () => <UserThreadTab user_id={user_id} />,
     third: () => <SettingsTab />,
   });
