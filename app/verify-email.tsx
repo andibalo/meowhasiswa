@@ -1,12 +1,10 @@
-import { Button, Input, Stack, Text, YStack, XStack, Image } from "tamagui";
+import { Stack, Text, YStack, XStack, Image } from "tamagui";
 import { useRouter } from "expo-router";
 import { OtpInput } from "react-native-otp-entry";
 import { useState, useCallback } from "react";
 import { useVerifyEmailMutation } from "redux/api";
-import { IVerifyEmailRequest } from "types/request/auth";
-import { useFetchUserProfileQuery } from "redux/api";
 import { useToast } from "hooks";
-import { NotFound } from "components/common";
+import { useLocalSearchParams } from 'expo-router';
 import Animated, {
   Easing,
   runOnJS,
@@ -17,19 +15,13 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-
-interface VerifyEmailProps {
-  verifyemail: IVerifyEmailRequest;
-  is_email_verified?: boolean;
-}
-
-export default function VerifyEmailScreen (props: VerifyEmailProps){
+export default function VerifyEmailScreen (){
   const router = useRouter();
-  const [isInputWrong, setIsInputWrong] = useState(false);
   const [verifyEmail] = useVerifyEmailMutation();
-  const verifyemail = props.verifyemail;
   const shakeTranslateX = useSharedValue(0);
- 
+  const [isInputWrong, setIsInputWrong] = useState(false);
+  const { email } = useLocalSearchParams<{ email: string }>();
+
   const toast = useToast();
 
   const setIsInputWrongToFalse = () => setIsInputWrong(false);
@@ -44,9 +36,9 @@ export default function VerifyEmailScreen (props: VerifyEmailProps){
     shakeTranslateX.value = withSequence(
       withTiming(translationVal, timingConfig),
       withTiming(-translationVal, timingConfig),
-      withSpring(0, { mass: 0.5 }, () => {
+      withSpring(0, { mass: 0.5 } , () => {
         runOnJS(setIsInputWrongToFalse)();
-      })
+      }),
     );
   }, []);
 
@@ -55,21 +47,13 @@ export default function VerifyEmailScreen (props: VerifyEmailProps){
   }));
 
   const handleOtpFilled = async (otpText: string) => {
-    try {
-      if (otpText === verifyemail.code) {
-        setIsInputWrong(true);
-        shake();
-        return;
-      }
-  
+    try { 
       await verifyEmail({
-        email: verifyemail.email,
+        email: email,
         code: otpText, 
       }).unwrap();
-
       router.push("/login");
     } catch (error) {
-      setIsInputWrong(true);
       shake();
       toast.showToastError("Invalid code. Please try again.");
     }
