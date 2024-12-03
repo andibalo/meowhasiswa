@@ -4,6 +4,9 @@ import { OtpInput } from "react-native-otp-entry";
 import { useState, useCallback } from "react";
 import { useVerifyEmailMutation } from "redux/api";
 import { IVerifyEmailRequest } from "types/request/auth";
+import { useFetchUserProfileQuery } from "redux/api";
+import { useToast } from "hooks";
+import { NotFound } from "components/common";
 import Animated, {
   Easing,
   runOnJS,
@@ -14,11 +17,20 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-export default function VerifyEmailScreen() {
+
+interface VerifyEmailProps {
+  verifyemail: IVerifyEmailRequest;
+  is_email_verified?: boolean;
+}
+
+export default function VerifyEmailScreen (props: VerifyEmailProps){
   const router = useRouter();
   const [isInputWrong, setIsInputWrong] = useState(false);
   const [verifyEmail] = useVerifyEmailMutation();
+  const verifyemail = props.verifyemail;
   const shakeTranslateX = useSharedValue(0);
+ 
+  const toast = useToast();
 
   const setIsInputWrongToFalse = () => setIsInputWrong(false);
 
@@ -43,12 +55,18 @@ export default function VerifyEmailScreen() {
   }));
 
   const handleOtpFilled = async (otpText: string) => {
-    
-    if (otpText === String(verifyEmail)) {
-      setIsInputWrong(true)
-      shake()
-      return
-  }
+    try {
+      await verifyEmail({
+        email: verifyemail.email,
+        code: otpText, 
+      }).unwrap();
+
+      router.push("/login");
+    } catch (error) {
+      setIsInputWrong(true);
+      shake();
+      toast.showToastError("Invalid code. Please try again.");
+    }
   };
 
   return (
@@ -102,4 +120,4 @@ export default function VerifyEmailScreen() {
       </XStack>
     </YStack>
   );
-}
+};
