@@ -17,5 +17,5 @@ export interface IRegisterUserRequest {
 
 export interface IVerifyEmailRequest {
     email: string;
-    code: number;
+    code: string;
 }

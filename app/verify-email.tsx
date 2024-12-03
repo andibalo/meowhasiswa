@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import { OtpInput } from "react-native-otp-entry";
 import { useState, useCallback } from "react";
 import { useVerifyEmailMutation } from "redux/api";
+import { IVerifyEmailRequest } from "types/request/auth";
 import Animated, {
   Easing,
   runOnJS,
@@ -42,12 +43,12 @@ export default function VerifyEmailScreen() {
   }));
 
   const handleOtpFilled = async (otpText: string) => {
+    
     if (otpText === String(verifyEmail)) {
-        setIsInputWrong(true)
-        shake()
-        return
-    }
-    router.push("/login")
+      setIsInputWrong(true)
+      shake()
+      return
+  }
   };
 
   return (
