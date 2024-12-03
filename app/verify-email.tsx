@@ -56,6 +56,12 @@ export default function VerifyEmailScreen (props: VerifyEmailProps){
 
   const handleOtpFilled = async (otpText: string) => {
     try {
+      if (otpText === verifyemail.code) {
+        setIsInputWrong(true);
+        shake();
+        return;
+      }
+  
       await verifyEmail({
         email: verifyemail.email,
         code: otpText, 
