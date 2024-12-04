@@ -36,10 +36,13 @@ export default function VerifyEmailScreen (){
     shakeTranslateX.value = withSequence(
       withTiming(translationVal, timingConfig),
       withTiming(-translationVal, timingConfig),
-      withSpring(0, { mass: 0.5 } , () => {
-        runOnJS(setIsInputWrongToFalse)();
-      }),
-    );
+      withSpring(0, { mass: 0.5 } , (finished) => {
+        if (finished) {
+            // @ts-ignore
+            runOnJS(setIsInputWrongToFalse)(null);
+        }
+    })
+  );
   }, []);
 
   const rShakeStyle = useAnimatedStyle(() => ({
@@ -48,12 +51,15 @@ export default function VerifyEmailScreen (){
 
   const handleOtpFilled = async (otpText: string) => {
     try { 
+
       await verifyEmail({
         email: email,
         code: otpText, 
       }).unwrap();
+
       router.push("/login");
     } catch (error) {
+      setIsInputWrong(true)
       shake();
       toast.showToastError("Invalid code. Please try again.");
     }
@@ -83,13 +89,13 @@ export default function VerifyEmailScreen (){
             onFilled={handleOtpFilled}
             theme={{
               pinCodeTextStyle: {
-                color: "$primary",
+                color: "black",
               },
               pinCodeContainerStyle: {
-                borderColor: isInputWrong ? "$red" : "$green",
+                borderColor: isInputWrong ? "red" : "#DFDFDE"
               },
               focusedPinCodeContainerStyle: {
-                borderColor: isInputWrong ? "$red" : "$green",
+                borderColor: isInputWrong ? "red" : "#A4D0A4"
               },
             }}
           />
