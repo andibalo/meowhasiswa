@@ -110,6 +110,12 @@ function RootLayoutNav() {
               headerShown: false,
             }}
           />
+          <Stack.Screen
+            name="verify-email"
+            options={{
+              headerShown: false,
+            }}
+          />
         </Stack>
       </ThemeProvider>
     </Provider>

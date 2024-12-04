@@ -1,35 +1,30 @@
 import { Button, Input, Stack, Text, YStack, XStack, Image } from "tamagui";
 import { FontAwesome } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import * as yup from 'yup';
-import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from "yup";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useAppDispatch } from "redux/store";
 import { register } from "redux/slice/auth";
+import { useRouter } from "expo-router";
 
 type RegisterFormData = {
-  username: string
-  email: string
-  password: string
-}
+  username: string;
+  email: string;
+  password: string;
+};
 
 const registerSchema = yup.object().shape({
-  username: yup.
-    string().
-    required('Username is required'),
-  email: yup.
-    string().
-    required('Email is required').
-    email("Invalid email format"),
-  password: yup.
-    string().
-    required('Password is required'),
+  username: yup.string().required("Username is required"),
+  email: yup
+    .string()
+    .required("Email is required")
+    .email("Invalid email format"),
+  password: yup.string().required("Password is required"),
 });
 
 export default function Register() {
-
-  const navigation = useNavigation();
-  const dispatch = useAppDispatch()
+  const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const {
     control,
@@ -38,26 +33,28 @@ export default function Register() {
   } = useForm<RegisterFormData>({
     resolver: yupResolver(registerSchema),
     defaultValues: {
-      username: '',
-      email: '',
-      password: ''
+      username: "",
+      email: "",
+      password: "",
     },
   });
 
   const handleRegister = async (formData: RegisterFormData) => {
-
-    //TODO: add error handling and success/fail toast
     try {
-      await dispatch(register({
+       await dispatch(register({
         username: formData.username,
         email: formData.email,
-        password: formData.password
-      })).unwrap()
+        password: formData.password,
+       })
+      ).unwrap();
 
       // @ts-ignore
-      navigation.navigate("login")
+      router.push({
+        pathname: "/verify-email",
+        params: { email: formData.email },
+      });
     } catch (error) {
-      console.log(error, "REGISTER FORM")
+      console.log(error, "REGISTER FORM");
     }
   };
 
@@ -96,7 +93,11 @@ export default function Register() {
           )}
           name="username"
         />
-        {errors.username && <Text color="$red10" fontSize={12}>{errors.username.message}</Text>}
+        {errors.username && (
+          <Text color="$red10" fontSize={12}>
+            {errors.username.message}
+          </Text>
+        )}
         <Text fontSize="$3" color="$color" mt="$3">
           Email
         </Text>
@@ -118,7 +119,11 @@ export default function Register() {
           )}
           name="email"
         />
-        {errors.email && <Text color="$red10" fontSize={12}>{errors.email.message}</Text>}
+        {errors.email && (
+          <Text color="$red10" fontSize={12}>
+            {errors.email.message}
+          </Text>
+        )}
         <Text fontSize="$3" color="$color" mt="$3">
           Password
         </Text>
@@ -142,7 +147,11 @@ export default function Register() {
           )}
           name="password"
         />
-        {errors.password && <Text color="$red10" fontSize={12}>{errors.password.message}</Text>}
+        {errors.password && (
+          <Text color="$red10" fontSize={12}>
+            {errors.password.message}
+          </Text>
+        )}
       </Stack>
       <XStack mt="$3" ai="center">
         <Text fontSize="$3" color="$color">
@@ -152,7 +161,7 @@ export default function Register() {
           fontWeight="bold"
           onPress={() => {
             //@ts-ignore
-            navigation.navigate("login")
+            router.push("/login");
           }}
           style={{ textDecorationLine: "underline" }}
           ml="$2"
