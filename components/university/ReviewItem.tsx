@@ -1,35 +1,50 @@
-import { View, Text, Avatar, YStack } from 'tamagui';
+import { View, Text, Avatar, YStack, XStack } from 'tamagui';
 import { IUniversityReview } from '../../types/model';
 import { StarRating } from 'components/common';
 import { formateDateWithDaysAgoThreshold } from 'utils';
+import { Ellipsis } from '@tamagui/lucide-icons';
+import { Pressable } from 'react-native';
 
 interface IUniversityReviewItemProps {
     review: IUniversityReview;
+    showMoreOptionsBtn?: boolean
 }
 
-export const ReviewItem = (props: IUniversityReviewItemProps) => {
-    const review = props.review
+export const ReviewItem = ({
+    review,
+    showMoreOptionsBtn = false
+}: IUniversityReviewItemProps) => {
 
     return (
         <View p={'$4'} bg={'$white1'} borderRadius={'$radius.4'}>
-            <View flexDirection="row" alignItems="center" marginBottom={'$2'}>
-                <Avatar size="$4" mr={'$2'} borderRadius={'$2'} borderWidth="$1" borderColor="$primary">
-                    <Avatar.Image
-                        accessibilityLabel="University Logo"
-                        src={review.university_image_url}
-                        objectFit="contain"
-                    />
-                    <Avatar.Fallback backgroundColor="$blue10" />
-                </Avatar>
-                <View>
-                    <Text fontSize={'$5'} fontWeight={'bold'} color="$primary">
-                        {review.university_abbreviated_name}
-                    </Text>
-                    <Text fontSize="$2" color="$primary">
-                        {formateDateWithDaysAgoThreshold(review.created_at, 3)}
-                    </Text>
+            <XStack alignItems="center" justifyContent="space-between">
+                <View flexDirection="row" alignItems="center" marginBottom={'$2'}>
+                    <Avatar size="$4" mr={'$2'} borderRadius={'$2'} borderWidth="$1" borderColor="$primary">
+                        <Avatar.Image
+                            accessibilityLabel="University Logo"
+                            src={review.university_image_url}
+                            objectFit="contain"
+                        />
+                        <Avatar.Fallback backgroundColor="$blue10" />
+                    </Avatar>
+                    <View>
+                        <Text fontSize={'$5'} fontWeight={'bold'} color="$primary">
+                            {review.university_abbreviated_name}
+                        </Text>
+                        <Text fontSize="$2" color="$primary">
+                            {formateDateWithDaysAgoThreshold(review.created_at, 3)}
+                        </Text>
+                    </View>
                 </View>
-            </View>
+                {
+                    showMoreOptionsBtn &&
+                    <Pressable onPress={() => console.log("MORE OPTIONS")} >
+                        <View p="$2">
+                            <Ellipsis size="$1" />
+                        </View>
+                    </Pressable>
+                }
+            </XStack>
             <Text fontSize="$3" color="$secondary" marginBottom={'$2'}>
                 {review.university_major}
             </Text>

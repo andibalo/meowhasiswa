@@ -59,6 +59,12 @@ export default function ProtectedLayout() {
                 }}
             />
             <Stack.Screen
+                name="university/[id]"
+                options={{
+                    headerTitle: "University Review",
+                }}
+            />
+            <Stack.Screen
                 name="university/rate-university"
                 options={{
                     headerTitle: "Rate University",

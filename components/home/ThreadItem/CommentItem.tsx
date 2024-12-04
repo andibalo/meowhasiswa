@@ -4,15 +4,23 @@ import { IComment, ICommentReply } from 'types/model/thread'
 import { Pressable } from 'react-native'
 import { formateDateWithDaysAgoThreshold } from 'utils'
 import { Ionicons } from '@expo/vector-icons'
+import Markdown from 'react-native-markdown-display';
 
 interface CommentItemProps {
     comment: IComment | ICommentReply;
     isReply?: boolean;
     onLikePress: () => void
     onDislikePress: () => void
+    onReplyPress?: () => void
 }
 
-export const CommentItem = ({ comment, isReply = false, onDislikePress, onLikePress }: CommentItemProps) => {
+export const CommentItem = ({
+    comment,
+    isReply = false,
+    onDislikePress,
+    onLikePress,
+    onReplyPress
+}: CommentItemProps) => {
 
     return (
         <View mb={'$3'} bg={'$white1'} borderRadius={'$radius.4'}>
@@ -44,9 +52,9 @@ export const CommentItem = ({ comment, isReply = false, onDislikePress, onLikePr
                         </View>
                     </XStack>
                     <View>
-                        <Text color="$primary">
+                        <Markdown>
                             {comment.content}
-                        </Text>
+                        </Markdown>
                     </View>
                 </View>
                 <XStack gap={'$5'}>
@@ -69,7 +77,7 @@ export const CommentItem = ({ comment, isReply = false, onDislikePress, onLikePr
                         <Text ml={'$2'}>{comment.dislike_count}</Text>
                     </XStack>
                     {
-                        !isReply && <Pressable onPress={() => console.log("REPLY")} >
+                        !isReply && <Pressable onPress={onReplyPress} >
                             <XStack ai={'center'}>
                                 <Reply />
                                 <Text ml={'$2'}>Reply</Text>

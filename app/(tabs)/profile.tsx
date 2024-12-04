@@ -5,13 +5,20 @@ import { useWindowDimensions } from 'react-native';
 import { Error, Loading, NotFound, TopTabBar } from 'components/common';
 import { useFetchUserProfileQuery } from 'redux/api';
 import dayjs from 'dayjs';
-import { SettingsTab, UserThreadTab } from 'components/profile';
+import { ProfileTab, SettingsTab, UserThreadTab } from 'components/profile';
 
 const routes = [
   { key: 'profile', title: 'Profile' },
   { key: 'posts', title: 'Posts' },
   { key: 'settings', title: 'Settings' },
 ];
+
+const renderScene = (user_id: string) =>
+  SceneMap({
+    first: () => <ProfileTab/>,
+    second: () => <UserThreadTab user_id={user_id} />,
+    third: () => <SettingsTab />,
+  });
 
 export default function ProfileScreen() {
   const { width } = useWindowDimensions();

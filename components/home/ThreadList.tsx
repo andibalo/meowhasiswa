@@ -8,7 +8,7 @@ interface IThreadListProps {
     title: string;
     data: IThread[];
     handleLoadMore: () => void;
-    isLoading: boolean;
+    isLoadingMore: boolean;
     onRefresh: () => void;
     isRefreshing?: boolean;
     currentUserId?: string;
@@ -27,7 +27,7 @@ export const ThreadList = ({
     title,
     data,
     handleLoadMore,
-    isLoading,
+    isLoadingMore,
     onRefresh,
     isRefreshing,
     currentUserId,
@@ -44,7 +44,7 @@ export const ThreadList = ({
             <ThreadItem thread={item} currentUserId={currentUserId} enableEditItem={enableEditItem} />
             <View my="$2" />
         </View>
-    );
+    )
 
     return (
         <FlatList
@@ -54,7 +54,7 @@ export const ThreadList = ({
             onEndReachedThreshold={0.5}
             scrollEventThrottle={16}
             onEndReached={handleLoadMore}
-            ListFooterComponent={renderFooterLoading(isLoading)}
+            ListFooterComponent={renderFooterLoading(isLoadingMore)}
             showsVerticalScrollIndicator={false}
             refreshControl={
                 <RefreshControl refreshing={!!isRefreshing} onRefresh={onRefresh} />

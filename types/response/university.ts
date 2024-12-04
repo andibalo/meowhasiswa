@@ -7,3 +7,5 @@ interface IFetchUniversityReviewListData {
 }
 
 export type FetchUniversityReviewListAPIResponse = APIResponse<IFetchUniversityReviewListData>;
+
+export type FetchUniversityReviewByIDAPIResponse = APIResponse<IUniversityReview>;

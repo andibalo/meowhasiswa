@@ -1,14 +1,14 @@
 import { SubThreadList } from 'components/subthread'
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { View } from 'tamagui'
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { Error, Fab, Loading, NotFound, SearchBar, TopTabBar } from 'components/common';
 import { useRouter } from 'expo-router';
-import { useFetchSubThreadListQuery } from 'redux/api/subthread';
 import { ISubThread } from 'types/model';
 import { useFetchUserProfileQuery } from 'redux/api';
 import { ROLE_ADMIN } from 'constants/common';
+import { fetchSubThreadList } from 'services/subthread';
 
 const routes = [
   { key: 'first', title: 'Explore' },
@@ -17,34 +17,89 @@ const routes = [
 
 interface ITabItemProps {
   title: string
-  data: ISubThread[] | undefined
-  handleLoadMore: () => void
-  isLoading: boolean
-  onRefresh: () => void
-  isRefreshing?: boolean
-  error: any
-}
-
-interface IRenderSceneProps {
-  data: ISubThread[] | undefined
-  handleLoadMore: () => void
-  isLoading: boolean
-  onRefresh: () => void
-  isRefreshing?: boolean
-  error: any
+  tabIndex: number
+  query: string
 }
 
 const TabItem = (props: ITabItemProps) => {
+  const [cursor, setCursor] = useState("");
+  const [subThreads, setSubThreads] = useState<ISubThread[]>([])
+  const [endOfDataReached, setEndOfDataReached] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [error, setError] = useState("")
 
-  if (props.isLoading) {
+  const fetchSubThreads = async (cursor) => {
+    try {
+      const response = await fetchSubThreadList({
+        cursor: cursor,
+        limit: 5,
+        isFollowing: props.tabIndex === 1,
+        shouldExcludeFollowing: props.tabIndex === 0,
+        _q: props.query
+      });
+
+      const respData = response?.data.data
+
+      if (respData) {
+
+        setSubThreads((prevItems) => [...prevItems, ...respData.subthreads]);
+
+        let nextCursor = respData.meta.next_cursor
+
+        if (!nextCursor) {
+          setEndOfDataReached(true)
+        }
+
+        if (nextCursor !== "") {
+          setCursor(nextCursor);
+        }
+      }
+
+    } catch (error) {
+      setError(error)
+    }
+  };
+
+  const loadInitialData = async () => {
+    setIsLoading(true)
+    await fetchSubThreads("")
+    setIsLoading(false)
+  }
+
+  useEffect(() => {
+    loadInitialData()
+  }, [props.query])
+
+  const onRefresh = async () => {
+    if (isLoading || isLoadingMore) {
+      return;
+    }
+
+    setEndOfDataReached(false)
+    setSubThreads([]);
+    fetchSubThreads("");
+  };
+
+  const handleLoadMore = async (cursor) => {
+    if (isLoading || isLoadingMore || endOfDataReached) {
+      return
+    }
+
+    setIsLoadingMore(true)
+    await fetchSubThreads(cursor)
+    setIsLoadingMore(false)
+  };
+
+  if (isLoading) {
     return <Loading />
   }
 
-  if (props.error) {
+  if (error) {
     return <Error />
   }
 
-  if (!props.data || (props.data && props.data.length === 0)) {
+  if (!subThreads || subThreads.length === 0) {
     return <NotFound description='SubMeow Not Found' />
   }
 
@@ -52,69 +107,33 @@ const TabItem = (props: ITabItemProps) => {
     <View flex={1}>
       <SubThreadList
         title={props.title}
-        data={props.data}
-        handleLoadMore={props.handleLoadMore}
-        isLoading={props.isLoading}
-        onRefresh={props.onRefresh}
-        isRefreshing={props.isRefreshing}
+        data={subThreads}
+        handleLoadMore={() => handleLoadMore(cursor)}
+        isLoadingMore={isLoading}
+        onRefresh={onRefresh}
       />
     </View>
   );
 };
-
-const renderScene = (props: IRenderSceneProps) => SceneMap({
-  first: () => <TabItem
-    title='Explore'
-    data={props.data}
-    handleLoadMore={props.handleLoadMore}
-    isLoading={props.isLoading}
-    onRefresh={props.onRefresh}
-    isRefreshing={props.isRefreshing}
-    error={props.error}
-  />,
-  second: () => <TabItem
-    title='Following'
-    data={props.data}
-    handleLoadMore={props.handleLoadMore}
-    isLoading={props.isLoading}
-    onRefresh={props.onRefresh}
-    isRefreshing={props.isRefreshing}
-    error={props.error}
-  />,
-});
 
 export default function SubThreadScreen() {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
   const router = useRouter();
 
-  const [cursor, setCursor] = useState("");
   const [searchInput, setSearchInput] = useState("")
   const [query, setQuery] = useState("")
 
-  const { data, error, isLoading, refetch } = useFetchSubThreadListQuery({
-    cursor: cursor,
-    limit: 10,
-    isFollowing: index === 1,
-    shouldExcludeFollowing: index === 0,
-    _q: query
-  });
-
   const { data: userData, error: fetchUserProfileError } = useFetchUserProfileQuery()
 
-  const onRefresh = () => {
-    refetch()
-  };
-
-  const handleLoadMore = () => {
-    if (data?.data) {
-      let nextCursor = data.data.meta.next_cursor;
-
-      if (nextCursor !== "") {
-        setCursor(nextCursor);
-      }
-    }
-  };
+  const renderScene = useMemo(
+    () =>
+      SceneMap({
+        first: () => <TabItem title='Explore' tabIndex={index} query={query} />,
+        second: () => <TabItem title="Following" tabIndex={index} query={query} />,
+      }),
+    [index, query]
+  );
 
   const handleSubmitSearch = () => {
     setQuery(searchInput)
@@ -146,13 +165,7 @@ export default function SubThreadScreen() {
         lazy
         renderTabBar={renderTabBar}
         navigationState={{ index, routes }}
-        renderScene={renderScene({
-          data: data?.data?.subthreads,
-          handleLoadMore,
-          isLoading,
-          onRefresh,
-          error
-        })}
+        renderScene={renderScene}
         onIndexChange={setIndex}
         initialLayout={{ width: layout.width }}
       />

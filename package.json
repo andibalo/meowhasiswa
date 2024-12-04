@@ -54,6 +54,7 @@
     "react-native-gesture-handler": "^2.21.0",
     "react-native-get-random-values": "^1.11.0",
     "react-native-gifted-chat": "^2.6.4",
+    "react-native-markdown-display": "^7.0.2",
     "react-native-modal-dropdown": "^1.0.2",
     "react-native-otp-entry": "^1.7.3",
     "react-native-pager-view": "6.3.0",
