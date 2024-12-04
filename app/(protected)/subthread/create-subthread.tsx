@@ -111,7 +111,7 @@ export default function CreateSubthreadScreen() {
                     }
                 }
 
-                const uploadResp = await uploadImage({
+                /*const uploadResp = await uploadImage({
                     uri: result.assets[0].uri,
                     fileName: result.assets[0].fileName,
                     type: result.assets[0].mimeType,
@@ -122,7 +122,7 @@ export default function CreateSubthreadScreen() {
                     return
                 }
 
-                setValue("imageUrl", uploadResp.data.data.URL)
+                setValue("imageUrl", uploadResp.data.data.URL)*/
 
                 setImage(result.assets[0].uri);
             }

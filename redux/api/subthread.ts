@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from './baseQuery';
 import { FetchSubThreadByIdAPIResponse, FetchSubThreadListAPIResponse } from 'types/response/subthread';
-import { ICreateSubThreadRequest, IFetchSubThreadListQueryParams, IFollowSubThreadRequest, IUnfollowSubThreadRequest } from 'types/request/subthread';
+import { ICreateSubThreadRequest, IFetchSubThreadListQueryParams, IFollowSubThreadRequest, IUnfollowSubThreadRequest, IUpdateSubThreadRequest } from 'types/request/subthread';
 import { APIResponse } from 'types/response';
 
 export const subThreadsApi = createApi({
@@ -87,7 +87,24 @@ export const subThreadsApi = createApi({
                 }
             },
         }),
+        updateSubThread: builder.mutation<APIResponse<any>, { subThreadId: string, updatedData: IUpdateSubThreadRequest }>({
+            invalidatesTags: ['SubThread'],
+            query: ({ subThreadId, updatedData }) => {
+                return {
+                    url: `/v1/subthread/${subThreadId}`,
+                    method: "PATCH",
+                    body: updatedData
+                };
+            }
+        }),
+        deleteSubThread: builder.mutation<APIResponse<any>, string>({
+            invalidatesTags: ['SubThread'],
+            query: (subThreadId) => ({
+                url: `/v1/subthread/${subThreadId}`,
+                method: "DELETE",
+            }),
+        }),
     }),
 });
 
-export const { useFetchSubThreadListQuery, useFetchSubThreadByIdQuery, useCreateSubThreadMutation, useFollowSubThreadMutation, useUnFollowSubThreadMutation } = subThreadsApi;
+export const { useFetchSubThreadListQuery, useFetchSubThreadByIdQuery, useCreateSubThreadMutation, useFollowSubThreadMutation, useUnFollowSubThreadMutation, useUpdateSubThreadMutation,useDeleteSubThreadMutation } = subThreadsApi;
