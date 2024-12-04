@@ -2,6 +2,7 @@ import { ThreadItem } from './ThreadItem';
 import { FlatList, RefreshControl } from 'react-native';
 import { IThread } from '../../types/model';
 import { Spinner, View } from 'tamagui';
+import React, { useMemo } from 'react';
 
 interface IThreadListProps {
     title: string;
@@ -12,14 +13,13 @@ interface IThreadListProps {
     isRefreshing?: boolean;
     currentUserId?: string;
     currentUserId2?: string;
-    enableEditItem?: boolean
+    enableEditItem?: boolean;
 }
 
 const renderFooterLoading = (loadingMore: boolean) => {
     if (!loadingMore) {
         return null;
     }
-
     return <Spinner size="large" color="$primary" mb="$3" />;
 };
 
@@ -32,31 +32,34 @@ export const ThreadList = ({
     isRefreshing,
     currentUserId,
     currentUserId2,
-    enableEditItem
+    enableEditItem,
 }: IThreadListProps) => {
+    // Deduplicate the data array based on thread ID
+    const uniqueData = useMemo(() => {
+        return Array.from(new Map(data.map(item => [item.id, item])).values());
+    }, [data]);
+
     const renderPost = ({ item }: { item: IThread }) => (
         <View>
-            <ThreadItem thread={item} currentUserId={currentUserId} enableEditItem={enableEditItem}/>
+            <ThreadItem thread={item} currentUserId={currentUserId} enableEditItem={enableEditItem} />
             <View my="$2" />
         </View>
     );
 
     return (
         <FlatList
-            data={data}
+            data={uniqueData} // Use deduplicated data
             renderItem={renderPost}
-            keyExtractor={(item) => `thread-${title}-${item.id}`}
+            keyExtractor={(item) => `thread-${title}-${item.id}-${item.created_at}`} // Ensure unique keys
             onEndReachedThreshold={0.5}
             scrollEventThrottle={16}
             onEndReached={handleLoadMore}
             ListFooterComponent={renderFooterLoading(isLoading)}
             showsVerticalScrollIndicator={false}
             refreshControl={
-                <RefreshControl
-                    refreshing={!!isRefreshing}
-                    onRefresh={onRefresh}
-                />
+                <RefreshControl refreshing={!!isRefreshing} onRefresh={onRefresh} />
             }
+            extraData={currentUserId} // Track current user to trigger re-renders
         />
     );
 };

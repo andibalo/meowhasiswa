@@ -16,6 +16,7 @@ interface ITabItemProps {
   onRefresh: () => void
   isRefreshing?: boolean
   error: any
+  currentUserId2?: string;
 }
 
 interface IRenderSceneProps {
@@ -25,6 +26,7 @@ interface IRenderSceneProps {
   onRefresh: () => void
   isRefreshing?: boolean
   error: any
+  currentUserId2?: string;
 }
 
 const routes = [
@@ -40,6 +42,7 @@ const renderScene = (props: IRenderSceneProps) => SceneMap({
     onRefresh={props.onRefresh}
     isRefreshing={props.isRefreshing}
     error={props.error}
+    currentUserId2={props.currentUserId2}
   />,
   second: () => <TabItem title='Newest'
     data={props.data}
@@ -48,13 +51,12 @@ const renderScene = (props: IRenderSceneProps) => SceneMap({
     onRefresh={props.onRefresh}
     isRefreshing={props.isRefreshing}
     error={props.error}
+    currentUserId2={props.currentUserId2}
   />,
 });
 
 // TODO: Improve user experience, still lagging and need to show spinner
 const TabItem = (props: ITabItemProps) => {
-  const { data: profData, error, isLoading } = useFetchUserProfileQuery();
-
   if (props.isLoading) {
     return <Loading />;
   }
@@ -76,7 +78,6 @@ const TabItem = (props: ITabItemProps) => {
         isLoading={props.isLoading}
         onRefresh={props.onRefresh}
         isRefreshing={props.isRefreshing}
-        currentUserId2={profData?.data?.id}
       />
     </View>
   );
@@ -88,6 +89,8 @@ export default function HomeScreen() {
   const [searchInput, setSearchInput] = useState("")
   const [query, setQuery] = useState("")
   const [cursor, setCursor] = useState("");
+
+  const { data: profData, error: profError, isLoading: profLoading } = useFetchUserProfileQuery();
 
   const { data, error, isLoading, refetch } = useFetchThreadListQuery({
     cursor: cursor,
@@ -125,6 +128,7 @@ export default function HomeScreen() {
   const renderTabBar = (props) => (
     <TopTabBar {...props} />
   );
+  const currentUserId2 = profData?.data?.id;
 
   return (
     <View flex={1} p="$3" pb="0" bg="$backgroundSoft">
@@ -145,7 +149,8 @@ export default function HomeScreen() {
           handleLoadMore,
           isLoading,
           onRefresh,
-          error
+          error,
+          currentUserId2
         })}
         onIndexChange={setIndex}
         initialLayout={{ width: layout.width }}

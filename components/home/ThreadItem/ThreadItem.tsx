@@ -17,7 +17,7 @@ interface ThreadItemProps {
     currentUserId?: string;
     inDetailScreen?: boolean;
     enableEditItem?: boolean;
-    currentUserId2?: string;  // current user ID for chat
+    currentUserId2?: string;
 }
 
 export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditItem, currentUserId2 }: ThreadItemProps) => {
@@ -94,12 +94,6 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
         }
     };
 
-    const handleLongPress = () => {
-        if (currentUserId2 && thread.user_id !== currentUserId2) {
-            setSheetVisible(true);
-        }
-    };
-
     const handleChat = async () => {
         // Check if a chat already exists between currentUserId2 and thread.user_id
         const chatId = `${currentUserId2}_${thread.user_id}`;
@@ -142,7 +136,6 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                         router.push(`/thread/${thread.id}`);
                     }
                 }}
-                onLongPress={handleLongPress}
             >
                 <View p={'$2'} bg={'$white1'} borderRadius={'$radius.4'}>
                     <YStack flex={1} justifyContent="space-between">
@@ -150,14 +143,25 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                             <XStack p={'$3'} jc={'space-between'} alignItems="center">
                                 <XStack alignItems="center">
                                     <View mr={'$2'}>
-                                        <Avatar borderRadius={'$2'} borderWidth="$1" borderColor="$primary" size="$4">
-                                            <Avatar.Image
-                                                accessibilityLabel="University"
-                                                src={thread.university_image_url}
-                                                objectFit="contain"
-                                            />
-                                            <Avatar.Fallback backgroundColor="$secondary" />
-                                        </Avatar>
+                                        <Pressable onPress={() => {
+                                            if (currentUserId2 && thread.user_id !== currentUserId2) {
+                                                setSheetVisible(true);
+                                            }
+                                            else {
+                                                console.log("Cannot open bottom sheet: User is the same.");
+                                                console.log("Current User ID:", currentUserId2);
+                                                console.log("Thread User ID:", thread.user_id);
+                                            }
+                                        }}>
+                                            <Avatar borderRadius={'$2'} borderWidth="$1" borderColor="$primary" size="$4">
+                                                <Avatar.Image
+                                                    accessibilityLabel="University"
+                                                    src={thread.university_image_url}
+                                                    objectFit="contain"
+                                                />
+                                                <Avatar.Fallback backgroundColor="$secondary" />
+                                            </Avatar>
+                                        </Pressable>
                                     </View>
                                     <YStack gap="$1">
                                         <XStack gap="$2">
