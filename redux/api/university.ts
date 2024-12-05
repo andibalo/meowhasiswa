@@ -3,6 +3,7 @@ import { baseQuery } from "./baseQuery";
 import { IFetchUniversityReviewListQueryParams, ICreateUniversityReviewRequest } from "types/request/university";
 import { FetchUniversityReviewByIDAPIResponse, FetchUniversityReviewListAPIResponse } from "types/response/university";
 import { APIResponse } from "types/response";
+import { userApi } from './user'
 
 export const universityApi = createApi({
   reducerPath: "university",
@@ -27,6 +28,15 @@ export const universityApi = createApi({
             pros: body.pros,
             cons: body.cons
           }
+        }
+      },
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+
+          dispatch(userApi.util.invalidateTags(['User']));
+        } catch (error) {
+          console.error('Error updating resource:', error);
         }
       },
     }),
