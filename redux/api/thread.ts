@@ -163,6 +163,20 @@ export const threadsApi = createApi({
                 };
             }
         }),
+        deleteComment: builder.mutation<APIResponse<any>, IReplyCommentRequest>({
+            invalidatesTags: (result, error, req) => [{ type: "Comment", id: req.threadId }],
+            query: (req) => ({
+                url: `/v1/thread/comment/${req.commentId}`,
+                method: "DELETE",
+            }),
+        }),
+        deleteReplyComment: builder.mutation<APIResponse<any>, IReplyCommentRequest>({
+            invalidatesTags: (result, error, req) => [{ type: "Comment", id: req.threadId }],
+            query: (req) => ({
+                url: `/v1/thread/comment/reply/${req.commentId}`,
+                method: "DELETE",
+            }),
+        }),
     }),
 });
 
