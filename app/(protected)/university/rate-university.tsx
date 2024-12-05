@@ -255,17 +255,17 @@ export default function RateUniversityScreen() {
                       closeMajorDropdown(selectedValue)
                     }
                   >
-                    <Select.Item value="Engineering" index={1}>
-                      Engineering
+                    <Select.Item value="Informatika" index={1}>
+                      Informatika
                     </Select.Item>
-                    <Select.Item value="Business" index={2}>
-                      Business
+                    <Select.Item value="DKV" index={2}>
+                      DKV
                     </Select.Item>
-                    <Select.Item value="Arts" index={3}>
-                      Arts
+                    <Select.Item value="Ilmu Komunikasi" index={3}>
+                      Ilmu Komunikasi 
                     </Select.Item>
-                    <Select.Item value="Sciences" index={4}>
-                      Sciences
+                    <Select.Item value="Jurnalistik" index={4}>
+                      Jurnalistik
                     </Select.Item>
                   </Select>
                 )}
