@@ -2,7 +2,7 @@ import devToolsEnhancer from 'redux-devtools-expo-dev-plugin';
 import { configureStore } from '@reduxjs/toolkit'
 import { useDispatch } from 'react-redux';
 import authReducer from './slice/auth'
-import { threadsApi, userApi, universityApi, subThreadsApi } from './api';
+import { threadsApi, userApi, universityApi, subThreadsApi, authApi } from './api';
 import { setupListeners } from '@reduxjs/toolkit/query';
 
 export const store = configureStore({
@@ -12,13 +12,16 @@ export const store = configureStore({
         [userApi.reducerPath]: userApi.reducer,
         [universityApi.reducerPath]: universityApi.reducer,
         [subThreadsApi.reducerPath]: subThreadsApi.reducer,
+        [authApi.reducerPath]: authApi.reducer,
+
     },
     middleware: (getDefaultMiddleware) => {
         return getDefaultMiddleware().
             concat(threadsApi.middleware).
             concat(userApi.middleware).
             concat(universityApi.middleware).
-            concat(subThreadsApi.middleware)
+            concat(subThreadsApi.middleware).
+            concat(authApi.middleware)
     },
     devTools: false,
     // @ts-ignore
