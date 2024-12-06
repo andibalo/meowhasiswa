@@ -2471,6 +2471,40 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@gorhom/bottom-sheet@npm:5":
+  version: 5.0.6
+  resolution: "@gorhom/bottom-sheet@npm:5.0.6"
+  dependencies:
+    "@gorhom/portal": "npm:1.0.14"
+    invariant: "npm:^2.2.4"
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-native": "*"
+    react: "*"
+    react-native: "*"
+    react-native-gesture-handler: ">=2.16.1"
+    react-native-reanimated: ">=3.16.0"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-native":
+      optional: true
+  checksum: b8beb6bb4d80828deed5c74c8b19926cbb4887d530d07c19eaaa1d8faae6c79f942f83baad076c84d065f357f6666cbc257799fe8fc58cb375e6cbebf52b6227
+  languageName: node
+  linkType: hard
+
+"@gorhom/portal@npm:1.0.14":
+  version: 1.0.14
+  resolution: "@gorhom/portal@npm:1.0.14"
+  dependencies:
+    nanoid: "npm:^3.3.1"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: e0fa06be88b850cccdc6a1417a86e5ac21d82e3bfd1cec7eb05eccf7f3b595babe305541f278fdcbde34f3a9db465097dca2c785445c28bafb83b744e235da0c
+  languageName: node
+  linkType: hard
+
 "@graphql-typed-document-node/core@npm:^3.1.0":
   version: 3.2.0
   resolution: "@graphql-typed-document-node/core@npm:3.2.0"
@@ -8381,6 +8415,7 @@ __metadata:
     "@expo/metro-config": "npm:~0.18.4"
     "@expo/metro-runtime": "npm:~3.2.1"
     "@expo/vector-icons": "npm:^14.0.2"
+    "@gorhom/bottom-sheet": "npm:5"
     "@hookform/resolvers": "npm:^3.9.1"
     "@react-native-async-storage/async-storage": "npm:1.23.1"
     "@react-native-picker/picker": "npm:2.7.5"
@@ -8422,7 +8457,7 @@ __metadata:
     react-hook-form: "npm:^7.53.2"
     react-native: "npm:0.74.1"
     react-native-element-dropdown: "npm:^2.12.2"
-    react-native-gesture-handler: "npm:^2.21.0"
+    react-native-gesture-handler: "npm:~2.16.1"
     react-native-get-random-values: "npm:^1.11.0"
     react-native-gifted-chat: "npm:^2.6.4"
     react-native-markdown-display: "npm:^7.0.2"
@@ -8430,7 +8465,7 @@ __metadata:
     react-native-otp-entry: "npm:^1.7.3"
     react-native-pager-view: "npm:6.3.0"
     react-native-ratings: "npm:^8.1.0"
-    react-native-reanimated: "npm:3.10.1"
+    react-native-reanimated: "npm:~3.10.1"
     react-native-safe-area-context: "npm:^4.10.5"
     react-native-screens: "npm:~3.31.1"
     react-native-svg: "npm:15.2.0"
@@ -11680,6 +11715,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nanoid@npm:^3.3.1":
+  version: 3.3.8
+  resolution: "nanoid@npm:3.3.8"
+  bin:
+    nanoid: bin/nanoid.cjs
+  checksum: 2d1766606cf0d6f47b6f0fdab91761bb81609b2e3d367027aff45e6ee7006f660fb7e7781f4a34799fe6734f1268eeed2e37a5fdee809ade0c2d4eb11b0f9c40
+  languageName: node
+  linkType: hard
+
 "nanoid@npm:^5.0.4":
   version: 5.0.8
   resolution: "nanoid@npm:5.0.8"
@@ -12726,18 +12770,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-gesture-handler@npm:^2.21.0":
-  version: 2.21.0
-  resolution: "react-native-gesture-handler@npm:2.21.0"
+"react-native-gesture-handler@npm:~2.16.1":
+  version: 2.16.2
+  resolution: "react-native-gesture-handler@npm:2.16.2"
   dependencies:
     "@egjs/hammerjs": "npm:^2.0.17"
     hoist-non-react-statics: "npm:^3.3.0"
     invariant: "npm:^2.2.4"
+    lodash: "npm:^4.17.21"
     prop-types: "npm:^15.7.2"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 8c5aa42be32a9ee8e8267cc5b787ec90c29986d7aae9042215bd2e59ed22aee4462cb8625c7c98afc3a80e01bff696d67cd1b6c5f6b37e0d5c7f40acca531f3e
+  checksum: 227799f5e16f9725d81db524fc06c1fbef226835a5ee989642d132748832f7543ebc750d4309e49bcaa0fb6d1e7dd6b74028785e4b755978ab7f66f05b414c18
   languageName: node
   linkType: hard
 
@@ -12876,7 +12921,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-reanimated@npm:3.10.1":
+"react-native-reanimated@npm:~3.10.1":
   version: 3.10.1
   resolution: "react-native-reanimated@npm:3.10.1"
   dependencies:
