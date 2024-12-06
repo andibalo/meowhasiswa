@@ -1,4 +1,3 @@
-import { useState, useRef, useCallback } from "react";
 import { Reply } from "@tamagui/lucide-icons";
 import { Text, View, XStack, YStack, Avatar } from "tamagui";
 import { IComment, ICommentReply } from "types/model/thread";
@@ -6,13 +5,6 @@ import { Pressable } from "react-native";
 import { formateDateWithDaysAgoThreshold } from "utils";
 import { Ionicons } from "@expo/vector-icons";
 import Markdown from "react-native-markdown-display";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import {
-  BottomSheetModal,
-  BottomSheetModalProvider,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
 
 interface CommentItemProps {
   comment: IComment | ICommentReply;
@@ -29,20 +21,8 @@ export const CommentItem = ({
   onLikePress,
   onReplyPress,
 }: CommentItemProps) => {
-  // BottomSheetModal state management
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-
-  const handlePresentModalPress = useCallback(() => {
-    bottomSheetModalRef.current?.present();
-  }, []);
-
-  const handleDismissModal = useCallback(() => {
-    bottomSheetModalRef.current?.dismiss();
-  }, []);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <BottomSheetModalProvider>
         <View mb={"$3"} bg={"$white1"} borderRadius={"$radius.4"}>
           <YStack flex={1} justifyContent="space-between" gap="$3">
             <View>
@@ -82,13 +62,6 @@ export const CommentItem = ({
                     </YStack>
                   </XStack>
                 </View>
-                <Pressable onPress={handlePresentModalPress}>
-                  <MaterialCommunityIcons
-                    name="dots-vertical"
-                    size={24}
-                    color="$primary"
-                  />
-                </Pressable>
               </XStack>
               <View>
                 <Markdown>{comment.content}</Markdown>
@@ -126,27 +99,5 @@ export const CommentItem = ({
             </XStack>
           </YStack>
         </View>
-
-        {/* Bottom Sheet Modal */}
-        <BottomSheetModal
-          ref={bottomSheetModalRef}
-          index={0}
-          snapPoints={["90%"]} // Adjust as needed
-          onDismiss={handleDismissModal}
-        >
-          <BottomSheetView>
-            <XStack justifyContent="space-between" padding="$3">
-              {/* Delete Comment button without functionality */}
-              <Pressable>
-                <Text color="$error">Delete Comment</Text>
-              </Pressable>
-              <Pressable onPress={handleDismissModal}>
-                <Text color="$primary">Cancel</Text>
-              </Pressable>
-            </XStack>
-          </BottomSheetView>
-        </BottomSheetModal>
-      </BottomSheetModalProvider>
-    </GestureHandlerRootView> // Close GestureHandlerRootView here
   );
 };
