@@ -16,7 +16,11 @@ import { IComment, ICommentReply } from "types/model";
 
 import { Pressable, Alert } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { useDeleteCommentMutation, useDeleteReplyCommentMutation } from "redux/api/thread";
+import {
+  useDeleteCommentMutation,
+  useDeleteReplyCommentMutation,
+} from "redux/api/thread";
+import { useFetchUserProfileQuery } from "redux/api";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   BottomSheetModal,
@@ -28,37 +32,50 @@ export default function ThreadDetailScreen() {
   const navigation = useNavigation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data, error, isLoading } = useFetchThreadByIdQuery(id);
+  const { data: userProfileData, error: userProfileError } =
+    useFetchUserProfileQuery();
   const {
     data: threadCommentsData,
     error: errorFetchThreadComments,
     isLoading: isFetchingThreadComments,
   } = useFetchThreadCommentsQuery(id);
 
+  const userProfile = userProfileData?.data;
+
   const [postComment] = usePostCommentMutation();
   const [likeComment] = useLikeCommentMutation();
   const [dislikeComment] = useDislikeCommentMutation();
   const [replyComment] = useReplyCommentMutation();
-  const [deleteComment] = useDeleteCommentMutation(); //
-  const [deleteReplyComment] = useDeleteReplyCommentMutation(); //
+  const [deleteComment] = useDeleteCommentMutation(); 
+  const [deleteReplyComment] = useDeleteReplyCommentMutation(); 
 
   const [comment, setComment] = useState("");
-  const [selectedComment, setSelectedComment] = useState<IComment | ICommentReply | null>(null);//
+  const [selectedComment, setSelectedComment] = useState<
+    IComment | ICommentReply | null
+  >(null); 
   const [isReplying, setIsReplying] = useState(false);
   const [replyCommentData, setReplyCommentData] = useState<IComment | null>(
     null
   );
 
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null); //
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null); 
   const scrollViewRef = useRef<ScrollView>(null);
   const toast = useToast();
 
   const threadComments = threadCommentsData?.data?.thread_comments;
   const threadDetail = data?.data?.thread;
 
-  const handlePresentModalPress = useCallback((comment: IComment | ICommentReply) => {
-    setSelectedComment(comment);//
-    bottomSheetModalRef.current?.present();
-  }, []);
+  const handlePresentModalPress = useCallback(
+    (comment: IComment | ICommentReply) => {
+      if (comment.user_id === userProfile?.id) {
+        setSelectedComment(comment);
+        bottomSheetModalRef.current?.present();
+      } else {
+        toast.showToastError("You can only manage your own comments.");
+      }
+    },
+    [userProfile?.id, toast]
+  );
 
   const handleDismissModal = useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
@@ -79,6 +96,10 @@ export default function ThreadDetailScreen() {
 
   if (!threadDetail) {
     return <NotFound description="Thread Not Found" />;
+  }
+
+  if (userProfileError) {
+    return <Error />;
   }
 
   const onReplyClose = () => {
@@ -140,20 +161,29 @@ export default function ThreadDetailScreen() {
   };
 
   const handleDeleteComment = async (comment: IComment | ICommentReply) => {
+    if (comment.user_id !== userProfile?.id) {
+      toast.showToastError("You can only delete your own comments.");
+      return;
+    }
+
     Alert.alert(
       "Confirm Deletion",
-      "Are you sure you want to delete this thread? This action cannot be undone.",
+      "Are you sure you want to delete this comment? This action cannot be undone.",
       [
         { text: "Cancel", style: "cancel" },
         {
           text: "Delete",
           style: "destructive",
           onPress: async () => {
-            try {
-              await deleteComment(comment.id).unwrap();
-              Alert.alert("Success", "Thread deleted successfully.");
+            try { 
+                if ("thread_comment_id" in comment) {
+                    await deleteReplyComment(comment.id).unwrap();
+                  } else {
+                    await deleteComment(comment.id).unwrap();
+                  }
+              Alert.alert("Success", "Comment deleted successfully.");
             } catch (error) {
-              Alert.alert("Error", "Failed to delete the thread.");
+              Alert.alert("Error", "Failed to delete the comment.");
             }
           },
         },
@@ -202,7 +232,9 @@ export default function ThreadDetailScreen() {
                           onReplyPress={() => onReplyPress(comment)}
                         />
                         <YStack mb="$14">
-                          <Pressable onPress={() => handlePresentModalPress(comment)}>
+                          <Pressable
+                            onPress={() => handlePresentModalPress(comment)}
+                          >
                             <MaterialCommunityIcons
                               name="dots-vertical"
                               size={24}
@@ -214,25 +246,43 @@ export default function ThreadDetailScreen() {
                       <YStack pl="$5" mt="$2" gap="$2">
                         {comment.replies.length > 0 &&
                           comment.replies.map((commentReply) => (
-                            <CommentItem
-                              key={commentReply.id}
-                              isReply={true}
-                              comment={commentReply}
-                              onLikePress={() =>
-                                onLikePress({
-                                  threadId: commentReply.thread_id,
-                                  isReply: true,
-                                  commentId: commentReply.id,
-                                })
-                              }
-                              onDislikePress={() =>
-                                onDislikePress({
-                                  threadId: commentReply.thread_id,
-                                  isReply: true,
-                                  commentId: commentReply.id,
-                                })
-                              }
-                            />
+                            <XStack
+                              justifyContent="space-between"
+                              alignItems="center"
+                            >
+                              <CommentItem
+                                key={commentReply.id}
+                                isReply={true}
+                                comment={commentReply}
+                                onLikePress={() =>
+                                  onLikePress({
+                                    threadId: commentReply.thread_id,
+                                    isReply: true,
+                                    commentId: commentReply.id,
+                                  })
+                                }
+                                onDislikePress={() =>
+                                  onDislikePress({
+                                    threadId: commentReply.thread_id,
+                                    isReply: true,
+                                    commentId: commentReply.id,
+                                  })
+                                }
+                              />
+                              <YStack mb="$14">
+                                <Pressable
+                                  onPress={() =>
+                                    handlePresentModalPress(commentReply)
+                                  }
+                                >
+                                  <MaterialCommunityIcons
+                                    name="dots-vertical"
+                                    size={24}
+                                    color="$primary"
+                                  />
+                                </Pressable>
+                              </YStack>
+                            </XStack>
                           ))}
                       </YStack>
                     </View>
@@ -259,9 +309,17 @@ export default function ThreadDetailScreen() {
         >
           <BottomSheetView>
             <XStack justifyContent="space-between" padding="$3">
-              <Pressable onPress={() => selectedComment && handleDeleteComment(selectedComment)}>
-                <Text color="$error">Delete Comment</Text>
-              </Pressable>
+              {selectedComment?.user_id === userProfile?.id ? (
+                <Pressable
+                  onPress={() =>
+                    selectedComment && handleDeleteComment(selectedComment)
+                  }
+                >
+                  <Text color="$error">Delete Comment</Text>
+                </Pressable>
+              ) : (
+                <Text color="$gray">You can't delete this comment</Text>
+              )}
               <Pressable onPress={handleDismissModal}>
                 <Text color="$primary">Cancel</Text>
               </Pressable>
