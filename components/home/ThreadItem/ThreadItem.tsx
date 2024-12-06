@@ -27,7 +27,6 @@ interface ThreadItemProps {
   currentUserId?: string;
   inDetailScreen?: boolean;
   enableEditItem?: boolean;
-  isSubscribe?: boolean;
 }
 
 export const ThreadItem = ({
@@ -35,7 +34,6 @@ export const ThreadItem = ({
   currentUserId,
   inDetailScreen,
   enableEditItem,
-  isSubscribe
 }: ThreadItemProps) => {
   const router = useRouter();
   const [deleteThread] = useDeleteThreadMutation();
@@ -129,14 +127,14 @@ export const ThreadItem = ({
     } catch (error) {
       toast.showToastError("Error Subscribe Thread", error);
     }
-  }; 
+  };
 
   const handleUnsubscribeThread = async () => {
     try {
       await unSubscribeThread(thread.id);
     } catch (error) {
       toast.showToastError("Error Unsubscribe Thread", error);
-    } 
+    }
   };
 
   return (
@@ -274,15 +272,12 @@ export const ThreadItem = ({
         >
           <BottomSheetView>
             <XStack justifyContent="space-between" padding="$3">
-              {isSubscribe ? (
-                <Pressable onPress={handleUnsubscribeThread}>
-                  <Text color="$primary">unsubscribe</Text>
-                </Pressable>
-              ) : (
-                <Pressable onPress={handleSubscribeThread}>
-                  <Text color="$primary">subscribe</Text>
-                </Pressable>
-              )}
+              <Pressable onPress={handleSubscribeThread}>
+                <Text color="$primary">subscribe</Text>
+              </Pressable>
+              <Pressable onPress={handleUnsubscribeThread}>
+                <Text color="$primary">unsubscribe</Text>
+              </Pressable>
               <Pressable onPress={handleDismissModal}>
                 <Text color="$primary">Cancel</Text>
               </Pressable>
