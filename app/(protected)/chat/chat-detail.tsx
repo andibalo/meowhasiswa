@@ -4,7 +4,7 @@ import { Avatar, Button } from "tamagui";
 import { Send } from "@tamagui/lucide-icons";
 import { View } from "react-native";
 import { firestore } from "config";
-import { collection, addDoc, query, orderBy, onSnapshot, doc, getDoc, setDoc } from "firebase/firestore";
+import { collection, addDoc, query, orderBy, onSnapshot, doc, getDoc, setDoc, getDocs } from "firebase/firestore";
 import { useFetchUserProfileQuery } from 'redux/api';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 
@@ -42,41 +42,59 @@ export default function ChatDetailScreen() {
   // Handle sending messages
   const onSend = useCallback(async (newMessages: IMessage[] = []) => {
     if (!chatId || !data) return;
-
-    const chatDocRef = doc(firestore, "chats", chatId);
-    const chatDoc = await getDoc(chatDocRef);
-
-    // Create the chat document if it doesn't exist
-    if (!chatDoc.exists()) {
-      await setDoc(chatDocRef, {
-        chatId,
-        createdAt: new Date(),
-        user1: data?.data?.username,
-        pfp1: data?.data?.university?.image_url,
-        user2: "Placeholder", // Replace with the other user's username
-        pfp2: "Placeholder", // Replace with the other user's profile picture URL
-      });
-    }
-
+  
     const messagesRef = collection(firestore, "chats", chatId, "messages");
-
-    // Add new messages to the sub-collection
-    const writes = newMessages.map((m) =>
-      addDoc(messagesRef, {
-        text: m.text,
-        createdAt: new Date(),
-        userId: data?.data?.id,
-        username: data?.data?.username,
-        profilePic: data?.data?.university?.image_url,
-      })
-    );
-
-    await Promise.all(writes);
-
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, newMessages)
-    );
+  
+    try {
+      // Check if the messages sub-collection exists by attempting to fetch a document
+      const snapshot = await getDocs(messagesRef);
+  
+      // If the sub-collection is empty, add the first message (ensures its existence)
+      if (snapshot.empty && newMessages.length > 0) {
+        await addDoc(messagesRef, {
+          text: newMessages[0].text,
+          createdAt: new Date(),
+          userId: data?.data?.id,
+          username: data?.data?.username,
+          profilePic: data?.data?.university?.image_url,
+        });
+  
+        // Add remaining messages if any
+        if (newMessages.length > 1) {
+          const additionalWrites = newMessages.slice(1).map((m) =>
+            addDoc(messagesRef, {
+              text: m.text,
+              createdAt: new Date(),
+              userId: data?.data?.id,
+              username: data?.data?.username,
+              profilePic: data?.data?.university?.image_url,
+            })
+          );
+          await Promise.all(additionalWrites);
+        }
+      } else {
+        // If the sub-collection already exists, add all messages normally
+        const writes = newMessages.map((m) =>
+          addDoc(messagesRef, {
+            text: m.text,
+            createdAt: new Date(),
+            userId: data?.data?.id,
+            username: data?.data?.username,
+            profilePic: data?.data?.university?.image_url,
+          })
+        );
+        await Promise.all(writes);
+      }
+  
+      // Append new messages to local state
+      setMessages((previousMessages) =>
+        GiftedChat.append(previousMessages, newMessages)
+      );
+    } catch (error) {
+      console.error("Error sending messages:", error);
+    }
   }, [chatId, data]);
+  
 
   // Custom render components
   const renderBubble = (props: any) => (
