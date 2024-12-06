@@ -14,14 +14,15 @@ export default function ChatDetailScreen() {
   const { chatId } = useLocalSearchParams<{ chatId: string }>();
 
   const [messages, setMessages] = useState<IMessage[]>([]);
+  console.log(data?.data?.id)
 
   // Fetch messages from Firestore
   useEffect(() => {
     if (!chatId) return;
-
+  
     const messagesRef = collection(firestore, "chats", chatId, "messages");
     const q = query(messagesRef, orderBy("createdAt", "desc"));
-
+  
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const newMessages: IMessage[] = snapshot.docs.map((doc) => ({
         _id: doc.id,
@@ -33,67 +34,45 @@ export default function ChatDetailScreen() {
           avatar: doc.data().profilePic,
         },
       }));
-      setMessages(newMessages);
+      setMessages(newMessages); // No need to reverse as Firestore already orders them
     });
-
+  
     return () => unsubscribe();
-  }, [chatId]);
+  }, [chatId]);  
 
   // Handle sending messages
   const onSend = useCallback(async (newMessages: IMessage[] = []) => {
-    if (!chatId || !data) return;
+    if (!chatId || !data) {
+      console.error("Chat ID or user data is missing.");
+      return;
+    }
+  
+    if (newMessages.length === 0) {
+      console.error("No messages to send.");
+      return;
+    }
   
     const messagesRef = collection(firestore, "chats", chatId, "messages");
   
     try {
-      // Check if the messages sub-collection exists by attempting to fetch a document
-      const snapshot = await getDocs(messagesRef);
+      console.log("onSend triggered");
   
-      // If the sub-collection is empty, add the first message (ensures its existence)
-      if (snapshot.empty && newMessages.length > 0) {
-        await addDoc(messagesRef, {
-          text: newMessages[0].text,
-          createdAt: new Date(),
-          userId: data?.data?.id,
-          username: data?.data?.username,
-          profilePic: data?.data?.university?.image_url,
-        });
+      // Optimistically update local state
+      setMessages((previousMessages) => GiftedChat.append(previousMessages, newMessages));
   
-        // Add remaining messages if any
-        if (newMessages.length > 1) {
-          const additionalWrites = newMessages.slice(1).map((m) =>
-            addDoc(messagesRef, {
-              text: m.text,
-              createdAt: new Date(),
-              userId: data?.data?.id,
-              username: data?.data?.username,
-              profilePic: data?.data?.university?.image_url,
-            })
-          );
-          await Promise.all(additionalWrites);
-        }
-      } else {
-        // If the sub-collection already exists, add all messages normally
-        const writes = newMessages.map((m) =>
-          addDoc(messagesRef, {
-            text: m.text,
-            createdAt: new Date(),
-            userId: data?.data?.id,
-            username: data?.data?.username,
-            profilePic: data?.data?.university?.image_url,
-          })
-        );
-        await Promise.all(writes);
-      }
-  
-      // Append new messages to local state
-      setMessages((previousMessages) =>
-        GiftedChat.append(previousMessages, newMessages)
-      );
+      // Add new messages to Firestore
+      const writes = newMessages.map((m) => addDoc(messagesRef, {
+        text: m.text,
+        createdAt: new Date(),
+        userId: data?.data?.id,
+        username: data?.data?.username,
+        profilePic: data?.data?.university?.image_url,
+      }));
+      await Promise.all(writes);
     } catch (error) {
       console.error("Error sending messages:", error);
     }
-  }, [chatId, data]);
+  }, [chatId, data]);  
   
 
   // Custom render components
@@ -162,9 +141,14 @@ export default function ChatDetailScreen() {
       size="$5"
       chromeless
       icon={<Send color="$primary" size="$1.5" />}
-      onPress={() => onSend(props.messages)}
+      onPress={() => {
+        if (props.text && props.onSend) {
+          props.onSend({ text: props.text.trim() }, true);
+        }
+      }}
     />
   );
+  
 
   return (
     <View style={{ flex: 1, backgroundColor: "$primary" }}>
@@ -172,7 +156,6 @@ export default function ChatDetailScreen() {
         messages={messages}
         onSend={(messages) => onSend(messages)}
         user={{ _id: String(data?.data?.id) }}
-        inverted={false}
         renderBubble={renderBubble}
         renderAvatar={renderAvatar}
         renderDay={renderDay}

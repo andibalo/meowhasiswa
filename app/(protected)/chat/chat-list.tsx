@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { FlatList, Pressable } from "react-native";
 import { SizableText, XStack, YStack, Avatar } from "tamagui";
-import { useNavigation } from "@react-navigation/native";
 import { firestore } from "config/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { useFetchUserProfileQuery } from "redux/api";
@@ -9,7 +8,6 @@ import { useRouter } from 'expo-router';
 
 export default function ChatListScreen() {
   const { data, error, isLoading } = useFetchUserProfileQuery();
-  const navigation = useNavigation();
   const [chatRooms, setChatRooms] = useState<any[]>([]);
   const userId = data?.data?.id;
 
