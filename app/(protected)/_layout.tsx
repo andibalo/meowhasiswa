@@ -1,13 +1,9 @@
 import { Redirect, Stack } from 'expo-router';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/store';
-import { firestore } from "config/firebase";
-import { collection, getDocs } from "firebase/firestore";
-import { useFetchUserProfileQuery } from "redux/api";
 
 export default function ProtectedLayout() {
-    const { data, error, isLoading } = useFetchUserProfileQuery();
-    const userId = data?.data?.id;
+
     const token = useSelector((state: RootState) => state.auth.token)
     const enableAuthentication = process.env.EXPO_PUBLIC_ENABLE_AUTHENTICATION
 

@@ -16,7 +16,6 @@ export default function ChatDetailScreen() {
   const [messages, setMessages] = useState<IMessage[]>([]);
   console.log(data?.data?.id)
 
-  // Fetch messages from Firestore
   useEffect(() => {
     if (!chatId) return;
   
@@ -34,13 +33,12 @@ export default function ChatDetailScreen() {
           avatar: doc.data().profilePic,
         },
       }));
-      setMessages(newMessages); // No need to reverse as Firestore already orders them
+      setMessages(newMessages);
     });
   
     return () => unsubscribe();
   }, [chatId]);  
 
-  // Handle sending messages
   const onSend = useCallback(async (newMessages: IMessage[] = []) => {
     if (!chatId || !data) {
       console.error("Chat ID or user data is missing.");
@@ -57,10 +55,8 @@ export default function ChatDetailScreen() {
     try {
       console.log("onSend triggered");
   
-      // Optimistically update local state
       setMessages((previousMessages) => GiftedChat.append(previousMessages, newMessages));
   
-      // Add new messages to Firestore
       const writes = newMessages.map((m) => addDoc(messagesRef, {
         text: m.text,
         createdAt: new Date(),
@@ -75,7 +71,6 @@ export default function ChatDetailScreen() {
   }, [chatId, data]);  
   
 
-  // Custom render components
   const renderBubble = (props: any) => (
     <Bubble
       {...props}
