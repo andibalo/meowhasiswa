@@ -1,5 +1,5 @@
 import { Edit3, MessageSquare } from '@tamagui/lucide-icons';
-import { Text, View, XStack, YStack, Avatar, Separator } from 'tamagui';
+import { Text, View, XStack, YStack, Avatar, Separator, Button } from 'tamagui';
 import { IThread } from 'types/model/thread';
 import { Pressable, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -7,10 +7,10 @@ import { useLikeThreadMutation, useDislikeThreadMutation, useDeleteThreadMutatio
 import { useToast } from 'hooks';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { formateDateWithDaysAgoThreshold } from 'utils';
-import { useState } from 'react';
-import BottomSheet from '@gorhom/bottom-sheet';
+import { useState, useCallback, useMemo, useRef } from 'react';
 import { firestore } from 'config';
-import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+import { collection, addDoc, query, where, getDocs, doc, setDoc } from 'firebase/firestore';
+import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 
 interface ThreadItemProps {
     thread: IThread;
@@ -18,21 +18,31 @@ interface ThreadItemProps {
     inDetailScreen?: boolean;
     enableEditItem?: boolean;
     currentUserId2?: string;
+    currentUserName2?: string;
+    currentProfilePic2?: string;
 }
 
-export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditItem, currentUserId2 }: ThreadItemProps) => {
+export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditItem, currentUserId2, currentUserName2, currentProfilePic2 }: ThreadItemProps) => {
     const router = useRouter();
     const [deleteThread] = useDeleteThreadMutation();
     const [likeThread] = useLikeThreadMutation();
     const [dislikeThread] = useDislikeThreadMutation();
     const toast = useToast();
-    const [isSheetVisible, setSheetVisible] = useState(false);
+
+    // Ref to control the bottom sheet modal
+    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+    const handlePresentModalPress = useCallback(() => {
+        console.log('Modal Triggered');
+        bottomSheetModalRef.current?.present();
+    }, []);
+    const handleSheetChanges = useCallback((index: number) => {
+        console.log('handleSheetChanges', index);
+    }, []);
 
     const handleEditItem = () => {
         if (!enableEditItem) {
             return;
-        }
-        else if (enableEditItem) {
+        } else if (enableEditItem) {
             Alert.alert(
                 'Thread Actions',
                 'Choose an action for your thread:',
@@ -95,38 +105,43 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
     };
 
     const handleChat = async () => {
-        // Check if a chat already exists between currentUserId2 and thread.user_id
         const chatId = `${currentUserId2}_${thread.user_id}`;
+        const user1 = `${currentUserName2}`;
+        const user2 = `${thread.username}`;
+        const pfp1 = `${currentProfilePic2}`;
+        const pfp2 = `${thread.university_image_url}`;
         const chatsRef = collection(firestore, 'chats');
-        const q = query(chatsRef, where('chat-id', '==', chatId));
-
-        const chatQuerySnapshot = await getDocs(q);
-
+        const chatDocRef = doc(chatsRef, chatId);  // Use the chatId as the document name
+        
+        const chatQuerySnapshot = await getDocs(query(chatsRef, where('chatId', '==', chatId)));
+        
         if (chatQuerySnapshot.empty) {
-            // If no chat is found, create a new one
             try {
-                const newChatRef = await addDoc(chatsRef, {
+                // Create or overwrite the document with chatId as the ID
+                await setDoc(chatDocRef, {
                     chatId,
                     createdAt: new Date(),
+                    user1,
+                    user2,
+                    pfp1,
+                    pfp2,
                 });
-
-                // Redirect to ChatDetailScreen with the newly created chat ID
+                bottomSheetModalRef.current?.dismiss();
                 router.push({
                     pathname: '/chat/chat-detail',
-                    params: { chatId: newChatRef.id },
+                    params: { chatId },
                 });
             } catch (error) {
                 toast.showToastError("Something Went Wrong", "Failed to create chat");
             }
         } else {
-            // If a chat exists, use the existing chat ID
-            const existingChatId = chatQuerySnapshot.docs[0].id;
+            bottomSheetModalRef.current?.dismiss();
             router.push({
                 pathname: '/chat/chat-detail',
-                params: { chatId: existingChatId },
+                params: { chatId: chatQuerySnapshot.docs[0].id },
             });
         }
-    };
+    };        
 
     return (
         <>
@@ -143,16 +158,15 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                             <XStack p={'$3'} jc={'space-between'} alignItems="center">
                                 <XStack alignItems="center">
                                     <View mr={'$2'}>
-                                        <Pressable onPress={() => {
-                                            if (currentUserId2 && thread.user_id !== currentUserId2) {
-                                                setSheetVisible(true);
-                                            }
-                                            else {
-                                                console.log("Cannot open bottom sheet: User is the same.");
-                                                console.log("Current User ID:", currentUserId2);
-                                                console.log("Thread User ID:", thread.user_id);
-                                            }
-                                        }}>
+                                        <Pressable
+                                            onPress={() => {
+                                                if (currentUserId2 && thread.user_id !== currentUserId2) {
+                                                    handlePresentModalPress();
+                                                } else {
+                                                    console.log("Cannot open bottom sheet: User is the same.");
+                                                }
+                                            }}
+                                        >
                                             <Avatar borderRadius={'$2'} borderWidth="$1" borderColor="$primary" size="$4">
                                                 <Avatar.Image
                                                     accessibilityLabel="University"
@@ -232,18 +246,23 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                 </View>
             </Pressable>
 
-            {isSheetVisible && (
-                <BottomSheet
-                    snapPoints={['25%']}
-                    onClose={() => setSheetVisible(false)}
-                >
-                    <View style={{ padding: 16 }}>
-                        <Pressable onPress={handleChat}>
-                            <Text style={{ textAlign: 'center', fontSize: 18 }}>Chat</Text>
-                        </Pressable>
-                    </View>
-                </BottomSheet>
-            )}
+            {/* Bottom Sheet Modal */}
+            <BottomSheetModal
+                ref={bottomSheetModalRef}
+                onChange={handleSheetChanges}
+                index={0}
+                snapPoints={['25%']}
+                style={{ zIndex: 1000 }} // High zIndex
+                handleStyle={{ zIndex: 1000 }} // Ensures handle appears on top
+            >
+                <BottomSheetView>
+                    <Button onPress={() => {
+                        handleChat()
+                    }}>
+                        Chat
+                    </Button>
+                </BottomSheetView>
+            </BottomSheetModal>
         </>
     );
 };

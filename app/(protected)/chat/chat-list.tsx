@@ -4,7 +4,8 @@ import { SizableText, XStack, YStack, Avatar } from "tamagui";
 import { useNavigation } from "@react-navigation/native";
 import { firestore } from "config/firebase";
 import { collection, getDocs } from "firebase/firestore";
-import { useFetchUserProfileQuery } from 'redux/api';
+import { useFetchUserProfileQuery } from "redux/api";
+import { useRouter } from 'expo-router';
 
 export default function ChatListScreen() {
   const { data, error, isLoading } = useFetchUserProfileQuery();
@@ -12,39 +13,54 @@ export default function ChatListScreen() {
   const [chatRooms, setChatRooms] = useState<any[]>([]);
   const userId = data?.data?.id;
 
+  const router = useRouter();
+
   useEffect(() => {
     const fetchChatRooms = async () => {
       try {
-        const roomsSnapshot = await getDocs(collection(firestore, "chatRooms"));
-        const rooms = roomsSnapshot.docs.map((doc) => {
-          const data = doc.data();
-          const chatRoomId = doc.id;
-          const [user1, user2] = chatRoomId.split("-");
-          if (user1 === userId || user2 === userId) {
-            return {
-              id: chatRoomId,
-              ...data,
-            };
-          }
-          return null;
-        }).filter(Boolean); 
+        if (!userId) return;
 
-        setChatRooms(rooms);
+        const chatsSnapshot = await getDocs(collection(firestore, "chats"));
+        const rooms = await Promise.all(
+          chatsSnapshot.docs.map(async (docSnapshot) => {
+            const data = docSnapshot.data();
+            const chatId = docSnapshot.id; // chatId is a combination of user1_user2
+            const [user1, user2] = chatId.split("_");
+
+            // Check if the current userId is part of the chatId (either user1 or user2)
+            if (user1 === userId || user2 === userId) {
+              const otherUserId = user1 === userId ? user2 : user1;
+              const userProfile = {
+                chatId,
+                ...data,
+                otherUserId,
+                otherUsername: user1 === userId ? data.user2 : data.user1,
+                otherProfilePic: user1 === userId ? data.pfp2 : data.pfp1,
+              };
+              return userProfile;
+            }
+            return null;
+          })
+        );
+        
+        // Filter out null values (rooms that didn't match the userId)
+        setChatRooms(rooms.filter(Boolean));
       } catch (error) {
         console.error("Error fetching chat rooms:", error);
       }
     };
 
-    if (userId) {
-      fetchChatRooms();
-    }
+    fetchChatRooms();
   }, [userId]);
 
   const renderItem = ({ item }) => (
     <Pressable
       onPress={() => {
-        // @ts-ignore
-        navigation.navigate("chat/chat-detail", { chatRoomId: item.id });
+        console.log("Navigating with chatId:", item.chatId);
+        router.push({
+          pathname: '/chat/chat-detail',
+          params: { chatId: item.chatId },
+      });
       }}
     >
       <XStack flex={1} padding="$1" marginBottom="$4" alignItems="center">
@@ -57,7 +73,7 @@ export default function ChatListScreen() {
         >
           <Avatar.Image
             accessibilityLabel="Profile Picture"
-            src={item.profilePic}
+            src={item.otherProfilePic}
             objectFit="contain"
           />
           <Avatar.Fallback backgroundColor="$secondary" />
@@ -66,18 +82,15 @@ export default function ChatListScreen() {
           <XStack justifyContent="space-between" alignItems="center">
             <XStack alignItems="center">
               <SizableText size="$5" fontWeight="bold" color="$primary">
-                {item.university}
-              </SizableText>
-              <SizableText size="$3" marginLeft="$2" color="$secondary">
-                {item.username}
+                {item.otherUsername} {/* Display the other user's username */}
               </SizableText>
             </XStack>
             <SizableText size="$1" color="$secondary">
-              {item.timestamp}
+              {item.createdAt?.toDate().toLocaleString()} {/* Format the createdAt field */}
             </SizableText>
           </XStack>
           <SizableText size="$4" color="$primary" numberOfLines={1}>
-            {item.text}
+            {item.text} {/* Display the last message */}
           </SizableText>
         </YStack>
       </XStack>
@@ -89,7 +102,10 @@ export default function ChatListScreen() {
       <FlatList
         data={chatRooms}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.chatId}
+        ListEmptyComponent={
+          <SizableText color="$secondary">No chat rooms found</SizableText>
+        }
       />
     </YStack>
   );

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View, Text, Avatar } from 'tamagui';
-import { TabView } from 'react-native-tab-view';
+import { SceneMap, TabView } from 'react-native-tab-view';
 import { useWindowDimensions } from 'react-native';
 import { Error, Loading, NotFound, TopTabBar } from 'components/common';
 import { useFetchUserProfileQuery } from 'redux/api';

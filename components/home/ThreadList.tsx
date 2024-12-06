@@ -13,6 +13,8 @@ interface IThreadListProps {
     isRefreshing?: boolean;
     currentUserId?: string;
     currentUserId2?: string;
+    currentUserName2?: string;
+    currentProfilePic2?: string;
     enableEditItem?: boolean;
 }
 
@@ -32,6 +34,8 @@ export const ThreadList = ({
     isRefreshing,
     currentUserId,
     currentUserId2,
+    currentUserName2,
+    currentProfilePic2,
     enableEditItem,
 }: IThreadListProps) => {
     // Deduplicate the data array based on thread ID
@@ -41,7 +45,7 @@ export const ThreadList = ({
 
     const renderPost = ({ item }: { item: IThread }) => (
         <View>
-            <ThreadItem thread={item} currentUserId={currentUserId} enableEditItem={enableEditItem} />
+            <ThreadItem thread={item} currentUserId={currentUserId} enableEditItem={enableEditItem} currentUserId2={currentUserId2} currentUserName2={currentUserName2} currentProfilePic2={currentProfilePic2} />
             <View my="$2" />
         </View>
     )
