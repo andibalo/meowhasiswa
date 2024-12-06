@@ -87,25 +87,25 @@ function RootLayoutNav() {
             }}
           />
           <Stack.Screen
-            name="forgot-password"
+            name="forgot-password/input-email"
             options={{
               headerShown: false,
             }}
           />
           <Stack.Screen
-            name="password-reset"
+            name="forgot-password/new-password"
             options={{
               headerShown: false,
             }}
           />
           <Stack.Screen
-            name="set-new-password"
+            name="forgot-password/verify-code"
             options={{
               headerShown: false,
             }}
           />
           <Stack.Screen
-            name="forgot-password-complete"
+            name="forgot-password/complete"
             options={{
               headerShown: false,
             }}
