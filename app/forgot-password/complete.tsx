@@ -1,4 +1,4 @@
-import { Button, Input, Stack, Text, YStack, XStack, Image } from "tamagui";
+import { Button, Text, YStack, XStack, Image } from "tamagui";
 import { useRouter } from "expo-router";
 
 export default function ForgotPasswordCompleteScreen() {
@@ -8,7 +8,7 @@ export default function ForgotPasswordCompleteScreen() {
     <YStack f={1} jc="center" ai="center" padding="$4" bg="$background">
       <YStack mb="$1" ai="center">
         <Image
-          source={require("../assets/images/meow-logo.png")}
+          source={require("../../assets/images/meow-logo.png")}
           width={260}
           height={260}
           objectFit="contain"
