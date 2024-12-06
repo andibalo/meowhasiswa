@@ -15,7 +15,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-export default function VerifyEmailScreen (){
+export default function VerifyEmailScreen(){
   const router = useRouter();
   const [verifyEmail] = useVerifyEmailMutation();
   const shakeTranslateX = useSharedValue(0);

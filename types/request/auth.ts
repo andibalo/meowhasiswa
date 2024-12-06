@@ -19,3 +19,17 @@ export interface IVerifyEmailRequest {
     email: string;
     code: string;
 }
+
+export interface ISendResetPasswordCodeRequest {
+    email: string;
+}
+
+export interface IVerifyResetPasswordCodeRequest {
+    email: string;
+    code: string;
+}
+
+export interface IResetPasswordRequest {
+    email: string;
+    password: string;
+}
