@@ -106,7 +106,7 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                         <XStack p={'$3'} jc={'space-between'} alignItems="center">
                             <XStack alignItems="center">
                                 <View mr={'$2'}>
-                                    <Avatar borderRadius={'$2'} borderWidth="$1" borderColor="$primary" size="$4">
+                                    <Avatar borderRadius={'$2'} borderWidth={1} borderColor="$secondary" size="$4">
                                         <Avatar.Image
                                             accessibilityLabel="University"
                                             src={thread.university_image_url}
@@ -164,7 +164,7 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                                 name={thread.is_liked ? "paw" : "paw-outline"}
                                 onPress={inDetailScreen ? handleLike : () => null}
                                 size={26}
-                                color="black"
+                                color={thread.is_liked ? "#2f2ff4" : "black"}
                             />
                             <Text ml={'$2'}>{thread.like_count}</Text>
                         </XStack>
@@ -173,7 +173,7 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                                 name={thread.is_disliked ? "thumbs-down" : "thumbs-down-outline"}
                                 onPress={inDetailScreen ? handleDislike : () => null}
                                 size={26}
-                                color="black"
+                                color={thread.is_disliked ? "#2f2ff4" : "black"}
                             />
                             <Text ml={'$2'}>{thread.dislike_count}</Text>
                         </XStack>
