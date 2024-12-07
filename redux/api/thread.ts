@@ -1,4 +1,4 @@
-import { createApi } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from './baseQuery';
 import { ICreateThreadRequest, IDislikeCommentRequest, IFetchThreadListQueryParams, ILikeCommentRequest, IPostCommentRequest, IReplyCommentRequest, IUpdateThreadRequest } from 'types/request/thread';
 import { APIResponse, FetchThreadByIdAPIResponse, FetchThreadCommentsAPIResponse, FetchThreadListAPIResponse } from 'types/response';
@@ -177,6 +177,13 @@ export const threadsApi = createApi({
                 method: "DELETE",
             }),
         }),
+        editComment: builder.mutation({
+            query: ({ threadId, commentId, content }) => ({
+                url: `/threads/${threadId}/comments/${commentId}`,
+                method: 'PATCH',
+                body: { content },
+            }),
+        }),
     }),
 });
 
@@ -195,4 +202,5 @@ export const {
     useReplyCommentMutation,
     useDeleteCommentMutation,
     useDeleteReplyCommentMutation,
+    useEditCommentMutation,
 } = threadsApi;
