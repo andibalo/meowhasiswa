@@ -10,6 +10,7 @@ const conf = {
       ...configBase.tokens.color,
       primary: colors.primaryLight,
       secondary: colors.secondaryLight,
+      accent: colors.accentLight
     }
   }
 }
@@ -21,5 +22,5 @@ export default config
 export type Conf = typeof config
 
 declare module 'tamagui' {
-  interface TamaguiCustomConfig extends Conf {}
+  interface TamaguiCustomConfig extends Conf { }
 }

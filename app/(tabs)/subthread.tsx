@@ -1,6 +1,6 @@
 import { SubThreadList } from 'components/subthread'
 import { useEffect, useMemo, useState } from 'react';
-import { useWindowDimensions } from 'react-native';
+import { ImageBackground, useWindowDimensions } from 'react-native';
 import { View } from 'tamagui'
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { Error, Fab, Loading, NotFound, SearchBar, TopTabBar } from 'components/common';
@@ -152,26 +152,32 @@ export default function SubThreadScreen() {
   }
 
   return (
-    <View flex={1} p={'$3'} pb="0" bg="$backgroundSoft">
-      <View mb="$3">
-        <SearchBar
-          placeholder="Search Submeow"
-          value={searchInput}
-          onChangeText={(data) => onChangeText(data)}
-          onSubmitEditing={() => handleSubmitSearch()}
+    <ImageBackground
+      source={{ uri: "https://meowhasiswa-59cc5f49-f82b-4998-af05-368c90f07a20.s3.ap-southeast-1.amazonaws.com/cat_seamless_doodle_Converted-min.png" }}
+      resizeMode="cover"
+      style={{ flex: 1 }}
+    >
+      <View flex={1} p={'$3'} pb="0" bg="$backgroundSoft">
+        <View mb="$3">
+          <SearchBar
+            placeholder="Search Submeow"
+            value={searchInput}
+            onChangeText={(data) => onChangeText(data)}
+            onSubmitEditing={() => handleSubmitSearch()}
+          />
+        </View>
+        <TabView
+          lazy
+          renderTabBar={renderTabBar}
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={{ width: layout.width }}
         />
+        {
+          userData?.data?.role === ROLE_ADMIN && <Fab onPress={() => router.push('/subthread/create-subthread')} />
+        }
       </View>
-      <TabView
-        lazy
-        renderTabBar={renderTabBar}
-        navigationState={{ index, routes }}
-        renderScene={renderScene}
-        onIndexChange={setIndex}
-        initialLayout={{ width: layout.width }}
-      />
-      {
-        userData?.data?.role === ROLE_ADMIN && <Fab onPress={() => router.push('/subthread/create-subthread')} />
-      }
-    </View>
+    </ImageBackground>
   )
 }
