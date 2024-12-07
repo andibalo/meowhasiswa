@@ -59,28 +59,32 @@ export default function ThreadDetailScreen() {
     null
   );
 
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const subsBottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const commentBottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const threadBottomSheetModalRef = useRef<BottomSheetModal>(null);
   const scrollViewRef = useRef<ScrollView>(null);
   const toast = useToast();
 
   const threadComments = threadCommentsData?.data?.thread_comments;
   const threadDetail = data?.data?.thread;
 
-  const handlePresentModalPress = useCallback(
+  const openCommentBottomSheet = useCallback(
     (comment: IComment | ICommentReply) => {
       setSelectedComment(comment);
-      bottomSheetModalRef.current?.present();
+      commentBottomSheetModalRef.current?.present();
     },
-    [userProfile?.id]
+    []
   );
 
-  const handleDismissModal = useCallback(() => {
-    bottomSheetModalRef.current?.dismiss();
+  const closeCommentBottomSheet = useCallback(() => {
+    commentBottomSheetModalRef.current?.dismiss();
   }, []);
 
-  const openSubsBottomSheet = useCallback(() => {
-    subsBottomSheetModalRef.current?.present();
+  const openThreadBottomSheet = useCallback(() => {
+    threadBottomSheetModalRef.current?.present();
+  }, []);
+
+  const closeThreadBottomSheet = useCallback(() => {
+    threadBottomSheetModalRef.current?.dismiss();
   }, []);
 
   if (!id) {
@@ -188,10 +192,10 @@ export default function ThreadDetailScreen() {
                 await deleteComment(comment.id).unwrap();
               }
 
-              handleDismissModal()
+              closeCommentBottomSheet()
             } catch (error) {
               toast.showToastError("Could not delete comment", error)
-              handleDismissModal()
+              closeCommentBottomSheet()
             }
           },
         },
@@ -201,25 +205,57 @@ export default function ThreadDetailScreen() {
   };
 
   const handleSubscribeThread = async () => {
-    try {
-      await subscribeThread(threadDetail.id);
-    } catch (error) {
-      toast.showToastError("Error Subscribe Thread", error);
-    }
+    Alert.alert(
+      "Receive notifications for this thread?",
+      "You will receive notifications if there are any new comments on this thread.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Subscribe",
+          style: "default",
+          onPress: async () => {
+            try {
+              await subscribeThread(threadDetail.id);
+              closeThreadBottomSheet()
+            } catch (error) {
+              toast.showToastError("Error Subscribe Thread", error);
+              closeThreadBottomSheet()
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   const handleUnsubscribeThread = async () => {
-    try {
-      await unSubscribeThread(threadDetail.id);
-    } catch (error) {
-      toast.showToastError("Error Unsubscribe Thread", error);
-    }
+    Alert.alert(
+      "Turn off notifications for this thread?",
+      "You will not receive any notifications if there are new comments on this thread.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Unsubscribe",
+          style: "default",
+          onPress: async () => {
+            try {
+              await unSubscribeThread(threadDetail.id);
+              closeThreadBottomSheet()
+            } catch (error) {
+              toast.showToastError("Error Unsubscribe Thread", error);
+              closeThreadBottomSheet()
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   return (
     <View flex={1} backgroundColor="$background">
       <ScrollView ref={scrollViewRef}>
-        <ThreadItem thread={threadDetail} inDetailScreen openSubsBottomSheet={openSubsBottomSheet}/>
+        <ThreadItem thread={threadDetail} inDetailScreen openBottomSheet={openThreadBottomSheet} />
         <View>
           <Separator mb="$2" />
         </View>
@@ -255,7 +291,7 @@ export default function ThreadDetailScreen() {
                     />
                     <YStack mb="$14">
                       <Pressable
-                        onPress={() => handlePresentModalPress(comment)}
+                        onPress={() => openCommentBottomSheet(comment)}
                       >
                         <View p="$2">
                           <Ellipsis size="$1" />
@@ -292,7 +328,7 @@ export default function ThreadDetailScreen() {
                           <YStack mb="$14">
                             <Pressable
                               onPress={() =>
-                                handlePresentModalPress(commentReply)
+                                openCommentBottomSheet(commentReply)
                               }
                             >
                               <View p="$2">
@@ -319,7 +355,7 @@ export default function ThreadDetailScreen() {
         replyMention={replyCommentData && replyCommentData.username}
       />
       <BottomSheet
-        ref={bottomSheetModalRef}
+        ref={commentBottomSheetModalRef}
       >
         <YStack gap="$4" padding="$3">
           {selectedComment?.user_id === userProfile.id && (
@@ -346,19 +382,18 @@ export default function ThreadDetailScreen() {
         </YStack>
       </BottomSheet>
       <BottomSheet
-        ref={subsBottomSheetModalRef}
+        ref={threadBottomSheetModalRef}
       >
         <YStack gap="$4" padding="$3">
-        {threadDetail.is_subscribed ? 
-        (
-          <Pressable onPress={handleUnsubscribeThread}>
-          <Text color="$primary">unsubscribe</Text>
-        </Pressable>
-        ):(
+          {userProfile.id !== threadDetail.user_id &&
+            (
+              <Pressable onPress={threadDetail.is_subscribed ? handleUnsubscribeThread : handleSubscribeThread}>
+                <Text color="$primary">{threadDetail.is_subscribed ? "Unsubscribe" : "Subscribe"}</Text>
+              </Pressable>
+            )}
           <Pressable onPress={handleSubscribeThread}>
-          <Text color="$primary">subscribe</Text>
-        </Pressable>
-        )}
+            <Text color="$primary">Report</Text>
+          </Pressable>
         </YStack>
       </BottomSheet>
     </View>

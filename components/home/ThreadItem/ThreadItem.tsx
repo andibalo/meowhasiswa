@@ -15,20 +15,16 @@ interface ThreadItemProps {
     currentUserId?: string;
     inDetailScreen?: boolean;
     enableEditItem?: boolean;
-    openSubsBottomSheet?: () => void;
+    openBottomSheet?: () => void;
 }
 
-export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditItem, openSubsBottomSheet }: ThreadItemProps) => {
+export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditItem, openBottomSheet }: ThreadItemProps) => {
     const theme = useTheme()
     const router = useRouter();
     const [deleteThread] = useDeleteThreadMutation();
     const [likeThread] = useLikeThreadMutation();
     const [dislikeThread] = useDislikeThreadMutation();
     const toast = useToast()
-
-    const handlePresentSubsModalPress = useCallback(() => {
-      openSubsBottomSheet?.();
-    }, [openSubsBottomSheet])
 
     const handleEditItem = () => {
 
@@ -149,15 +145,15 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                                     </Pressable>
                                 )
                             }
-                            <YStack>
                             {inDetailScreen && (
-                              <Pressable onPress={handlePresentSubsModalPress}>
-                                <View p="$2">
-                                  <Ellipsis size="$1" />
-                                </View>
-                              </Pressable>
+                                <YStack>
+                                    <Pressable onPress={openBottomSheet}>
+                                        <View p="$2">
+                                            <Ellipsis size="$1" />
+                                        </View>
+                                    </Pressable>
+                                </YStack>
                             )}
-                            </YStack>
                         </XStack>
                         <YStack pr={'$3'} pl={'$3'} pb={'$1.5'} gap="$1">
                             <Text color="$primary" fontSize={'$6'} fontWeight="bold">
@@ -181,7 +177,7 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                                 name={thread.is_liked ? "paw" : "paw-outline"}
                                 onPress={inDetailScreen ? handleLike : () => null}
                                 size={26}
-                                color={thread.is_liked ? theme.accent.val : theme.primary.val}
+                                color={thread.is_liked ? theme.green10.val : theme.primary.val}
                             />
                             <Text ml={'$2'}>{thread.like_count}</Text>
                         </XStack>
@@ -190,7 +186,7 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                                 name={thread.is_disliked ? "thumbs-down" : "thumbs-down-outline"}
                                 onPress={inDetailScreen ? handleDislike : () => null}
                                 size={26}
-                                color={thread.is_disliked ? theme.accent.val : theme.primary.val}
+                                color={thread.is_disliked ? theme.red10.val : theme.primary.val}
                             />
                             <Text ml={'$2'}>{thread.dislike_count}</Text>
                         </XStack>

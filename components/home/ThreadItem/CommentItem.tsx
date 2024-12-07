@@ -74,7 +74,7 @@ export const CommentItem = ({
               name={comment.is_liked ? "paw" : "paw-outline"}
               onPress={onLikePress}
               size={26}
-              color={comment.is_liked ? theme.accent.val : theme.primary.val}
+              color={comment.is_liked ? theme.green10.val : theme.primary.val}
             />
             <Text ml={"$2"}>{comment.like_count}</Text>
           </XStack>
@@ -85,7 +85,7 @@ export const CommentItem = ({
               }
               onPress={onDislikePress}
               size={26}
-              color={comment.is_disliked ? theme.accent.val : theme.primary.val}
+              color={comment.is_disliked ? theme.red10.val : theme.primary.val}
             />
             <Text ml={"$2"}>{comment.dislike_count}</Text>
           </XStack>
