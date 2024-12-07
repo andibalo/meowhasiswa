@@ -177,10 +177,10 @@ export const threadsApi = createApi({
                 method: "DELETE",
             }),
         }),
-        editComment: builder.mutation({
-            query: ({ threadId, commentId, content }) => ({
-                url: `/threads/${threadId}/comments/${commentId}`,
-                method: 'PATCH',
+        editComment: builder.mutation<void, { commentId: string; content: string }>({
+            query: ({ commentId, content }) => ({
+                url: `/comments/${commentId}`,
+                method: "PATCH",
                 body: { content },
             }),
         }),

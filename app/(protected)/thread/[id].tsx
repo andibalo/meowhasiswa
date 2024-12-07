@@ -19,6 +19,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import {
     useDeleteCommentMutation,
     useDeleteReplyCommentMutation,
+    useEditCommentMutation,
 } from "redux/api/thread";
 import { useFetchUserProfileQuery } from "redux/api";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -50,6 +51,7 @@ export default function ThreadDetailScreen() {
     const [deleteReplyComment] = useDeleteReplyCommentMutation(); //
     const [isEditing, setIsEditing] = useState(false);
     const [editingComment, setEditingComment] = useState<IComment | null>(null);
+    const [editComment] = useEditCommentMutation();
 
     const [comment, setComment] = useState("");
     const [selectedComment, setSelectedComment] = useState<
@@ -134,47 +136,54 @@ export default function ThreadDetailScreen() {
 
     const handleSubmitComment = async () => {
         if (comment.trim() === "") return;
-
-        try {
-            if (isReplying) {
-                if (!replyCommentData) {
-                    return;
-                }
-
-                await replyComment({
-                    threadId: id,
-                    content: comment,
-                    commentId: replyCommentData.id,
-                }).unwrap();
-                setComment("");
-                setIsReplying(false);
-                setReplyCommentData(null);
-                return;
-            }
-
-            await postComment({ threadId: id, content: comment }).unwrap();
-            setComment("");
-            setTimeout(() => {
-                scrollViewRef.current?.scrollToEnd({ animated: true });
-            }, 200);
-        } catch (error) {
-            toast.showToastError("Error submitting comment:", error);
-        }
-    };
     
-    const handleEditComment = (comment: IComment | ICommentReply) => {
+        try {
+          if (isReplying) {
+            if (!replyCommentData) {
+              return;
+            }
+    
+            await replyComment({
+              threadId: id,
+              content: comment,
+              commentId: replyCommentData.id,
+            }).unwrap();
+            setComment("");
+            setIsReplying(false);
+            setReplyCommentData(null);
+            return;
+          }
+    
+          await postComment({ threadId: id, content: comment }).unwrap();
+          setComment("");
+          setTimeout(() => {
+            scrollViewRef.current?.scrollToEnd({ animated: true });
+          }, 200);
+        } catch (error) {
+          toast.showToastError("Error submitting comment", error);
+        }
+      };
+    
+      const handleEditComment = async (comment: IComment | ICommentReply) => {
         if ('replies' in comment) {
-            // It's an IComment
-            setEditingComment(comment); // Store the comment being edited
-            setComment(comment.content); // Pre-fill the input field with the comment content
-            setIsEditing(true); // Set the editing state to true
-            bottomSheetModalRef.current?.dismiss(); // Close the modal
+            setEditingComment(comment);
+            setComment(comment.content);
+            setIsEditing(true);
+            bottomSheetModalRef.current?.dismiss();
+            // try {
+            //         await editComment({
+            //                 commentId: comment.id,
+            //                 content: comment.content,
+            //         }).unwrap();
+        
+            //     toast.showToast("Comment updated successfully!");
+            // } catch (error) {
+            //     toast.showToastError("Error editing comment:", error);
+            // }
         } else {
-            // It's an ICommentReply
-            toast.showToastError("Replies cannot be edited.");
+            toast.showToastError("Editing replies is not supported.");
         }
     };
-
 
     const handleDeleteComment = async (comment: IComment | ICommentReply) => {
         if (comment.user_id !== userProfile?.id) {
@@ -184,7 +193,7 @@ export default function ThreadDetailScreen() {
 
         Alert.alert(
             "Confirm Deletion",
-            "Are you sure you want to delete this thread? This action cannot be undone.",
+            "Are you sure you want to delete this comment? This action cannot be undone.",
             [
                 { text: "Cancel", style: "cancel" },
                 {
@@ -197,9 +206,9 @@ export default function ThreadDetailScreen() {
                             } else {
                                 await deleteComment(comment.id).unwrap();
                             }
-                            Alert.alert("Success", "Thread deleted successfully.");
+                            Alert.alert("Success", "Comment deleted successfully.");
                         } catch (error) {
-                            Alert.alert("Error", "Failed to delete the thread.");
+                            Alert.alert("Error", "Failed to delete the comment.");
                         }
                     },
                 },
@@ -326,7 +335,7 @@ export default function ThreadDetailScreen() {
                     <BottomSheetView>
                         <XStack justifyContent="space-between" padding="$3">
                             {selectedComment?.user_id === userProfile?.id ? (
-                                 <View gap='$2'>
+                                 <View gap='$4'>
                                     <Pressable
                                          onPress={() =>
                                             selectedComment && handleEditComment(selectedComment)
