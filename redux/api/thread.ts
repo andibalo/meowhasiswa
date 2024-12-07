@@ -209,7 +209,6 @@ export const {
     useReplyCommentMutation,
     useDeleteCommentMutation,
     useDeleteReplyCommentMutation,
-    useReplyCommentMutation,
     useSubscribeThreadMutation,
     useUnSubscribeThreadMutation
 } = threadsApi;

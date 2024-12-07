@@ -7,6 +7,8 @@ import {
   useLikeCommentMutation,
   usePostCommentMutation,
   useReplyCommentMutation,
+  useUnSubscribeThreadMutation,
+  useSubscribeThreadMutation
 } from "redux/api/thread";
 import { CommentInput, CommentItem, ThreadItem } from "components/home";
 import { BottomSheet, Error, Loading, NotFound } from "components/common";
@@ -37,6 +39,9 @@ export default function ThreadDetailScreen() {
   } = useFetchThreadCommentsQuery(id);
 
   const userProfile = userProfileData?.data;
+
+  const [subscribeThread] = useSubscribeThreadMutation();
+  const [unSubscribeThread] = useUnSubscribeThreadMutation();
 
   const [postComment] = usePostCommentMutation();
   const [likeComment] = useLikeCommentMutation();
@@ -71,6 +76,10 @@ export default function ThreadDetailScreen() {
 
   const handleDismissModal = useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
+  }, []);
+
+  const openSubsBottomSheet = useCallback(() => {
+    bottomSheetModalRef.current?.present();
   }, []);
 
   if (!id) {
@@ -188,6 +197,22 @@ export default function ThreadDetailScreen() {
       ],
       { cancelable: true }
     );
+  };
+
+  const handleSubscribeThread = async () => {
+    try {
+      await subscribeThread(threadDetail.id);
+    } catch (error) {
+      toast.showToastError("Error Subscribe Thread", error);
+    }
+  };
+
+  const handleUnsubscribeThread = async () => {
+    try {
+      await unSubscribeThread(threadDetail.id);
+    } catch (error) {
+      toast.showToastError("Error Unsubscribe Thread", error);
+    }
   };
 
   return (
@@ -317,6 +342,18 @@ export default function ThreadDetailScreen() {
               <Text color="$red10">Delete Comment</Text>
             </Pressable>
           )}
+        </YStack>
+      </BottomSheet>
+      <BottomSheet
+        ref={openSubsBottomSheet}
+      >
+        <YStack gap="$4" padding="$3">
+        <Pressable onPress={handleSubscribeThread}>
+          <Text color="$primary">subscribe</Text>
+        </Pressable>
+        <Pressable onPress={handleUnsubscribeThread}>
+          <Text color="$primary">unsubscribe</Text>
+        </Pressable>
         </YStack>
       </BottomSheet>
     </View>
