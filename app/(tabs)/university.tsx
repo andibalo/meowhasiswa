@@ -8,6 +8,7 @@ import {
 } from "redux/api";
 import { useRouter } from "expo-router";
 import { useState } from "react";
+import { ImageBackground } from "react-native";
 
 export default function UniversityScreen() {
 
@@ -84,41 +85,47 @@ export default function UniversityScreen() {
   const universityId = userProfile?.data?.university_id;
 
   return (
-    <View flex={1} p="$3" pb="0" bg="$backgroundSoft">
-      <View mb="$3">
-        <SearchBar
-          placeholder="Search University"
-          value={searchInput}
-          onChangeText={(data) => onChangeText(data)}
-          onSubmitEditing={() => handleSubmitSearch()}
-        />
-      </View>
-      {universityId && !hasRateUniversity ? (
-        <View
-          flex={1}
-          jc="center"
-          ai="center"
-          px="$5"
-        >
-          <FontAwesome name="exclamation-circle" size={40} color="$primary" />
-          <View mt="$2">
-            <Text fontSize="$5" textAlign="center">
-              You must review your university first before accessing this
-              screen.
-            </Text>
-          </View>
+    <ImageBackground
+      source={{ uri: "https://meowhasiswa-59cc5f49-f82b-4998-af05-368c90f07a20.s3.ap-southeast-1.amazonaws.com/cat_seamless_doodle_Converted-min.png" }}
+      resizeMode="cover"
+      style={{ flex: 1 }}
+    >
+      <View flex={1} p="$3" pb="0" bg="$backgroundSoft">
+        <View mb="$3">
+          <SearchBar
+            placeholder="Search University"
+            value={searchInput}
+            onChangeText={(data) => onChangeText(data)}
+            onSubmitEditing={() => handleSubmitSearch()}
+          />
         </View>
-      ) : (
-        <ReviewList
-          data={uniRatings}
-          handleLoadMore={handleLoadMore}
-          isLoadingMore={isFetching}
-          onRefresh={onRefresh}
-        />
-      )}
-      {universityId && !hasRateUniversity &&
-        <Fab onPress={() => router.push("/university/rate-university")} />
-      }
-    </View>
+        {universityId && !hasRateUniversity ? (
+          <View
+            flex={1}
+            jc="center"
+            ai="center"
+            px="$5"
+          >
+            <FontAwesome name="exclamation-circle" size={40} color="$primary" />
+            <View mt="$2">
+              <Text fontSize="$5" textAlign="center">
+                You must review your university first before accessing this
+                screen.
+              </Text>
+            </View>
+          </View>
+        ) : (
+          <ReviewList
+            data={uniRatings}
+            handleLoadMore={handleLoadMore}
+            isLoadingMore={isFetching}
+            onRefresh={onRefresh}
+          />
+        )}
+        {universityId && !hasRateUniversity &&
+          <Fab onPress={() => router.push("/university/rate-university")} />
+        }
+      </View>
+    </ImageBackground>
   );
 }

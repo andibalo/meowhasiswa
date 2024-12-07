@@ -14,11 +14,11 @@ export const TopTabBar = (props: TabBarProps<Route>) => {
         <TabBar
             {...props}
             indicatorStyle={{
-                backgroundColor: theme.primary.val,
+                backgroundColor: theme.accent.val,
                 height: 3,
             }}
-            activeColor={theme.primary.val}
-            inactiveColor="#C5C5C5"
+            activeColor={theme.accent.val}
+            inactiveColor="#595959"
             style={{
                 backgroundColor: 'white',
                 borderRadius: 2,

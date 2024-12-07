@@ -163,6 +163,20 @@ export const threadsApi = createApi({
                 };
             }
         }),
+        deleteComment: builder.mutation<APIResponse<any>, string>({
+            invalidatesTags: ['Comment'],
+            query: (commentId) => ({
+                url: `/v1/thread/comment/${commentId}`,
+                method: "DELETE",
+            }),
+        }),
+        deleteReplyComment: builder.mutation<APIResponse<any>, string>({
+            invalidatesTags: ['Comment'],
+            query: (commentId) => ({
+                url: `/v1/thread/comment/reply/${commentId}`,
+                method: "DELETE",
+            }),
+        }),
         subscribeThread: builder.mutation<APIResponse<any>, string>({
             invalidatesTags: (result, error, threadId) => [{ type: "Thread", id: threadId }],
             query: (threadId) => ({
@@ -192,6 +206,9 @@ export const {
     useDislikeThreadMutation,
     useDislikeCommentMutation,
     useLikeCommentMutation,
+    useReplyCommentMutation,
+    useDeleteCommentMutation,
+    useDeleteReplyCommentMutation,
     useReplyCommentMutation,
     useSubscribeThreadMutation,
     useUnSubscribeThreadMutation
