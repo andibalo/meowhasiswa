@@ -16,6 +16,7 @@ export interface IThread {
     comment_count: number;
     is_liked: boolean;
     is_disliked: boolean;
+    is_subscribed: boolean;
     comments?: IComment[];
     created_by: string;
     created_at: string;

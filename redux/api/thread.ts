@@ -177,6 +177,20 @@ export const threadsApi = createApi({
                 method: "DELETE",
             }),
         }),
+        subscribeThread: builder.mutation<APIResponse<any>, string>({
+            invalidatesTags: (result, error, threadId) => [{ type: "Thread", id: threadId }],
+            query: (threadId) => ({
+                url: `/v1/thread/subscribe/${threadId}`,
+                method: "POST",
+            }),
+        }),
+        unSubscribeThread: builder.mutation<APIResponse<any>, string>({
+            invalidatesTags: (result, error, threadId) => [{ type: "Thread", id: threadId }],
+            query: (threadId) => ({
+                url: `/v1/thread/unsubscribe/${threadId}`,
+                method: "PATCH",
+            }),
+        }),
     }),
 });
 
@@ -195,4 +209,6 @@ export const {
     useReplyCommentMutation,
     useDeleteCommentMutation,
     useDeleteReplyCommentMutation,
+    useSubscribeThreadMutation,
+    useUnSubscribeThreadMutation
 } = threadsApi;

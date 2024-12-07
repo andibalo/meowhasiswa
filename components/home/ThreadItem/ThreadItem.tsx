@@ -7,15 +7,18 @@ import { useLikeThreadMutation, useDislikeThreadMutation, useDeleteThreadMutatio
 import { useToast } from 'hooks';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { formateDateWithDaysAgoThreshold } from 'utils';
+import { Ellipsis } from '@tamagui/lucide-icons';
+import { useCallback } from 'react';
 
 interface ThreadItemProps {
     thread: IThread;
     currentUserId?: string;
     inDetailScreen?: boolean;
-    enableEditItem?: boolean
+    enableEditItem?: boolean;
+    openBottomSheet?: () => void;
 }
 
-export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditItem }: ThreadItemProps) => {
+export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditItem, openBottomSheet }: ThreadItemProps) => {
     const theme = useTheme()
     const router = useRouter();
     const [deleteThread] = useDeleteThreadMutation();
@@ -142,6 +145,15 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                                     </Pressable>
                                 )
                             }
+                            {inDetailScreen && (
+                                <YStack>
+                                    <Pressable onPress={openBottomSheet}>
+                                        <View p="$2">
+                                            <Ellipsis size="$1" />
+                                        </View>
+                                    </Pressable>
+                                </YStack>
+                            )}
                         </XStack>
                         <YStack pr={'$3'} pl={'$3'} pb={'$1.5'} gap="$1">
                             <Text color="$primary" fontSize={'$6'} fontWeight="bold">
@@ -165,7 +177,7 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                                 name={thread.is_liked ? "paw" : "paw-outline"}
                                 onPress={inDetailScreen ? handleLike : () => null}
                                 size={26}
-                                color={thread.is_liked ? theme.accent.val : theme.primary.val}
+                                color={thread.is_liked ? theme.green10.val : theme.primary.val}
                             />
                             <Text ml={'$2'}>{thread.like_count}</Text>
                         </XStack>
@@ -174,7 +186,7 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                                 name={thread.is_disliked ? "thumbs-down" : "thumbs-down-outline"}
                                 onPress={inDetailScreen ? handleDislike : () => null}
                                 size={26}
-                                color={thread.is_disliked ? theme.accent.val : theme.primary.val}
+                                color={thread.is_disliked ? theme.red10.val : theme.primary.val}
                             />
                             <Text ml={'$2'}>{thread.dislike_count}</Text>
                         </XStack>
