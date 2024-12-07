@@ -1,5 +1,5 @@
 import { Reply } from "@tamagui/lucide-icons";
-import { Text, View, XStack, YStack, Avatar } from "tamagui";
+import { Text, View, XStack, YStack, Avatar, useTheme } from "tamagui";
 import { IComment, ICommentReply } from "types/model/thread";
 import { Pressable } from "react-native";
 import { formateDateWithDaysAgoThreshold } from "utils";
@@ -21,6 +21,7 @@ export const CommentItem = ({
   onLikePress,
   onReplyPress,
 }: CommentItemProps) => {
+  const theme = useTheme()
 
   return (
     <View mb={"$3"} bg={"$white1"} borderRadius={"$radius.4"}>
@@ -73,7 +74,7 @@ export const CommentItem = ({
               name={comment.is_liked ? "paw" : "paw-outline"}
               onPress={onLikePress}
               size={26}
-              color={comment.is_liked ? "#2f2ff4" : "black"}
+              color={comment.is_liked ? theme.accent.val : theme.primary.val}
             />
             <Text ml={"$2"}>{comment.like_count}</Text>
           </XStack>
@@ -84,7 +85,7 @@ export const CommentItem = ({
               }
               onPress={onDislikePress}
               size={26}
-              color={comment.is_disliked ? "#2f2ff4" : "black"}
+              color={comment.is_disliked ? theme.accent.val : theme.primary.val}
             />
             <Text ml={"$2"}>{comment.dislike_count}</Text>
           </XStack>

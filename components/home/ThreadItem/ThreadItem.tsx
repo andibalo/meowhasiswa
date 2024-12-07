@@ -1,5 +1,5 @@
 import { Edit3, MessageSquare } from '@tamagui/lucide-icons';
-import { Text, View, XStack, YStack, Avatar, Separator } from 'tamagui';
+import { Text, View, XStack, YStack, Avatar, Separator, useTheme } from 'tamagui';
 import { IThread } from 'types/model/thread';
 import { Pressable, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -16,6 +16,7 @@ interface ThreadItemProps {
 }
 
 export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditItem }: ThreadItemProps) => {
+    const theme = useTheme()
     const router = useRouter();
     const [deleteThread] = useDeleteThreadMutation();
     const [likeThread] = useLikeThreadMutation();
@@ -164,7 +165,7 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                                 name={thread.is_liked ? "paw" : "paw-outline"}
                                 onPress={inDetailScreen ? handleLike : () => null}
                                 size={26}
-                                color={thread.is_liked ? "#2f2ff4" : "black"}
+                                color={thread.is_liked ? theme.accent.val : theme.primary.val}
                             />
                             <Text ml={'$2'}>{thread.like_count}</Text>
                         </XStack>
@@ -173,7 +174,7 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                                 name={thread.is_disliked ? "thumbs-down" : "thumbs-down-outline"}
                                 onPress={inDetailScreen ? handleDislike : () => null}
                                 size={26}
-                                color={thread.is_disliked ? "#2f2ff4" : "black"}
+                                color={thread.is_disliked ? theme.accent.val : theme.primary.val}
                             />
                             <Text ml={'$2'}>{thread.dislike_count}</Text>
                         </XStack>
