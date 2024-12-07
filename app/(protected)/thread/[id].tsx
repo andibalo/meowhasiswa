@@ -60,6 +60,7 @@ export default function ThreadDetailScreen() {
   );
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const subsBottomSheetModalRef = useRef<BottomSheetModal>(null);
   const scrollViewRef = useRef<ScrollView>(null);
   const toast = useToast();
 
@@ -79,7 +80,7 @@ export default function ThreadDetailScreen() {
   }, []);
 
   const openSubsBottomSheet = useCallback(() => {
-    bottomSheetModalRef.current?.present();
+    subsBottomSheetModalRef.current?.present();
   }, []);
 
   if (!id) {
@@ -218,7 +219,7 @@ export default function ThreadDetailScreen() {
   return (
     <View flex={1} backgroundColor="$background">
       <ScrollView ref={scrollViewRef}>
-        <ThreadItem thread={threadDetail} inDetailScreen />
+        <ThreadItem thread={threadDetail} inDetailScreen openSubsBottomSheet={openSubsBottomSheet}/>
         <View>
           <Separator mb="$2" />
         </View>
@@ -345,15 +346,19 @@ export default function ThreadDetailScreen() {
         </YStack>
       </BottomSheet>
       <BottomSheet
-        ref={openSubsBottomSheet}
+        ref={subsBottomSheetModalRef}
       >
         <YStack gap="$4" padding="$3">
-        <Pressable onPress={handleSubscribeThread}>
-          <Text color="$primary">subscribe</Text>
-        </Pressable>
-        <Pressable onPress={handleUnsubscribeThread}>
+        {threadDetail.is_subscribed ? 
+        (
+          <Pressable onPress={handleUnsubscribeThread}>
           <Text color="$primary">unsubscribe</Text>
         </Pressable>
+        ):(
+          <Pressable onPress={handleSubscribeThread}>
+          <Text color="$primary">subscribe</Text>
+        </Pressable>
+        )}
         </YStack>
       </BottomSheet>
     </View>
