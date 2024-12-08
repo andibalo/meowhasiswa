@@ -7,18 +7,19 @@ import { firestore } from "config";
 import { collection, addDoc, query, orderBy, onSnapshot, doc, getDoc, setDoc, getDocs } from "firebase/firestore";
 import { useFetchUserProfileQuery } from 'redux/api';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
+import { useToast } from 'hooks'
 
 export default function ChatDetailScreen() {
   const { data, error, isLoading } = useFetchUserProfileQuery();
   const navigation = useNavigation();
   const { chatId } = useLocalSearchParams<{ chatId: string }>();
+  const toast = useToast()
 
   const [messages, setMessages] = useState<IMessage[]>([]);
-  console.log(data?.data?.id)
 
   useEffect(() => {
     if (!chatId) return;
-  
+    toast.showToastError("Chat ID or user data is missing.")
     const messagesRef = collection(firestore, "chats", chatId, "messages");
     const q = query(messagesRef, orderBy("createdAt", "desc"));
   
@@ -41,20 +42,18 @@ export default function ChatDetailScreen() {
 
   const onSend = useCallback(async (newMessages: IMessage[] = []) => {
     if (!chatId || !data) {
-      console.error("Chat ID or user data is missing.");
+      toast.showToastError("Chat ID or user data is missing.");
       return;
     }
   
     if (newMessages.length === 0) {
-      console.error("No messages to send.");
+      toast.showToastError("No messages to send.");
       return;
     }
   
     const messagesRef = collection(firestore, "chats", chatId, "messages");
   
     try {
-      console.log("onSend triggered");
-  
       setMessages((previousMessages) => GiftedChat.append(previousMessages, newMessages));
   
       const writes = newMessages.map((m) => addDoc(messagesRef, {
@@ -66,7 +65,7 @@ export default function ChatDetailScreen() {
       }));
       await Promise.all(writes);
     } catch (error) {
-      console.error("Error sending messages:", error);
+      toast.showToastError("Error sending messages:", error);
     }
   }, [chatId, data]);  
   
@@ -97,7 +96,7 @@ export default function ChatDetailScreen() {
     <Avatar
       borderRadius={"$2"}
       borderWidth="$1"
-      borderColor="$primary"
+      borderColor="#fff"
       marginRight="$2"
       size="$4"
     >

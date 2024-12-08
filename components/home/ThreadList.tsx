@@ -38,11 +38,6 @@ export const ThreadList = ({
     currentProfilePic2,
     enableEditItem,
 }: IThreadListProps) => {
-    // Deduplicate the data array based on thread ID
-    const uniqueData = useMemo(() => {
-        return Array.from(new Map(data.map(item => [item.id, item])).values());
-    }, [data]);
-
     const renderPost = ({ item }: { item: IThread }) => (
         <View>
             <ThreadItem thread={item} currentUserId={currentUserId} enableEditItem={enableEditItem} currentUserId2={currentUserId2} currentUserName2={currentUserName2} currentProfilePic2={currentProfilePic2} />
@@ -52,16 +47,19 @@ export const ThreadList = ({
 
     return (
         <FlatList
-            data={uniqueData} // Use deduplicated data
+            data={data}
             renderItem={renderPost}
-            keyExtractor={(item) => `thread-${title}-${item.id}-${item.created_at}`} // Ensure unique keys
+            keyExtractor={(item) => `thread-${title}-${item.id}`}
             onEndReachedThreshold={0.5}
             scrollEventThrottle={16}
             onEndReached={handleLoadMore}
             ListFooterComponent={renderFooterLoading(isLoadingMore)}
             showsVerticalScrollIndicator={false}
             refreshControl={
-                <RefreshControl refreshing={!!isRefreshing} onRefresh={onRefresh} />
+                <RefreshControl
+                    refreshing={!!isRefreshing}
+                    onRefresh={onRefresh}
+                />
             }
             extraData={currentUserId} // Track current user to trigger re-renders
         />

@@ -2,11 +2,10 @@ import { useEffect, useState } from "react";
 import { FlatList, Pressable } from "react-native";
 import { SizableText, XStack, YStack, Avatar } from "tamagui";
 import { firestore } from "config/firebase";
-import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, limit, onSnapshot } from "firebase/firestore";
 import { useFetchUserProfileQuery } from "redux/api";
-import { useRouter } from 'expo-router';
-import { useFocusEffect } from '@react-navigation/native';
-import React from "react";
+import { useRouter } from "expo-router";
+import { useToast } from "hooks";
 
 interface ChatRoom {
   chatId: string;
@@ -22,8 +21,8 @@ export default function ChatListScreen() {
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
   const userId = data?.data?.id;
   const router = useRouter();
+  const toast = useToast();
 
-  // Function to fetch chat rooms
   const fetchChatRooms = async () => {
     try {
       if (!userId) return;
@@ -46,14 +45,6 @@ export default function ChatListScreen() {
               createdAt: null,
             };
 
-            setChatRooms((prevRooms) => {
-              return prevRooms.map((room) =>
-                room.chatId === chatId
-                  ? { ...room, text: "Loading...", createdAt: null }
-                  : room
-              );
-            });
-
             const messagesRef = collection(firestore, "chats", chatId, "messages");
             const lastMessageQuery = query(messagesRef, orderBy("createdAt", "desc"), limit(1));
             const lastMessageSnapshot = await getDocs(lastMessageQuery);
@@ -72,20 +63,44 @@ export default function ChatListScreen() {
 
       setChatRooms(rooms.filter((room) => room !== null) as ChatRoom[]);
     } catch (error) {
-      console.error("Error fetching chat rooms:", error);
+      toast.showToastError("Error fetching chat rooms:", error);
     }
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
+  useEffect(() => {
+    if (!userId) return;
+    const unsubscribeChats = onSnapshot(collection(firestore, "chats"), () => {
       fetchChatRooms();
-    }, [userId])
-  );
+    });
+
+    return () => unsubscribeChats();
+  }, [userId]);
+
+  useEffect(() => {
+    const unsubscribes = chatRooms.map((room) => {
+      const messagesRef = collection(firestore, "chats", room.chatId, "messages");
+      const q = query(messagesRef, orderBy("createdAt", "desc"), limit(1));
+
+      return onSnapshot(q, (snapshot) => {
+        if (!snapshot.empty) {
+          const lastMessage = snapshot.docs[0].data();
+          setChatRooms((prevRooms) =>
+            prevRooms.map((r) =>
+              r.chatId === room.chatId
+                ? { ...r, text: lastMessage.text, createdAt: lastMessage.createdAt }
+                : r
+            )
+          );
+        }
+      });
+    });
+
+    return () => unsubscribes.forEach((unsubscribe) => unsubscribe());
+  }, [chatRooms]);
 
   const renderItem = ({ item }: { item: ChatRoom }) => (
     <Pressable
       onPress={() => {
-        console.log("Navigating with chatId:", item.chatId);
         router.push({
           pathname: '/chat/chat-detail',
           params: { chatId: item.chatId },
