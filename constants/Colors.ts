@@ -3,6 +3,7 @@ const tintColorDark = '#fff';
 const primaryLight = '#030303'
 const secondaryLight = '#595959'
 const accentLight = '#2f2ff4'
+const accentTintLight = '#d5d5fd'
 
 export const colors = {
   light: {
@@ -21,5 +22,6 @@ export const colors = {
   },
   primaryLight,
   secondaryLight,
-  accentLight
+  accentLight,
+  accentTintLight
 };

@@ -1,4 +1,4 @@
-import { XStack, Button, Input, InputProps } from 'tamagui'
+import { XStack, Button, Input, InputProps, useTheme } from 'tamagui'
 import { Search } from '@tamagui/lucide-icons'
 
 interface ISearchBarProps extends InputProps {
@@ -6,9 +6,10 @@ interface ISearchBarProps extends InputProps {
 }
 
 export const SearchBar = (props: ISearchBarProps) => {
+    const theme = useTheme()
 
     return (
-        <XStack borderRadius="$2" bg="#d5d5fd" alignItems="center"  >
+        <XStack borderRadius="$2" bg={theme.accentTint.val} alignItems="center"  >
             <Input
                 value={props.value}
                 onChangeText={props.onChangeText}

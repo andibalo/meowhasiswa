@@ -10,7 +10,8 @@ const conf = {
       ...configBase.tokens.color,
       primary: colors.primaryLight,
       secondary: colors.secondaryLight,
-      accent: colors.accentLight
+      accent: colors.accentLight,
+      accentTint: colors.accentTintLight
     }
   }
 }
