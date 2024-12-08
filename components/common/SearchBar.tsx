@@ -8,7 +8,7 @@ interface ISearchBarProps extends InputProps {
 export const SearchBar = (props: ISearchBarProps) => {
 
     return (
-        <XStack borderRadius="$2" bg="white" alignItems="center" borderWidth={1} borderColor="$primary" >
+        <XStack borderRadius="$2" bg="#d5d5fd" alignItems="center"  >
             <Input
                 value={props.value}
                 onChangeText={props.onChangeText}
