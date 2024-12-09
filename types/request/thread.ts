@@ -43,3 +43,15 @@ export interface IReplyCommentRequest {
     threadId: string;
     content: string;
 }
+
+export interface IUpdateCommentRequest {
+    commentId: string;
+    threadId: string;
+    content: string;
+}
+
+export interface IUpdateCommentReplyRequest {
+    commentId: string;
+    threadId: string;
+    content: string;
+}
