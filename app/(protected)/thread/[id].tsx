@@ -20,7 +20,7 @@ import {
   useDeleteCommentMutation,
   useDeleteReplyCommentMutation,
 } from "redux/api/thread";
-import { useFetchUserProfileQuery } from "redux/api";
+import { useEditCommentMutation, useEditCommentReplyMutation, useFetchUserProfileQuery } from "redux/api";
 import {
   BottomSheetModal,
 } from "@gorhom/bottom-sheet";
@@ -44,6 +44,8 @@ export default function ThreadDetailScreen() {
   const [unSubscribeThread] = useUnSubscribeThreadMutation();
 
   const [postComment] = usePostCommentMutation();
+  const [editComment] = useEditCommentMutation()
+  const [editCommentReply] = useEditCommentReplyMutation()
   const [likeComment] = useLikeCommentMutation();
   const [dislikeComment] = useDislikeCommentMutation();
   const [replyComment] = useReplyCommentMutation();
@@ -55,6 +57,7 @@ export default function ThreadDetailScreen() {
     IComment | ICommentReply | null
   >(null);
   const [isReplying, setIsReplying] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [replyCommentData, setReplyCommentData] = useState<IComment | null>(
     null
   );
@@ -112,10 +115,26 @@ export default function ThreadDetailScreen() {
     return <Error />;
   }
 
+  const onEditClose = () => {
+    setIsEditing(false);
+    setSelectedComment(null);
+    setComment("");
+  };
+
   const onReplyClose = () => {
     setIsReplying(false);
     setReplyCommentData(null);
     setComment("");
+  };
+
+  const onEditCommentPress = () => {
+    if (!selectedComment) {
+      return
+    }
+
+    setIsEditing(true);
+    setComment(selectedComment.content);
+    closeCommentBottomSheet()
   };
 
   const onReplyPress = (commentData: IComment) => {
@@ -144,6 +163,33 @@ export default function ThreadDetailScreen() {
     if (comment.trim() === "") return;
 
     try {
+      if (isEditing) {
+        if (!selectedComment) {
+          toast.showToastError("No Comment Selected");
+          return
+        }
+
+        if ("thread_comment_id" in selectedComment) {
+          await editCommentReply({
+            threadId: id,
+            content: comment,
+            commentId: selectedComment.id,
+          }).unwrap();
+
+          onEditClose()
+          return
+        }
+
+        await editComment({
+          threadId: id,
+          content: comment,
+          commentId: selectedComment.id,
+        }).unwrap();
+
+        onEditClose()
+        return
+      }
+
       if (isReplying) {
         if (!replyCommentData) {
           return;
@@ -154,9 +200,8 @@ export default function ThreadDetailScreen() {
           content: comment,
           commentId: replyCommentData.id,
         }).unwrap();
-        setComment("");
-        setIsReplying(false);
-        setReplyCommentData(null);
+
+        onReplyClose()
         return;
       }
 
@@ -351,7 +396,9 @@ export default function ThreadDetailScreen() {
         onChangeText={(val) => setComment(val)}
         onSubmit={handleSubmitComment}
         isReplying={isReplying}
+        isEditing={isEditing}
         onReplyClose={onReplyClose}
+        onEditClose={onEditClose}
         replyMention={replyCommentData && replyCommentData.username}
       />
       <BottomSheet
@@ -360,7 +407,7 @@ export default function ThreadDetailScreen() {
         <YStack gap="$4" padding="$3">
           {selectedComment?.user_id === userProfile.id && (
             <Pressable
-              onPress={() => null}
+              onPress={() => onEditCommentPress()}
             >
               <Text>Edit Comment</Text>
             </Pressable>
