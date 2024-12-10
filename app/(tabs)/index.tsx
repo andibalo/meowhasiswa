@@ -27,6 +27,7 @@ const TabItem = (props: ITabItemProps) => {
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [error, setError] = useState("")
 
+  //TODO: Refactor to use rtk query
   const fetchThreads = async (cursor) => {
     try {
       const response = await fetchThreadList({
@@ -77,7 +78,7 @@ const TabItem = (props: ITabItemProps) => {
 
     setEndOfDataReached(false)
     setThreads([]);
-    fetchThreads("");
+    await fetchThreads("");
   };
 
   const handleLoadMore = async (cursor) => {

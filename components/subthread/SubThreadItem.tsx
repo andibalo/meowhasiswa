@@ -14,9 +14,10 @@ import { Error } from "components/common";
 interface SubThreadItemProps {
   subthread: ISubThread;
   isFollowing?: boolean;
+  onRefresh: () => void
 }
 
-export const SubThreadItem = ({ subthread, isFollowing }: SubThreadItemProps) => {
+export const SubThreadItem = ({ subthread, isFollowing, onRefresh }: SubThreadItemProps) => {
   const router = useRouter();
   const [followSubThread] = useFollowSubThreadMutation();
   const [unFollowSubThread] = useUnFollowSubThreadMutation();
@@ -41,6 +42,7 @@ export const SubThreadItem = ({ subthread, isFollowing }: SubThreadItemProps) =>
         subthread_id: subthread.id,
         user_id: userProfile.id,
       }).unwrap();
+      onRefresh()
     } catch (error) {
       toast.showToastError("Error Following Submeow", error);
     }
@@ -52,6 +54,7 @@ export const SubThreadItem = ({ subthread, isFollowing }: SubThreadItemProps) =>
         subthread_id: subthread.id,
         user_id: userProfile.id,
       }).unwrap();
+      onRefresh()
     } catch (error) {
       toast.showToastError("Error unFollowing Submeow", error);
     }
