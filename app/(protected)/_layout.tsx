@@ -73,7 +73,13 @@ export default function ProtectedLayout() {
             <Stack.Screen
                 name="university/rate-university"
                 options={{
-                    headerTitle: "Rate University",
+                    headerTitle: "Review University",
+                }}
+            />
+            <Stack.Screen
+                name="university/edit-rate-university"
+                options={{
+                    headerTitle: "Edit University Review",
                 }}
             />
         </Stack>

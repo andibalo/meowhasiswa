@@ -9,15 +9,16 @@ import {
   ScrollView,
 } from "tamagui";
 import { TouchableOpacity } from "react-native";
-import { useNavigation } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import * as yup from "yup";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ChevronDown } from "@tamagui/lucide-icons";
-import { useState } from "react";
-import { useCreateUniversityReviewMutation } from "redux/api";
+import { useEffect, useState } from "react";
+import { useEditUniversityReviewMutation, useFetchUniversityReviewByIdQuery } from "redux/api";
 import { useFetchUserProfileQuery } from "redux/api";
 import { Error, Loading, NotFound } from "components/common";
+import { useToast } from "hooks";
 
 type RateUniversityFormData = {
   title: string;
@@ -81,10 +82,26 @@ const rateUniversitySchema = yup.object().shape({
     ),
 });
 
-export default function RateUniversityScreen() {
+export default function EditRateUniversityScreen() {
   const navigation = useNavigation();
+
+  const { universityReviewId } = useLocalSearchParams<{ universityReviewId: string }>();
+  if (!universityReviewId) {
+    navigation.goBack();
+    return;
+  }
+
   const { data, error, isLoading } = useFetchUserProfileQuery();
-  const [createUniversityReview] = useCreateUniversityReviewMutation();
+  const {
+    data: universityReviewData,
+    error: fetchUniversityReviewError,
+    isLoading: fetchUniversityReviewLoading
+  } = useFetchUniversityReviewByIdQuery(universityReviewId);
+
+  const [editUniversityReview] = useEditUniversityReviewMutation();
+
+  const toast = useToast()
+
   const [isMajorDropdownVisible, setIsMajorDropdownVisible] = useState(false);
   const [isFRatingDropdownVisible, setIsFRatingDropdownVisible] =
     useState(false);
@@ -118,11 +135,11 @@ export default function RateUniversityScreen() {
     },
   });
 
-  if (isLoading) {
+  if (isLoading || fetchUniversityReviewLoading) {
     return <Loading />
   }
 
-  if (error) {
+  if (error || fetchUniversityReviewError) {
     return <Error />;
   }
 
@@ -132,17 +149,37 @@ export default function RateUniversityScreen() {
     return <NotFound description="User Not Found" />;
   }
 
-  const handleRateUniversity = async (formData: RateUniversityFormData) => {
-    console.log(formData);
+  const universityReview = universityReviewData?.data;
+
+  if (!universityReview) {
+    return <NotFound description="University Review Not Found" />;
+  }
+
+  useEffect(() => {
+    setValue('title', universityReview.title);
+    setValue('content', universityReview.content);
+    setValue('university_major', universityReview.university_major);
+    setValue('facility_rating', universityReview.facility_rating);
+    setValue('student_organization_rating', universityReview.student_organization_rating);
+    setValue('social_environment_rating', universityReview.social_environment_rating);
+    setValue('education_quality_rating', universityReview.education_quality_rating);
+    setValue('price_to_value_rating', universityReview.price_to_value_rating);
+    setValue('pros', universityReview.pros);
+    setValue('cons', universityReview.cons);
+  }, [universityReview, setValue]);
+
+
+  const handleUpdateUniversityRating = async (formData: RateUniversityFormData) => {
     try {
-      const result = await createUniversityReview({
+      await editUniversityReview({
         university_id: userProfile.university_id!,
+        university_review_id: universityReviewId,
         ...formData,
       }).unwrap();
-      console.log("Review created successfully:", result);
+
       navigation.goBack();
     } catch (err) {
-      console.error("Error creating review:", err);
+      toast.showToastError("Error updating university review", err)
     }
   };
 
@@ -634,7 +671,7 @@ export default function RateUniversityScreen() {
         <Button
           bg="$primary"
           color="white"
-          onPress={handleSubmit(handleRateUniversity)}
+          onPress={handleSubmit(handleUpdateUniversityRating)}
         >
           Submit
         </Button>
