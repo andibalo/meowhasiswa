@@ -92,22 +92,27 @@ export default function ChatDetailScreen() {
     />
   );
 
-  const renderAvatar = (props: any) => (
-    <Avatar
-      borderRadius={"$2"}
-      borderWidth="$1"
-      borderColor="#fff"
-      marginRight="$2"
-      size="$4"
-    >
-      <Avatar.Image
-        accessibilityLabel="Profile Picture"
-        src={props.currentMessage.user.avatar}
-        objectFit="contain"
-      />
-      <Avatar.Fallback backgroundColor="$secondary" />
-    </Avatar>
-  );
+  const renderAvatar = (props) => {
+    if (props.currentMessage.user._id === 2) {
+      return (
+        <Avatar
+          borderRadius={"$2"}
+          borderWidth={1}
+          borderColor="$secondary"
+          marginRight="$2"
+          size="$4"
+        >
+          <Avatar.Image
+            accessibilityLabel="Profile Picture"
+            src={props.currentMessage.user.avatar}
+            objectFit="contain"
+          />
+          <Avatar.Fallback backgroundColor="$secondary" />
+        </Avatar>
+      );
+    }
+    return null;
+  };
 
   const renderDay = (props: any) => (
     <Day
