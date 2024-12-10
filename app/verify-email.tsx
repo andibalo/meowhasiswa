@@ -15,7 +15,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-export default function VerifyEmailScreen(){
+export default function VerifyEmailScreen() {
   const router = useRouter();
   const [verifyEmail] = useVerifyEmailMutation();
   const shakeTranslateX = useSharedValue(0);
@@ -36,13 +36,13 @@ export default function VerifyEmailScreen(){
     shakeTranslateX.value = withSequence(
       withTiming(translationVal, timingConfig),
       withTiming(-translationVal, timingConfig),
-      withSpring(0, { mass: 0.5 } , (finished) => {
+      withSpring(0, { mass: 0.5 }, (finished) => {
         if (finished) {
-            // @ts-ignore
-            runOnJS(setIsInputWrongToFalse)(null);
+          // @ts-ignore
+          runOnJS(setIsInputWrongToFalse)(null);
         }
-    })
-  );
+      })
+    );
   }, []);
 
   const rShakeStyle = useAnimatedStyle(() => ({
@@ -50,11 +50,11 @@ export default function VerifyEmailScreen(){
   }));
 
   const handleOtpFilled = async (otpText: string) => {
-    try { 
+    try {
 
       await verifyEmail({
         email: email,
-        code: otpText, 
+        code: otpText,
       }).unwrap();
 
       router.push("/login");
@@ -69,7 +69,13 @@ export default function VerifyEmailScreen(){
     <YStack f={1} jc="center" ai="center" padding="$4" bg="$background">
       <YStack mb="$1" ai="center">
         <Image
-          source={require("../assets/images/meow-logo.png")}
+          source={
+            {
+              uri: 'https://meowhasiswa-59cc5f49-f82b-4998-af05-368c90f07a20.s3.ap-southeast-1.amazonaws.com/meow-logo.png',
+              width: 260,
+              height: 260,
+            }
+          }
           width={260}
           height={260}
           objectFit="contain"

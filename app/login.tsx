@@ -65,7 +65,13 @@ export default function Login() {
     <YStack f={1} jc="center" ai="center" padding="$4" bg="$background">
       <YStack mb="$1" ai="center">
         <Image
-          source={require("../assets/images/meow-logo.png")}
+          source={
+            {
+              uri: 'https://meowhasiswa-59cc5f49-f82b-4998-af05-368c90f07a20.s3.ap-southeast-1.amazonaws.com/meow-logo.png',
+              width: 260,
+              height: 260,
+            }
+          }
           width={260}
           height={260}
           objectFit="contain"
@@ -130,7 +136,7 @@ export default function Login() {
             {errors.password.message}
           </Text>
         )}
-       <XStack jc="flex-end" mt="$2" width="100%">
+        <XStack jc="flex-end" mt="$2" width="100%">
           <Text
             fontSize="$2"
             color="$secondary"

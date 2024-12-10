@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { authApi, subThreadsApi, threadsApi, universityApi, userApi } from "redux/api";
 import { login as loginService, register as registerService } from "services/auth";
 import { ILoginRequest, IRegisterRequest } from "types/request/auth";
 import { APIResponse } from "types/response/common";
@@ -19,18 +20,7 @@ export const register = createAsyncThunk(
 			return res?.data;
 		} catch (e) {
 			console.log(e, "REGISTER ERR")
-			// if (e instanceof ResponseError) {
-			// 	const err = await wrapError(e);
-			// 	return rejectWithValue({
-			// 		meta: {
-			// 			statusCode: e.response.status,
-			// 			message:
-			// 				e.response.status === HttpStatus.InternalServerError
-			// 					? serverEncounterError
-			// 					: err.message,
-			// 		},
-			// 	});
-			// }
+			throw e
 		}
 	}
 );
@@ -46,18 +36,8 @@ export const login = createAsyncThunk(
 			return res?.data;
 		} catch (e) {
 			console.log(e, "LOGIN ERR")
-			// if (e instanceof ResponseError) {
-			// 	const err = await wrapError(e);
-			// 	return rejectWithValue({
-			// 		meta: {
-			// 			statusCode: e.response.status,
-			// 			message:
-			// 				e.response.status === HttpStatus.InternalServerError
-			// 					? serverEncounterError
-			// 					: err.message,
-			// 		},
-			// 	});
-			// }
+
+			throw e
 		}
 	}
 );
@@ -76,13 +56,18 @@ const authSlice = createSlice({
 		},
 		setIsBiometricAuthEnabled: (state, action: PayloadAction<ISetIsBiometricAuthEnabledPayload>) => {
 			state.isBiometricAuthEnabled = action.payload.isEnabled
-			
-			if(action.payload.shouldAuthenticate){
+
+			if (action.payload.shouldAuthenticate) {
 				state.isBiometricAuthenticated = true
 			}
 		},
 		setIsBiometricAuthenticated: (state, action: PayloadAction<boolean>) => {
 			state.isBiometricAuthenticated = action.payload
+		},
+		logout: (state) => {
+			state.isBiometricAuthEnabled = false
+			state.isBiometricAuthenticated = false
+			state.token = ""
 		}
 	},
 	extraReducers: (builder) => {
@@ -100,6 +85,15 @@ const authSlice = createSlice({
 	},
 })
 
-export const { setToken, setIsBiometricAuthEnabled, setIsBiometricAuthenticated } = authSlice.actions
+export const { setToken, setIsBiometricAuthEnabled, setIsBiometricAuthenticated, logout } = authSlice.actions
 
 export default authSlice.reducer
+
+export const logoutAndResetCache = () => (dispatch) => {
+	dispatch(logout());
+	dispatch(threadsApi.util.resetApiState());
+	dispatch(authApi.util.resetApiState());
+	dispatch(subThreadsApi.util.resetApiState());
+	dispatch(universityApi.util.resetApiState());
+	dispatch(userApi.util.resetApiState());
+};

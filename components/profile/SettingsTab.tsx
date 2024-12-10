@@ -1,6 +1,6 @@
 import { LogOut } from '@tamagui/lucide-icons'
 import { Pressable } from 'react-native'
-import { setIsBiometricAuthEnabled, setToken } from 'redux/slice/auth'
+import { logoutAndResetCache, setIsBiometricAuthEnabled } from 'redux/slice/auth'
 import { RootState, useAppDispatch } from 'redux/store'
 import { View, YStack, Text, Separator, XStack, Switch } from 'tamagui'
 import * as SecureStore from 'expo-secure-store';
@@ -20,19 +20,15 @@ export const SettingsTab = () => {
 
     const handleLogOut = async () => {
         try {
-
             let token = await SecureStore.getItemAsync(JWT_TOKEN_KEY);
             if (token) {
                 await SecureStore.deleteItemAsync(JWT_TOKEN_KEY);
             }
 
-            dispatch(setToken(""))
-
+            dispatch(logoutAndResetCache())
             // @ts-ignore
             navigation.navigate("login")
-
         } catch (error) {
-
             toast.showToastError("Something went wrong", error)
         }
     }

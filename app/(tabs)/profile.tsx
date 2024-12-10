@@ -55,7 +55,7 @@ export default function ProfileScreen() {
       resizeMode="cover"
       style={{ flex: 1 }}
     >
-      <View flex={1} padding="$4" bg="$backgroundSoft">
+      <View flex={1} padding="$4" pb="$0" bg="$backgroundSoft">
         <View
           bg="$background"
           borderRadius="$2"
@@ -87,9 +87,10 @@ export default function ProfileScreen() {
                   {userProfile.username}
                 </Text>
               </Text>
-              <Text fontSize={14} color="$primary">
+              {/* TODO: Get major data from university rating */}
+              {/* <Text fontSize={14} color="$primary">
                 Informatika
-              </Text>
+              </Text> */}
             </View>
           </View>
           <Text fontSize="$3" color="$primary">
