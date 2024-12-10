@@ -1,5 +1,5 @@
 import { Edit3, MessageSquare } from '@tamagui/lucide-icons';
-import { Text, View, XStack, YStack, Avatar, Separator } from 'tamagui';
+import { Text, View, XStack, YStack, Avatar, Separator, useTheme } from 'tamagui';
 import { IThread } from 'types/model/thread';
 import { Pressable, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -7,15 +7,19 @@ import { useLikeThreadMutation, useDislikeThreadMutation, useDeleteThreadMutatio
 import { useToast } from 'hooks';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { formateDateWithDaysAgoThreshold } from 'utils';
+import { Ellipsis } from '@tamagui/lucide-icons';
+import { useCallback } from 'react';
 
 interface ThreadItemProps {
     thread: IThread;
     currentUserId?: string;
     inDetailScreen?: boolean;
-    enableEditItem?: boolean
+    enableEditItem?: boolean;
+    openBottomSheet?: () => void;
 }
 
-export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditItem }: ThreadItemProps) => {
+export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditItem, openBottomSheet }: ThreadItemProps) => {
+    const theme = useTheme()
     const router = useRouter();
     const [deleteThread] = useDeleteThreadMutation();
     const [likeThread] = useLikeThreadMutation();
@@ -106,7 +110,7 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                         <XStack p={'$3'} jc={'space-between'} alignItems="center">
                             <XStack alignItems="center">
                                 <View mr={'$2'}>
-                                    <Avatar borderRadius={'$2'} borderWidth="$1" borderColor="$primary" size="$4">
+                                    <Avatar borderRadius={'$2'} borderWidth={1} borderColor="$secondary" size="$4">
                                         <Avatar.Image
                                             accessibilityLabel="University"
                                             src={thread.university_image_url}
@@ -141,6 +145,15 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                                     </Pressable>
                                 )
                             }
+                            {inDetailScreen && (
+                                <YStack>
+                                    <Pressable onPress={openBottomSheet}>
+                                        <View p="$2">
+                                            <Ellipsis size="$1" />
+                                        </View>
+                                    </Pressable>
+                                </YStack>
+                            )}
                         </XStack>
                         <YStack pr={'$3'} pl={'$3'} pb={'$1.5'} gap="$1">
                             <Text color="$primary" fontSize={'$6'} fontWeight="bold">
@@ -164,7 +177,7 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                                 name={thread.is_liked ? "paw" : "paw-outline"}
                                 onPress={inDetailScreen ? handleLike : () => null}
                                 size={26}
-                                color="black"
+                                color={thread.is_liked ? theme.green10.val : theme.primary.val}
                             />
                             <Text ml={'$2'}>{thread.like_count}</Text>
                         </XStack>
@@ -173,7 +186,7 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                                 name={thread.is_disliked ? "thumbs-down" : "thumbs-down-outline"}
                                 onPress={inDetailScreen ? handleDislike : () => null}
                                 size={26}
-                                color="black"
+                                color={thread.is_disliked ? theme.red10.val : theme.primary.val}
                             />
                             <Text ml={'$2'}>{thread.dislike_count}</Text>
                         </XStack>

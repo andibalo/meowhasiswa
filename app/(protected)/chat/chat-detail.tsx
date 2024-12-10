@@ -59,8 +59,8 @@ export default function ChatDetailScreen() {
       return (
         <Avatar
           borderRadius={"$2"}
-          borderWidth="$1"
-          borderColor="$primary"
+          borderWidth={1}
+          borderColor="$secondary"
           marginRight="$2"
           size="$4"
         >

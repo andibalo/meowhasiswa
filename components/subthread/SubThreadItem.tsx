@@ -119,8 +119,8 @@ export const SubThreadItem = ({ subthread, isFollowing }: SubThreadItemProps) =>
             <View mr={"$2"}>
               <Avatar
                 borderRadius={"$2"}
-                borderWidth="$1"
-                borderColor="$primary"
+                borderWidth={1}
+                borderColor="$secondary"
                 size="$4"
               >
                 <Avatar.Image
@@ -151,19 +151,19 @@ export const SubThreadItem = ({ subthread, isFollowing }: SubThreadItemProps) =>
                     onPress={() => handleUnfollowSubThread()}
                   >
                     <Text color="white" fontSize="$2">
-                      Followed
+                      Unfollow
                     </Text>
                   </Button>
                 ) : (
                   <Button
-                    bg="$backgroundSoft"
+                    bg="$primary"
                     padding="$1"
                     borderRadius="$3"
                     width={100}
                     height={24}
                     onPress={() => handleFollowSubThread()}
                   >
-                    <Text fontSize="$2">Follow</Text>
+                    <Text fontSize="$2" color="white" >Follow</Text>
                   </Button>
                 )}
               </XStack>

@@ -19,7 +19,13 @@ export const ReviewItem = ({
         <View p={'$4'} bg={'$white1'} borderRadius={'$radius.4'}>
             <XStack alignItems="center" justifyContent="space-between">
                 <View flexDirection="row" alignItems="center" marginBottom={'$2'}>
-                    <Avatar size="$4" mr={'$2'} borderRadius={'$2'} borderWidth="$1" borderColor="$primary">
+                    <Avatar
+                        size="$4"
+                        mr={'$2'}
+                        borderRadius={'$2'}
+                        borderWidth={1}
+                        borderColor="$secondary"
+                    >
                         <Avatar.Image
                             accessibilityLabel="University Logo"
                             src={review.university_image_url}
