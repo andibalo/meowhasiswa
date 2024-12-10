@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from './baseQuery';
-import { ICreateThreadRequest, IDislikeCommentRequest, IFetchThreadListQueryParams, ILikeCommentRequest, IPostCommentRequest, IReplyCommentRequest, IUpdateThreadRequest } from 'types/request/thread';
+import { ICreateThreadRequest, IDislikeCommentRequest, IFetchThreadListQueryParams, ILikeCommentRequest, IPostCommentRequest, IReplyCommentRequest, IUpdateCommentRequest, IUpdateThreadRequest } from 'types/request/thread';
 import { APIResponse, FetchThreadByIdAPIResponse, FetchThreadCommentsAPIResponse, FetchThreadListAPIResponse } from 'types/response';
 
 export const threadsApi = createApi({
@@ -125,7 +125,7 @@ export const threadsApi = createApi({
             }
         }),
         likeComment: builder.mutation<APIResponse<any>, ILikeCommentRequest>({
-            invalidatesTags: (result, error, req) => [{ type: "Comment", id: req.threadId }],
+            invalidatesTags: (result, error, req) => [{ type: "Thread" }, { type: "Comment", id: req.threadId }],
             query: (req) => {
                 return {
                     url: `/v1/thread/comment/like/${req.commentId}`,
@@ -138,7 +138,7 @@ export const threadsApi = createApi({
             }
         }),
         dislikeComment: builder.mutation<APIResponse<any>, IDislikeCommentRequest>({
-            invalidatesTags: (result, error, req) => [{ type: "Comment", id: req.threadId }],
+            invalidatesTags: (result, error, req) => [{ type: "Thread" }, { type: "Comment", id: req.threadId }],
             query: (req) => {
                 return {
                     url: `/v1/thread/comment/dislike/${req.commentId}`,
@@ -150,8 +150,8 @@ export const threadsApi = createApi({
                 };
             }
         }),
-       replyComment: builder.mutation<APIResponse<any>, IReplyCommentRequest>({
-            invalidatesTags: (result, error, req) => [{ type: "Comment", id: req.threadId }],
+        replyComment: builder.mutation<APIResponse<any>, IReplyCommentRequest>({
+            invalidatesTags: (result, error, req) => [{ type: "Thread" }, { type: "Comment", id: req.threadId }],
             query: (req) => {
                 return {
                     url: `/v1/thread/comment/reply/${req.commentId}`,
@@ -163,6 +163,58 @@ export const threadsApi = createApi({
                 };
             }
         }),
+        editComment: builder.mutation<APIResponse<any>, IUpdateCommentRequest>({
+            invalidatesTags: (result, error, req) => [{ type: "Comment", id: req.threadId }],
+            query: (req) => {
+                return {
+                    url: `/v1/thread/comment/${req.commentId}`,
+                    body: {
+                        content: req.content
+                    },
+                    method: "PATCH"
+                };
+            }
+        }),
+        editCommentReply: builder.mutation<APIResponse<any>, IReplyCommentRequest>({
+            invalidatesTags: (result, error, req) => [{ type: "Comment", id: req.threadId }],
+            query: (req) => {
+                return {
+                    url: `/v1/thread/comment/reply/${req.commentId}`,
+                    body: {
+                        content: req.content
+                    },
+                    method: "PATCH"
+                };
+            }
+        }),
+        deleteComment: builder.mutation<APIResponse<any>, string>({
+            invalidatesTags: ['Thread', 'Comment'],
+            query: (commentId) => ({
+                url: `/v1/thread/comment/${commentId}`,
+                method: "DELETE",
+            }),
+        }),
+        deleteReplyComment: builder.mutation<APIResponse<any>, string>({
+            invalidatesTags: ['Thread', 'Comment'],
+            query: (commentId) => ({
+                url: `/v1/thread/comment/reply/${commentId}`,
+                method: "DELETE",
+            }),
+        }),
+        subscribeThread: builder.mutation<APIResponse<any>, string>({
+            invalidatesTags: (result, error, threadId) => [{ type: "Thread", id: threadId }],
+            query: (threadId) => ({
+                url: `/v1/thread/subscribe/${threadId}`,
+                method: "POST",
+            }),
+        }),
+        unSubscribeThread: builder.mutation<APIResponse<any>, string>({
+            invalidatesTags: (result, error, threadId) => [{ type: "Thread", id: threadId }],
+            query: (threadId) => ({
+                url: `/v1/thread/unsubscribe/${threadId}`,
+                method: "PATCH",
+            }),
+        }),
     }),
 });
 
@@ -172,11 +224,17 @@ export const {
     useFetchThreadCommentsQuery,
     useCreateThreadMutation,
     usePostCommentMutation,
+    useEditCommentMutation,
+    useEditCommentReplyMutation,
     useDeleteThreadMutation,
     useUpdateThreadMutation,
     useLikeThreadMutation,
     useDislikeThreadMutation,
     useDislikeCommentMutation,
     useLikeCommentMutation,
-    useReplyCommentMutation
+    useReplyCommentMutation,
+    useDeleteCommentMutation,
+    useDeleteReplyCommentMutation,
+    useSubscribeThreadMutation,
+    useUnSubscribeThreadMutation
 } = threadsApi;

@@ -110,8 +110,8 @@ export default function ChatListScreen() {
       <XStack flex={1} padding="$1" marginBottom="$4" alignItems="center">
         <Avatar
           borderRadius={"$2"}
-          borderWidth="$1"
-          borderColor="$primary"
+          borderWidth={1}
+          borderColor="$secondary"
           marginRight="$2"
           size="$5"
         >

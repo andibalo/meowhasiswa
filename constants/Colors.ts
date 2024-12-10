@@ -2,6 +2,8 @@ const tintColorLight = '#2f95dc';
 const tintColorDark = '#fff';
 const primaryLight = '#030303'
 const secondaryLight = '#595959'
+const accentLight = '#2f2ff4'
+const accentTintLight = '#d5d5fd'
 
 export const colors = {
   light: {
@@ -19,5 +21,7 @@ export const colors = {
     tabIconSelected: tintColorDark,
   },
   primaryLight,
-  secondaryLight
+  secondaryLight,
+  accentLight,
+  accentTintLight
 };

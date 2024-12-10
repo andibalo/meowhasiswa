@@ -1,8 +1,7 @@
 import { Redirect, Tabs } from 'expo-router'
-import { useTheme } from 'tamagui'
+import { View } from 'tamagui'
 import { Home, School, User, MessagesSquare } from '@tamagui/lucide-icons'
 import { useRouter } from 'expo-router'
-import { Button } from 'tamagui'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { RootState, useAppDispatch } from 'redux/store'
 import { useSelector } from 'react-redux'
@@ -19,10 +18,10 @@ import { useFetchUserProfileQuery } from 'redux/api'
 import { ICreateUserDeviceRequest } from 'types/request/user'
 import { getDeviceTypeFromEnum } from 'utils'
 import { Error } from 'components/common'
+import { Pressable } from 'react-native'
 
 export default function TabLayout() {
 
-  const theme = useTheme()
   const router = useRouter()
   const toast = useToast()
   const dispatch = useAppDispatch()
@@ -37,7 +36,7 @@ export default function TabLayout() {
 
   const enableAuthentication = process.env.EXPO_PUBLIC_ENABLE_AUTHENTICATION
 
-  const saveUserDeviceData = async (pushToken : string, payload: ICreateUserDeviceRequest) => {
+  const saveUserDeviceData = async (pushToken: string, payload: ICreateUserDeviceRequest) => {
 
     try {
       const getUserDeviceResp = await getUserDevice({ notification_token: pushToken })
@@ -92,7 +91,7 @@ export default function TabLayout() {
   }, [])
 
   useEffect(() => {
-    if(token !== "" && pushToken !== "" && userData?.data?.id){
+    if (token !== "" && pushToken !== "" && userData?.data?.id) {
 
       const payload = {
         userId: userData.data.id,
@@ -124,7 +123,7 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: theme.primary.val,
+        tabBarActiveTintColor: "#2f2ff4",
       }}
     >
       <Tabs.Screen
@@ -133,22 +132,15 @@ export default function TabLayout() {
           title: 'Home',
           tabBarIcon: ({ color }) => <Home color={color} />,
           headerRight: () => (
-            <Button
+            <Pressable
               onPress={() => {
                 router.push('/chat/chat-list')
               }}
-              theme={theme.name}
-              backgroundColor="white"
-              borderRadius={8}
-              paddingHorizontal={10}
-              style={{
-                backgroundColor: 'white',
-                borderWidth: 0,
-                borderColor: 'transparent',
-              }}
             >
-              <Ionicons name="chatbox-ellipses-outline" size={24} color={theme.primary.val} />
-            </Button>
+              <View p="$2">
+                <Ionicons name="chatbox-ellipses-outline" size={24} />
+              </View>
+            </Pressable>
           ),
         }}
       />

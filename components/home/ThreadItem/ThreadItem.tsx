@@ -1,5 +1,5 @@
 import { Edit3, MessageSquare } from '@tamagui/lucide-icons';
-import { Text, View, XStack, YStack, Avatar, Separator, Button } from 'tamagui';
+import { Text, View, XStack, YStack, Avatar, Separator, useTheme, Button } from 'tamagui';
 import { IThread } from 'types/model/thread';
 import { Pressable, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -11,6 +11,8 @@ import { useState, useCallback, useMemo, useRef } from 'react';
 import { firestore } from 'config';
 import { collection, addDoc, query, where, getDocs, doc, setDoc } from 'firebase/firestore';
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import { Ellipsis } from '@tamagui/lucide-icons';
+import { useCallback } from 'react';
 
 interface ThreadItemProps {
     thread: IThread;
@@ -20,9 +22,11 @@ interface ThreadItemProps {
     currentUserId2?: string;
     currentUserName2?: string;
     currentProfilePic2?: string;
+    openBottomSheet?: () => void;
 }
 
-export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditItem, currentUserId2, currentUserName2, currentProfilePic2 }: ThreadItemProps) => {
+export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditItem, currentUserId2, currentUserName2, currentProfilePic2, openBottomSheet }: ThreadItemProps) => {
+    const theme = useTheme()
     const router = useRouter();
     const [deleteThread] = useDeleteThreadMutation();
     const [likeThread] = useLikeThreadMutation();
@@ -147,7 +151,7 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
         <>
             <Pressable
                 onPress={() => {
-                    if (!inDetailScreen) {
+                    if (inDetailScreen) {
                         router.push(`/thread/${thread.id}`);
                     }
                 }}
@@ -167,7 +171,7 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                                                 }
                                             }}
                                         >
-                                            <Avatar borderRadius={'$2'} borderWidth="$1" borderColor="$primary" size="$4">
+                                            <Avatar borderRadius={'$2'} borderWidth={1} borderColor="$secondary" size="$4">
                                                 <Avatar.Image
                                                     accessibilityLabel="University"
                                                     src={thread.university_image_url}

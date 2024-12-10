@@ -120,6 +120,7 @@ export default function Login() {
               bg="$backgroundSoft"
               padding="$3"
               borderRadius="$2"
+              autoCapitalize="none"
             />
           )}
           name="password"
@@ -136,7 +137,7 @@ export default function Login() {
             style={{ textDecorationLine: "underline" }}
             onPress={() => {
               // @ts-ignore
-              navigation.navigate("forgot-password");
+              navigation.navigate("forgot-password/input-email");
             }}
           >
             Forgot Password?

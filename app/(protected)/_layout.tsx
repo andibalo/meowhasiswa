@@ -59,6 +59,12 @@ export default function ProtectedLayout() {
                 }}
             />
             <Stack.Screen
+                name="subthread/edit-subthread"
+                options={{
+                    headerTitle: "Edit Subthread",
+                }}
+            />
+            <Stack.Screen
                 name="university/[id]"
                 options={{
                     headerTitle: "University Review",

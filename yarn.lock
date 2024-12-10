@@ -2471,7 +2471,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gorhom/bottom-sheet@npm:^5":
+"@gorhom/bottom-sheet@npm:^5.0.6":
   version: 5.0.6
   resolution: "@gorhom/bottom-sheet@npm:5.0.6"
   dependencies:
@@ -8415,7 +8415,7 @@ __metadata:
     "@expo/metro-config": "npm:~0.18.4"
     "@expo/metro-runtime": "npm:~3.2.1"
     "@expo/vector-icons": "npm:^14.0.2"
-    "@gorhom/bottom-sheet": "npm:^5"
+    "@gorhom/bottom-sheet": "npm:^5.0.6"
     "@hookform/resolvers": "npm:^3.9.1"
     "@react-native-async-storage/async-storage": "npm:1.23.1"
     "@react-native-picker/picker": "npm:2.7.5"
@@ -8457,7 +8457,7 @@ __metadata:
     react-hook-form: "npm:^7.53.2"
     react-native: "npm:0.74.1"
     react-native-element-dropdown: "npm:^2.12.2"
-    react-native-gesture-handler: "npm:^2.21.0"
+    react-native-gesture-handler: "npm:^2.21.2"
     react-native-get-random-values: "npm:^1.11.0"
     react-native-gifted-chat: "npm:^2.6.4"
     react-native-markdown-display: "npm:^7.0.2"
@@ -8465,7 +8465,7 @@ __metadata:
     react-native-otp-entry: "npm:^1.7.3"
     react-native-pager-view: "npm:6.3.0"
     react-native-ratings: "npm:^8.1.0"
-    react-native-reanimated: "npm:3.10.1"
+    react-native-reanimated: "npm:~3.10.1"
     react-native-safe-area-context: "npm:^4.10.5"
     react-native-screens: "npm:~3.31.1"
     react-native-svg: "npm:15.2.0"
@@ -12770,9 +12770,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-gesture-handler@npm:^2.21.0":
-  version: 2.21.0
-  resolution: "react-native-gesture-handler@npm:2.21.0"
+"react-native-gesture-handler@npm:^2.21.2":
+  version: 2.21.2
+  resolution: "react-native-gesture-handler@npm:2.21.2"
   dependencies:
     "@egjs/hammerjs": "npm:^2.0.17"
     hoist-non-react-statics: "npm:^3.3.0"
@@ -12781,7 +12781,7 @@ __metadata:
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 8c5aa42be32a9ee8e8267cc5b787ec90c29986d7aae9042215bd2e59ed22aee4462cb8625c7c98afc3a80e01bff696d67cd1b6c5f6b37e0d5c7f40acca531f3e
+  checksum: b098fdfdda8ac9e834b0165d3f17d09682119fa2bf85ddb19a6f63257825cec073362f93d75b94da3b3581eccbce775d711aa044e9ea1ac888be2c071f9f00fd
   languageName: node
   linkType: hard
 
@@ -12920,7 +12920,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-reanimated@npm:3.10.1":
+"react-native-reanimated@npm:~3.10.1":
   version: 3.10.1
   resolution: "react-native-reanimated@npm:3.10.1"
   dependencies:

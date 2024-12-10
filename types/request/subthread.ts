@@ -25,3 +25,12 @@ export interface IUnfollowSubThreadRequest {
     subthread_id: string;
     user_id: string;
 }
+
+export interface IUpdateSubThreadRequest {
+    name: string;
+    description: string;
+    image_url: string;
+    label_color: string;
+    is_university_subthread?: boolean;
+    university_id?: string
+}
