@@ -493,7 +493,7 @@ export default function ThreadDetailScreen() {
             )}
           {userProfile.id !== threadDetail.user_id && userProfile.role === ROLE_ADMIN &&
             (
-              /*unban in progress*/
+              /*TODO: add unban functionality*/
               <Pressable onPress={handleBanUser}>
                 <Text color="$primary">Ban</Text>
               </Pressable>
