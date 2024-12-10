@@ -8,11 +8,13 @@ import { Pressable } from 'react-native';
 interface IUniversityReviewItemProps {
     review: IUniversityReview;
     showMoreOptionsBtn?: boolean
+    openReviewBottomSheet?: () => void
 }
 
 export const ReviewItem = ({
     review,
-    showMoreOptionsBtn = false
+    showMoreOptionsBtn = false,
+    openReviewBottomSheet
 }: IUniversityReviewItemProps) => {
 
     return (
@@ -44,7 +46,7 @@ export const ReviewItem = ({
                 </View>
                 {
                     showMoreOptionsBtn &&
-                    <Pressable onPress={() => console.log("MORE OPTIONS")} >
+                    <Pressable onPress={openReviewBottomSheet} >
                         <View p="$2">
                             <Ellipsis size="$1" />
                         </View>
@@ -90,6 +92,12 @@ export const ReviewItem = ({
                     ))}
                 </YStack>
             </View>
+            {
+                review.updated_at &&
+                <View mt="$3">
+                    <Text color="$secondary">Last modified {formateDateWithDaysAgoThreshold(review.updated_at, 3)}</Text>
+                </View>
+            }
         </View>
     );
 };

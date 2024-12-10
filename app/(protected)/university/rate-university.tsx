@@ -17,7 +17,7 @@ import { ChevronDown } from "@tamagui/lucide-icons";
 import { useState } from "react";
 import { useCreateUniversityReviewMutation } from "redux/api";
 import { useFetchUserProfileQuery } from "redux/api";
-import { Error, NotFound } from "components/common";
+import { Error, Loading, NotFound } from "components/common";
 
 type RateUniversityFormData = {
   title: string;
@@ -117,6 +117,10 @@ export default function RateUniversityScreen() {
       cons: ["", "", ""],
     },
   });
+
+  if (isLoading) {
+    return <Loading />
+  }
 
   if (error) {
     return <Error />;
@@ -262,7 +266,7 @@ export default function RateUniversityScreen() {
                       DKV
                     </Select.Item>
                     <Select.Item value="Ilmu Komunikasi" index={3}>
-                      Ilmu Komunikasi 
+                      Ilmu Komunikasi
                     </Select.Item>
                     <Select.Item value="Jurnalistik" index={4}>
                       Jurnalistik

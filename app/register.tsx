@@ -41,11 +41,11 @@ export default function Register() {
 
   const handleRegister = async (formData: RegisterFormData) => {
     try {
-       await dispatch(register({
+      await dispatch(register({
         username: formData.username,
         email: formData.email,
         password: formData.password,
-       })
+      })
       ).unwrap();
 
       // @ts-ignore
@@ -62,7 +62,13 @@ export default function Register() {
     <YStack f={1} jc="center" ai="center" padding="$4" bg="$background">
       <YStack mb="$1" ai="center">
         <Image
-          source={require("../assets/images/meow-logo.png")}
+          source={
+            {
+              uri: 'https://meowhasiswa-59cc5f49-f82b-4998-af05-368c90f07a20.s3.ap-southeast-1.amazonaws.com/meow-logo.png',
+              width: 260,
+              height: 260,
+            }
+          }
           width={260}
           height={260}
           objectFit="contain"
