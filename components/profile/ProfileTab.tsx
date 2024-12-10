@@ -1,27 +1,17 @@
 import { Pressable } from 'react-native'
 import { View, YStack, Text, Separator, XStack } from 'tamagui'
-import { useFetchUserProfileQuery } from 'redux/api'
-import { Error, Loading, NotFound } from 'components/common'
 import { useRouter } from 'expo-router'
+import { IUser } from 'types/model'
 
-export const ProfileTab = () => {
+interface IProfileThreadTabProps {
+    userProfile: IUser;
+}
+
+export const ProfileTab = (props: IProfileThreadTabProps) => {
 
     const router = useRouter()
-    const { data, error, isLoading } = useFetchUserProfileQuery();
 
-    if (isLoading) {
-        return <Loading />;
-    }
-
-    if (error) {
-        return <Error />;
-    }
-
-    const userProfile = data?.data;
-
-    if (!userProfile) {
-        return <NotFound description="User Profile Not Found" />;
-    }
+    const { userProfile } = props
 
     const handleOnMyUniversityReviewPress = () => {
         if (!userProfile.has_rate_university) {
