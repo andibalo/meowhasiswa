@@ -20,11 +20,12 @@ import {
   useDeleteCommentMutation,
   useDeleteReplyCommentMutation,
 } from "redux/api/thread";
-import { useEditCommentMutation, useEditCommentReplyMutation, useFetchUserProfileQuery } from "redux/api";
+import { useEditCommentMutation, useEditCommentReplyMutation, useFetchUserProfileQuery, useBanUserMutation, useUnBanUserMutation } from "redux/api";
 import {
   BottomSheetModal,
 } from "@gorhom/bottom-sheet";
 import { Ellipsis } from "@tamagui/lucide-icons";
+import { ROLE_ADMIN } from "constants/common";
 
 export default function ThreadDetailScreen() {
   const navigation = useNavigation();
@@ -39,6 +40,9 @@ export default function ThreadDetailScreen() {
   } = useFetchThreadCommentsQuery(id);
 
   const userProfile = userProfileData?.data;
+
+  const [banUser] = useBanUserMutation();
+  const [unBanUser] = useUnBanUserMutation();
 
   const [subscribeThread] = useSubscribeThreadMutation();
   const [unSubscribeThread] = useUnSubscribeThreadMutation();
@@ -297,6 +301,55 @@ export default function ThreadDetailScreen() {
     );
   };
 
+  const handleBanUser = async () => {
+    Alert.alert(
+      "Ban User?",
+      "Are you sure you want to ban this user? This action cannot be undone.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Ban User",
+          style: "default",
+          onPress: async () => {
+            try {
+              await banUser(threadDetail.user_id);
+              toast.showToast("Banned User");
+              closeThreadBottomSheet()
+            } catch (error) {
+              toast.showToastError("Error Ban User", error);
+              closeThreadBottomSheet()
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  const handleUnBanUser = async () => {
+    Alert.alert(
+      "UnBan User?",
+      "Are you sure you want to unban this user? This action cannot be undone.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "UnBan User",
+          style: "default",
+          onPress: async () => {
+            try {
+              await unBanUser(threadDetail.user_id);
+              closeThreadBottomSheet()
+            } catch (error) {
+              toast.showToastError("Error UnBan User", error);
+              closeThreadBottomSheet()
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
   return (
     <View flex={1} backgroundColor="$background">
       <ScrollView ref={scrollViewRef}>
@@ -436,6 +489,13 @@ export default function ThreadDetailScreen() {
             (
               <Pressable onPress={threadDetail.is_subscribed ? handleUnsubscribeThread : handleSubscribeThread}>
                 <Text color="$primary">{threadDetail.is_subscribed ? "Unsubscribe" : "Subscribe"}</Text>
+              </Pressable>
+            )}
+          {userProfile.id !== threadDetail.user_id && userProfile.role === ROLE_ADMIN &&
+            (
+              /*unban in progress*/
+              <Pressable onPress={handleBanUser}>
+                <Text color="$primary">Ban</Text>
               </Pressable>
             )}
           <Pressable onPress={handleSubscribeThread}>
