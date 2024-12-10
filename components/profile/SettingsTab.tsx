@@ -36,16 +36,12 @@ export const SettingsTab = () => {
     const handleToggleBiometricAuth = async (isChecked) => {
 
         try {
-            console.log(isChecked, "CCC")
             if (isChecked) {
-                console.log(isChecked, "DAWDWA")
                 const isBiometricSupported = await LocalAuthentication.hasHardwareAsync()
                 if (!isBiometricSupported) {
                     toast.showToastWarn("Your device does not support biometric functions")
                     return
                 }
-
-                console.log(isChecked, "DAWDWA")
 
                 const savedBiometric = await LocalAuthentication.isEnrolledAsync()
                 if (!savedBiometric) {
