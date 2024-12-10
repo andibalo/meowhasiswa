@@ -16,10 +16,9 @@ export default function ChatDetailScreen() {
   const toast = useToast()
 
   const [messages, setMessages] = useState<IMessage[]>([]);
-
+  console.log(chatId)
   useEffect(() => {
     if (!chatId) return;
-    toast.showToastError("Chat ID or user data is missing.")
     const messagesRef = collection(firestore, "chats", chatId, "messages");
     const q = query(messagesRef, orderBy("createdAt", "desc"));
   
