@@ -116,6 +116,10 @@ export default function TabLayout() {
     return <Error />
   }
 
+  if (userData?.data?.is_banned) {
+    return <Redirect href="/banned-user"/>;
+  }
+
   if (isBiometricAuthEnabled && token !== "" && !isBiometricAuthenticated) {
     triggerBiometricLogin()
   }
