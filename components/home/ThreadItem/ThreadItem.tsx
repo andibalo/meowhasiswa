@@ -32,7 +32,6 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
     const [dislikeThread] = useDislikeThreadMutation();
     const toast = useToast();
 
-    // Ref to control the bottom sheet modal
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const handlePresentModalPress = useCallback(() => {
         console.log('Modal Triggered');
@@ -114,13 +113,12 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
         const pfp1 = `${currentProfilePic2}`;
         const pfp2 = `${thread.university_image_url}`;
         const chatsRef = collection(firestore, 'chats');
-        const chatDocRef = doc(chatsRef, chatId);  // Use the chatId as the document name
+        const chatDocRef = doc(chatsRef, chatId);
         
         const chatQuerySnapshot = await getDocs(query(chatsRef, where('chatId', '==', chatId)));
         
         if (chatQuerySnapshot.empty) {
             try {
-                // Create or overwrite the document with chatId as the ID
                 await setDoc(chatDocRef, {
                     chatId,
                     createdAt: new Date(),
@@ -257,15 +255,13 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                     </YStack>
                 </View>
             </Pressable>
-
-            {/* Bottom Sheet Modal */}
             <BottomSheetModal
                 ref={bottomSheetModalRef}
                 onChange={handleSheetChanges}
                 index={0}
                 snapPoints={['25%']}
-                style={{ zIndex: 1000 }} // High zIndex
-                handleStyle={{ zIndex: 1000 }} // Ensures handle appears on top
+                style={{ zIndex: 1000 }}
+                handleStyle={{ zIndex: 1000 }}
             >
                 <BottomSheetView>
                     <Button onPress={() => {
