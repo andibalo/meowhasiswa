@@ -12,7 +12,6 @@ import { firestore } from 'config';
 import { collection, addDoc, query, where, getDocs, doc, setDoc } from 'firebase/firestore';
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { Ellipsis } from '@tamagui/lucide-icons';
-import { useCallback } from 'react';
 
 interface ThreadItemProps {
     thread: IThread;

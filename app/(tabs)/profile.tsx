@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, Avatar } from 'tamagui';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { ImageBackground, useWindowDimensions } from 'react-native';
@@ -12,13 +12,6 @@ const routes = [
   { key: 'posts', title: 'Posts' },
   { key: 'settings', title: 'Settings' },
 ];
-
-const renderScene = (user_id: string) =>
-  SceneMap({
-    first: () => <ProfileTab />,
-    second: () => <UserThreadTab user_id={user_id} />,
-    third: () => <SettingsTab />,
-  });
 
 export default function ProfileScreen() {
   const { width } = useWindowDimensions();
@@ -40,10 +33,11 @@ export default function ProfileScreen() {
     return <NotFound description="User Not Found" />;
   }
 
+  // Render scene correctly based on the route key
   const renderScene = ({ route }: { route: { key: string } }) => {
     switch (route.key) {
       case 'profile':
-        return <Text>Profile Content</Text>;
+        return <ProfileTab />;
       case 'posts':
         return <UserThreadTab user_id={userProfile.id} />;
       case 'settings':
@@ -55,7 +49,9 @@ export default function ProfileScreen() {
 
   return (
     <ImageBackground
-      source={{ uri: "https://meowhasiswa-59cc5f49-f82b-4998-af05-368c90f07a20.s3.ap-southeast-1.amazonaws.com/cat_seamless_doodle_Converted-min.png" }}
+      source={{
+        uri: "https://meowhasiswa-59cc5f49-f82b-4998-af05-368c90f07a20.s3.ap-southeast-1.amazonaws.com/cat_seamless_doodle_Converted-min.png",
+      }}
       resizeMode="cover"
       style={{ flex: 1 }}
     >
@@ -104,7 +100,7 @@ export default function ProfileScreen() {
           lazy
           renderTabBar={(props) => <TopTabBar {...props} />}
           navigationState={{ index, routes }}
-          renderScene={renderScene(userProfile.id)}
+          renderScene={renderScene}
           onIndexChange={setIndex}
           initialLayout={{ width }}
         />
