@@ -177,6 +177,13 @@ export const threadsApi = createApi({
                 method: "DELETE",
             }),
         }),
+        editComment: builder.mutation({
+            query: ({ threadId, commentId, content }) => ({
+                url: `/threads/${threadId}/comments/${commentId}`,
+                method: 'PATCH',
+                body: { content },
+            }),
+        }),
     }),
 });
 
@@ -195,4 +202,5 @@ export const {
     useReplyCommentMutation,
     useDeleteCommentMutation,
     useDeleteReplyCommentMutation,
+    useEditCommentMutation,
 } = threadsApi;

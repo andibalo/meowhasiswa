@@ -7,6 +7,7 @@ import {
   useLikeCommentMutation,
   usePostCommentMutation,
   useReplyCommentMutation,
+  useEditCommentMutation,
 } from "redux/api/thread";
 import { CommentInput, CommentItem, ThreadItem } from "components/home";
 import { BottomSheet, Error, Loading, NotFound } from "components/common";
@@ -44,6 +45,7 @@ export default function ThreadDetailScreen() {
   const [replyComment] = useReplyCommentMutation();
   const [deleteComment] = useDeleteCommentMutation();
   const [deleteReplyComment] = useDeleteReplyCommentMutation();
+  const [editComment] = useEditCommentMutation();
 
   const [comment, setComment] = useState("");
   const [selectedComment, setSelectedComment] = useState<
@@ -53,6 +55,9 @@ export default function ThreadDetailScreen() {
   const [replyCommentData, setReplyCommentData] = useState<IComment | null>(
     null
   );
+  const [isEditing, setIsEditing] = useState(false);
+  const [editCommentData, setEditCommentData] = useState(null);
+
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const scrollViewRef = useRef<ScrollView>(null);
@@ -143,6 +148,21 @@ export default function ThreadDetailScreen() {
         setComment("");
         setIsReplying(false);
         setReplyCommentData(null);
+        return;
+      }
+
+      if (isEditing) {
+        if (!editCommentData) {
+          return;
+        }
+  
+        await editComment({
+          commentId: editCommentData,
+          content: comment,
+        }).unwrap();
+        setComment("");
+        setIsEditing(false);
+        setEditCommentData(null);
         return;
       }
 
