@@ -204,6 +204,15 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                                         </View>
                                     </Pressable>
                                 )}
+                                {inDetailScreen && (
+                                <YStack>
+                                    <Pressable onPress={openBottomSheet}>
+                                        <View p="$2">
+                                            <Ellipsis size="$1" />
+                                        </View>
+                                    </Pressable>
+                                </YStack>
+                            )}
                             </XStack>
                             <YStack pr={'$3'} pl={'$3'} pb={'$1.5'} gap="$1">
                                 <Text color="$primary" fontSize={'$6'} fontWeight="bold">
