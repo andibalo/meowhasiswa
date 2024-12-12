@@ -61,6 +61,7 @@ export const ThreadList = ({
                     onRefresh={onRefresh}
                 />
             }
+            extraData={currentUserId} // Track current user to trigger re-renders
         />
     );
 };
