@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { View, Text, Avatar } from 'tamagui';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { ImageBackground, useWindowDimensions } from 'react-native';
@@ -10,9 +10,9 @@ import { IUser } from 'types/model';
 import { useFocusEffect } from 'expo-router';
 
 const routes = [
-  { key: 'profile', title: 'Profile' },
-  { key: 'posts', title: 'Posts' },
-  { key: 'settings', title: 'Settings' },
+  { key: 'first', title: 'Profile' },
+  { key: 'second', title: 'Post' },
+  { key: 'third', title: 'Settings' },
 ];
 
 const renderScene = (user_id: string, userProfile: IUser) =>
@@ -48,25 +48,9 @@ export default function ProfileScreen() {
     return <NotFound description="User Not Found" />;
   }
 
-  // Render scene correctly based on the route key
-  const renderScene = ({ route }: { route: { key: string } }) => {
-    switch (route.key) {
-      case 'profile':
-        return <ProfileTab />;
-      case 'posts':
-        return <UserThreadTab user_id={userProfile.id} />;
-      case 'settings':
-        return <SettingsTab />;
-      default:
-        return null;
-    }
-  };
-
   return (
     <ImageBackground
-      source={{
-        uri: "https://meowhasiswa-59cc5f49-f82b-4998-af05-368c90f07a20.s3.ap-southeast-1.amazonaws.com/cat_seamless_doodle_Converted-min.png",
-      }}
+      source={{ uri: "https://meowhasiswa-59cc5f49-f82b-4998-af05-368c90f07a20.s3.ap-southeast-1.amazonaws.com/cat_seamless_doodle_Converted-min.png" }}
       resizeMode="cover"
       style={{ flex: 1 }}
     >
