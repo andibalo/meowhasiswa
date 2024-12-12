@@ -33,10 +33,6 @@ const TabItem = (props: ITabItemProps) => {
   const currentUserName2 = profData?.data?.username;
   const currentProfilePic2 = profData?.data?.university?.image_url;
 
-  const currentUserId2 = profData?.data?.id;
-  const currentUserName2 = profData?.data?.username;
-  const currentProfilePic2 = profData?.data?.university?.image_url;
-
   //TODO: Refactor to use rtk query
   const fetchThreads = async (cursor) => {
     try {
