@@ -618,23 +618,24 @@ export default function EditRateUniversityScreen() {
           <Text color="$color" fontWeight="bold" mb="$2">
             Pros
           </Text>
-          {[0, 1, 2].map((index) => (
-            <View key={index}>
-              <Controller
-                control={control}
-                name={`pros.${index}`}
-                render={({ field: { onChange, value } }) => (
-                  <TextArea
-                    value={value}
-                    onChangeText={onChange}
-                    borderRadius="$2"
-                    maxLength={255}
-                    verticalAlign="top"
-                  />
-                )}
-              />
-            </View>
-          ))}
+          <YStack gap="$2" >
+            {[0, 1, 2].map((index) => (
+              <View key={index}>
+                <Controller
+                  control={control}
+                  name={`pros.${index}`}
+                  render={({ field: { onChange, value } }) => (
+                    <Input
+                      value={value}
+                      onChangeText={onChange}
+                      borderRadius="$2"
+                      maxLength={255}
+                    />
+                  )}
+                />
+              </View>
+            ))}
+          </YStack>
           {errors.pros && (
             <Text color="$red10" fontSize={12}>
               {errors.pros.message}
@@ -645,23 +646,24 @@ export default function EditRateUniversityScreen() {
           <Text color="$color" fontWeight="bold" mb="$2">
             Cons
           </Text>
-          {[0, 1, 2].map((index) => (
-            <View key={index}>
-              <Controller
-                control={control}
-                name={`cons.${index}`}
-                render={({ field: { onChange, value } }) => (
-                  <TextArea
-                    value={value}
-                    onChangeText={onChange}
-                    borderRadius="$2"
-                    maxLength={255}
-                    verticalAlign="top"
-                  />
-                )}
-              />
-            </View>
-          ))}
+          <YStack gap="$2">
+            {[0, 1, 2].map((index) => (
+              <View key={index}>
+                <Controller
+                  control={control}
+                  name={`cons.${index}`}
+                  render={({ field: { onChange, value } }) => (
+                    <Input
+                      value={value}
+                      onChangeText={onChange}
+                      borderRadius="$2"
+                      maxLength={255}
+                    />
+                  )}
+                />
+              </View>
+            ))}
+          </YStack>
           {errors.cons?.[0] && (
             <Text color="$red10" fontSize={12}>
               {errors.cons[0].message}

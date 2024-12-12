@@ -23,7 +23,7 @@ const renderFooterLoading = (loadingMore) => {
 export const SubThreadList = (props: ISubThreadListProps) => {
 
     const renderPost = ({ item }) => (
-        <SubThreadItem subthread={item} isFollowing={props.title === "Following"} />
+        <SubThreadItem onRefresh={props.onRefresh} subthread={item} isFollowing={props.title === "Following"} />
     );
 
     return (

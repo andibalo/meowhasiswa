@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, Text, Avatar } from 'tamagui';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { ImageBackground, useWindowDimensions } from 'react-native';
@@ -6,6 +6,8 @@ import { Error, Loading, NotFound, TopTabBar } from 'components/common';
 import { useFetchUserProfileQuery } from 'redux/api';
 import dayjs from 'dayjs';
 import { ProfileTab, SettingsTab, UserThreadTab } from 'components/profile';
+import { IUser } from 'types/model';
+import { useFocusEffect } from 'expo-router';
 
 const routes = [
   { key: 'profile', title: 'Profile' },
@@ -13,11 +15,24 @@ const routes = [
   { key: 'settings', title: 'Settings' },
 ];
 
+const renderScene = (user_id: string, userProfile: IUser) =>
+  SceneMap({
+    first: () => <ProfileTab userProfile={userProfile} />,
+    second: () => <UserThreadTab user_id={user_id} />,
+    third: () => <SettingsTab />,
+  });
+
 export default function ProfileScreen() {
   const { width } = useWindowDimensions();
   const [index, setIndex] = useState(0);
 
-  const { data, error, isLoading } = useFetchUserProfileQuery();
+  const { data, error, isLoading, refetch } = useFetchUserProfileQuery();
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   if (isLoading) {
     return <Loading />;
@@ -101,7 +116,7 @@ export default function ProfileScreen() {
           lazy
           renderTabBar={(props) => <TopTabBar {...props} />}
           navigationState={{ index, routes }}
-          renderScene={renderScene}
+          renderScene={renderScene(userProfile.id, userProfile)}
           onIndexChange={setIndex}
           initialLayout={{ width }}
         />
