@@ -1,5 +1,5 @@
 import { Edit3, MessageSquare } from '@tamagui/lucide-icons';
-import { Text, View, XStack, YStack, Avatar, Separator, useTheme, Button } from 'tamagui';
+import { Text, View, XStack, YStack, Avatar, Separator, useTheme } from 'tamagui';
 import { IThread } from 'types/model/thread';
 import { Pressable, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -7,11 +7,12 @@ import { useLikeThreadMutation, useDislikeThreadMutation, useDeleteThreadMutatio
 import { useToast } from 'hooks';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { formateDateWithDaysAgoThreshold } from 'utils';
-import { useState, useCallback, useMemo, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { firestore } from 'config';
-import { collection, addDoc, query, where, getDocs, doc, setDoc } from 'firebase/firestore';
-import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import { collection, getDocs, query, where, doc, setDoc } from 'firebase/firestore';
+import { BottomSheet } from 'components/common/BottomSheet';
 import { Ellipsis } from '@tamagui/lucide-icons';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 interface ThreadItemProps {
     thread: IThread;
@@ -24,45 +25,44 @@ interface ThreadItemProps {
     openBottomSheet?: () => void;
 }
 
-export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditItem, currentUserId2, currentUserName2, currentProfilePic2, openBottomSheet }: ThreadItemProps) => {
-    const theme = useTheme()
+export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditItem, currentUserId2, currentUserName2, currentProfilePic2 }: ThreadItemProps) => {
+    const theme = useTheme();
     const router = useRouter();
     const [deleteThread] = useDeleteThreadMutation();
     const [likeThread] = useLikeThreadMutation();
     const [dislikeThread] = useDislikeThreadMutation();
     const toast = useToast();
 
-    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-    const handlePresentModalPress = useCallback(() => {
-        console.log('Modal Triggered');
-        bottomSheetModalRef.current?.present();
+    const bottomSheetRef = useRef<BottomSheetModal>(null);
+
+    const openBottomSheet = useCallback(() => {
+        bottomSheetRef.current?.present();
     }, []);
-    const handleSheetChanges = useCallback((index: number) => {
-        console.log('handleSheetChanges', index);
+    
+    const closeBottomSheet = useCallback(() => {
+        bottomSheetRef.current?.dismiss();
     }, []);
 
     const handleEditItem = () => {
-        if (!enableEditItem) {
-            return;
-        } else if (enableEditItem) {
-            Alert.alert(
-                'Thread Actions',
-                'Choose an action for your thread:',
-                [
-                    { text: 'Cancel', style: 'cancel' },
-                    {
-                        text: 'Edit',
-                        onPress: () =>
-                            router.push({
-                                pathname: '/thread/edit-thread',
-                                params: { id: thread.id, subThreadId: thread.subthread_id },
-                            }),
-                    },
-                    { text: 'Delete', onPress: handleDelete },
-                ],
-                { cancelable: true }
-            );
-        }
+        if (!enableEditItem) return;
+
+        Alert.alert(
+            'Thread Actions',
+            'Choose an action for your thread:',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Edit',
+                    onPress: () =>
+                        router.push({
+                            pathname: '/thread/edit-thread',
+                            params: { id: thread.id, subThreadId: thread.subthread_id },
+                        }),
+                },
+                { text: 'Delete', onPress: handleDelete },
+            ],
+            { cancelable: true }
+        );
     };
 
     const handleDelete = async () => {
@@ -92,8 +92,7 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
         try {
             await likeThread(thread.id);
         } catch (error) {
-            console.log("LIKE THREAD:", error);
-            toast.showToastError("Something Went Wrong", "Cannot like thread");
+            toast.showToastError('Something Went Wrong', 'Cannot like thread');
         }
     };
 
@@ -101,73 +100,47 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
         try {
             await dislikeThread(thread.id);
         } catch (error) {
-            console.log("DISLIKE THREAD:", error);
-            toast.showToastError("Something Went Wrong", "Cannot dislike thread");
+            toast.showToastError('Something Went Wrong', 'Cannot dislike thread');
         }
     };
 
     const handleChat = async () => {
         const chatId = `${currentUserId2}_${thread.user_id}`;
-        const user1 = `${currentUserName2}`;
-        const user2 = `${thread.username}`;
-        const pfp1 = `${currentProfilePic2}`;
-        const pfp2 = `${thread.university_image_url}`;
         const chatsRef = collection(firestore, 'chats');
         const chatDocRef = doc(chatsRef, chatId);
-        
         const chatQuerySnapshot = await getDocs(query(chatsRef, where('chatId', '==', chatId)));
-        
+
         if (chatQuerySnapshot.empty) {
             try {
                 await setDoc(chatDocRef, {
                     chatId,
                     createdAt: new Date(),
-                    user1,
-                    user2,
-                    pfp1,
-                    pfp2,
+                    user1: currentUserName2,
+                    user2: thread.username,
+                    pfp1: currentProfilePic2,
+                    pfp2: thread.university_image_url,
                 });
-                bottomSheetModalRef.current?.dismiss();
-                router.push({
-                    pathname: '/chat/chat-detail',
-                    params: { chatId },
-                });
+                closeBottomSheet(); // Using closeBottomSheet here
+                router.push({ pathname: '/chat/chat-detail', params: { chatId } });
             } catch (error) {
-                toast.showToastError("Something Went Wrong", "Failed to create chat");
+                toast.showToastError('Something Went Wrong', 'Failed to create chat');
             }
         } else {
-            bottomSheetModalRef.current?.dismiss();
-            router.push({
-                pathname: '/chat/chat-detail',
-                params: { chatId: chatQuerySnapshot.docs[0].id },
-            });
+            closeBottomSheet(); // Using closeBottomSheet here
+            router.push({ pathname: '/chat/chat-detail', params: { chatId: chatQuerySnapshot.docs[0].id } });
         }
-    };        
+    };
 
     return (
         <>
-            <Pressable
-                onPress={() => {
-                    if (inDetailScreen) {
-                        router.push(`/thread/${thread.id}`);
-                    }
-                }}
-            >
+            <Pressable onPress={() => inDetailScreen && router.push(`/thread/${thread.id}`)}>
                 <View p={'$2'} bg={'$white1'} borderRadius={'$radius.4'}>
                     <YStack flex={1} justifyContent="space-between">
                         <View>
                             <XStack p={'$3'} jc={'space-between'} alignItems="center">
                                 <XStack alignItems="center">
                                     <View mr={'$2'}>
-                                        <Pressable
-                                            onPress={() => {
-                                                if (currentUserId2 && thread.user_id !== currentUserId2) {
-                                                    handlePresentModalPress();
-                                                } else {
-                                                    console.log("Cannot open bottom sheet: User is the same.");
-                                                }
-                                            }}
-                                        >
+                                        <Pressable onPress={() => currentUserId2 && thread.user_id !== currentUserId2 && openBottomSheet()}>
                                             <Avatar borderRadius={'$2'} borderWidth={1} borderColor="$secondary" size="$4">
                                                 <Avatar.Image
                                                     accessibilityLabel="University"
@@ -189,7 +162,7 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                                             <Text color="$primary" fontSize="$3">
                                                 {formateDateWithDaysAgoThreshold(thread.created_at, 3)}
                                             </Text>
-                                            <View bg={thread.subthread_color ? thread.subthread_color : "$primary"} px="$2" py="$1" borderRadius="$1">
+                                            <View bg={thread.subthread_color || "$primary"} px="$2" py="$1" borderRadius="$1">
                                                 <Text color="white" fontSize="$2">{`m/${thread.subthread_name}`}</Text>
                                             </View>
                                         </XStack>
@@ -203,14 +176,14 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                                     </Pressable>
                                 )}
                                 {inDetailScreen && (
-                                <YStack>
-                                    <Pressable onPress={openBottomSheet}>
-                                        <View p="$2">
-                                            <Ellipsis size="$1" />
-                                        </View>
-                                    </Pressable>
-                                </YStack>
-                            )}
+                                    <YStack>
+                                        <Pressable onPress={openBottomSheet}>
+                                            <View p="$2">
+                                                <Ellipsis size="$1" />
+                                            </View>
+                                        </Pressable>
+                                    </YStack>
+                                )}
                             </XStack>
                             <YStack pr={'$3'} pl={'$3'} pb={'$1.5'} gap="$1">
                                 <Text color="$primary" fontSize={'$6'} fontWeight="bold">
@@ -255,22 +228,20 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                     </YStack>
                 </View>
             </Pressable>
-            <BottomSheetModal
-                ref={bottomSheetModalRef}
-                onChange={handleSheetChanges}
-                index={0}
-                snapPoints={['25%']}
-                style={{ zIndex: 1000 }}
-                handleStyle={{ zIndex: 1000 }}
-            >
-                <BottomSheetView>
-                    <Button onPress={() => {
-                        handleChat()
-                    }}>
-                        Chat
-                    </Button>
-                </BottomSheetView>
-            </BottomSheetModal>
+            <BottomSheet ref={bottomSheetRef}>
+                <View>
+                    <Text fontWeight="bold" fontSize="$4" mb="$3">
+                        Start Chat
+                    </Text>
+                    <Pressable onPress={handleChat}>
+                        <View bg="$primary" p="$3" borderRadius="$1">
+                            <Text color="white" textAlign="center">
+                                Chat
+                            </Text>
+                        </View>
+                    </Pressable>
+                </View>
+            </BottomSheet>
         </>
     );
 };
