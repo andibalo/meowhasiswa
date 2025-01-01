@@ -120,13 +120,13 @@ export const ThreadItem = ({ thread, currentUserId, inDetailScreen, enableEditIt
                     pfp1: currentProfilePic2,
                     pfp2: thread.university_image_url,
                 });
-                closeBottomSheet(); // Using closeBottomSheet here
+                closeBottomSheet();
                 router.push({ pathname: '/chat/chat-detail', params: { chatId } });
             } catch (error) {
                 toast.showToastError('Something Went Wrong', 'Failed to create chat');
             }
         } else {
-            closeBottomSheet(); // Using closeBottomSheet here
+            closeBottomSheet();
             router.push({ pathname: '/chat/chat-detail', params: { chatId: chatQuerySnapshot.docs[0].id } });
         }
     };
