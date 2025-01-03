@@ -1,34 +1,75 @@
-import { useState, useCallback } from "react";
-import { GiftedChat, Bubble, Day, Time } from "react-native-gifted-chat";
-import { useRoute } from "@react-navigation/native";
-import { Avatar } from "tamagui";
+import { useState, useCallback, useEffect } from "react";
+import { GiftedChat, Bubble, Day, Time, IMessage, Composer } from "react-native-gifted-chat";
+import { Avatar, Button } from "tamagui";
+import { Send } from "@tamagui/lucide-icons";
 import { View } from "react-native";
+import { firestore } from "config";
+import { collection, addDoc, query, orderBy, onSnapshot, doc, getDoc, setDoc, getDocs } from "firebase/firestore";
+import { useFetchUserProfileQuery } from 'redux/api';
+import { useLocalSearchParams, useNavigation } from 'expo-router';
+import { useToast } from 'hooks'
 
 export default function ChatDetailScreen() {
-  const route = useRoute();
-  const { message } = route.params;
+  const { data, error, isLoading } = useFetchUserProfileQuery();
+  const navigation = useNavigation();
+  const { chatId } = useLocalSearchParams<{ chatId: string }>();
+  const toast = useToast()
 
-  const [messages, setMessages] = useState([
-    {
-      _id: 1,
-      text: message.text,
-      createdAt: new Date(),
-      user: {
-        _id: 2,
-        name: message.username,
-        avatar: message.profilePic,
-      },
-    },
-  ]);
-
-  const onSend = useCallback((newMessages = []) => {
-    setMessages((previousMessages) => {
-      const updatedMessages = [...previousMessages, ...newMessages];
-      return updatedMessages;
+  const [messages, setMessages] = useState<IMessage[]>([]);
+  console.log(chatId)
+  useEffect(() => {
+    if (!chatId) return;
+    const messagesRef = collection(firestore, "chats", chatId, "messages");
+    const q = query(messagesRef, orderBy("createdAt", "desc"));
+  
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const newMessages: IMessage[] = snapshot.docs.map((doc) => ({
+        _id: doc.id,
+        text: doc.data().text,
+        createdAt: doc.data().createdAt.toDate(),
+        user: {
+          _id: doc.data().userId,
+          name: doc.data().username,
+          avatar: doc.data().profilePic,
+        },
+      }));
+      setMessages(newMessages);
     });
-  }, []);
+  
+    return () => unsubscribe();
+  }, [chatId]);  
 
-  const renderBubble = (props) => (
+  const onSend = useCallback(async (newMessages: IMessage[] = []) => {
+    if (!chatId || !data) {
+      toast.showToastError("Chat ID or user data is missing.");
+      return;
+    }
+  
+    if (newMessages.length === 0) {
+      toast.showToastError("No messages to send.");
+      return;
+    }
+  
+    const messagesRef = collection(firestore, "chats", chatId, "messages");
+  
+    try {
+      setMessages((previousMessages) => GiftedChat.append(previousMessages, newMessages));
+  
+      const writes = newMessages.map((m) => addDoc(messagesRef, {
+        text: m.text,
+        createdAt: new Date(),
+        userId: data?.data?.id,
+        username: data?.data?.username,
+        profilePic: data?.data?.university?.image_url,
+      }));
+      await Promise.all(writes);
+    } catch (error) {
+      toast.showToastError("Error sending messages:", error);
+    }
+  }, [chatId, data]);  
+  
+
+  const renderBubble = (props: any) => (
     <Bubble
       {...props}
       wrapperStyle={{
@@ -44,12 +85,8 @@ export default function ChatDetailScreen() {
         },
       }}
       textStyle={{
-        left: {
-          color: "#fff",
-        },
-        right: {
-          color: "#fff",
-        },
+        left: { color: "#fff" },
+        right: { color: "#fff" },
       }}
     />
   );
@@ -76,7 +113,7 @@ export default function ChatDetailScreen() {
     return null;
   };
 
-  const renderDay = (props) => (
+  const renderDay = (props: any) => (
     <Day
       {...props}
       textStyle={{
@@ -87,34 +124,42 @@ export default function ChatDetailScreen() {
     />
   );
 
-  const renderTime = (props) => (
+  const renderTime = (props: any) => (
     <Time
       {...props}
       textStyle={{
-        left: {
-          color: "#fff",
-        },
-        right: {
-          color: "#fff",
-        },
+        left: { color: "#fff" },
+        right: { color: "#fff" },
       }}
     />
   );
 
+  const renderSend = (props: any) => (
+    <Button
+      size="$5"
+      chromeless
+      icon={<Send color="$primary" size="$1.5" />}
+      onPress={() => {
+        if (props.text && props.onSend) {
+          props.onSend({ text: props.text.trim() }, true);
+        }
+      }}
+    />
+  );
+  
+
   return (
-    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+    <View style={{ flex: 1, backgroundColor: "$primary" }}>
       <GiftedChat
         messages={messages}
         onSend={(messages) => onSend(messages)}
-        user={{
-          _id: 1,
-        }}
-        inverted={false}
+        user={{ _id: String(data?.data?.id) }}
         renderBubble={renderBubble}
         renderAvatar={renderAvatar}
         renderDay={renderDay}
         renderTime={renderTime}
         showAvatarForEveryMessage
+        renderSend={renderSend}
       />
     </View>
   );

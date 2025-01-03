@@ -7,6 +7,7 @@ import { Error, Fab, Loading, NotFound, SearchBar, TopTabBar } from 'components/
 import { useRouter } from 'expo-router';
 import { IThread } from 'types/model';
 import { fetchThreadList } from 'services/thread';
+import { useFetchUserProfileQuery } from 'redux/api';
 
 interface ITabItemProps {
   title: string
@@ -20,12 +21,17 @@ const routes = [
 ];
 
 const TabItem = (props: ITabItemProps) => {
+  const { data: profData, error: profError, isLoading: profLoading } = useFetchUserProfileQuery();
   const [cursor, setCursor] = useState("");
   const [threads, setThreads] = useState<IThread[]>([])
   const [endOfDataReached, setEndOfDataReached] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [error, setError] = useState("")
+
+  const currentUserId2 = profData?.data?.id;
+  const currentUserName2 = profData?.data?.username;
+  const currentProfilePic2 = profData?.data?.university?.image_url;
 
   //TODO: Refactor to use rtk query
   const fetchThreads = async (cursor) => {
@@ -111,6 +117,9 @@ const TabItem = (props: ITabItemProps) => {
         handleLoadMore={() => handleLoadMore(cursor)}
         isLoadingMore={isLoadingMore}
         onRefresh={onRefresh}
+        currentUserId2={currentUserId2}
+        currentUserName2={currentUserName2}
+        currentProfilePic2={currentProfilePic2}
       />
     </View>
   );

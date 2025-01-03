@@ -1,4 +1,4 @@
-import { StyleSheet, useColorScheme } from 'react-native'
+import { useColorScheme, StyleSheet } from 'react-native'
 import { TamaguiProvider, type TamaguiProviderProps } from 'tamagui'
 import { ToastProvider, ToastViewport } from '@tamagui/toast'
 import { CurrentToast } from './CurrentToast'
@@ -6,9 +6,7 @@ import { config } from '../tamagui.config'
 import { Provider as ReduxProvider } from 'react-redux'
 import { store } from 'redux/store'
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import {
-  BottomSheetModalProvider,
-} from '@gorhom/bottom-sheet';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 
 export function Provider({ children, ...rest }: Omit<TamaguiProviderProps, 'config'>) {
   const colorScheme = useColorScheme()

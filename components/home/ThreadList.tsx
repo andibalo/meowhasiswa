@@ -2,6 +2,7 @@ import { ThreadItem } from './ThreadItem';
 import { FlatList, RefreshControl } from 'react-native';
 import { IThread } from '../../types/model';
 import { Spinner, View } from 'tamagui';
+import React, { useMemo } from 'react';
 
 interface IThreadListProps {
     title: string;
@@ -11,14 +12,16 @@ interface IThreadListProps {
     onRefresh: () => void;
     isRefreshing?: boolean;
     currentUserId?: string;
-    enableEditItem?: boolean
+    currentUserId2?: string;
+    currentUserName2?: string;
+    currentProfilePic2?: string;
+    enableEditItem?: boolean;
 }
 
 const renderFooterLoading = (loadingMore: boolean) => {
     if (!loadingMore) {
         return null;
     }
-
     return <Spinner size="large" color="$primary" mb="$3" />;
 };
 
@@ -30,11 +33,14 @@ export const ThreadList = ({
     onRefresh,
     isRefreshing,
     currentUserId,
-    enableEditItem
+    currentUserId2,
+    currentUserName2,
+    currentProfilePic2,
+    enableEditItem,
 }: IThreadListProps) => {
     const renderPost = ({ item }: { item: IThread }) => (
         <View>
-            <ThreadItem thread={item} currentUserId={currentUserId} enableEditItem={enableEditItem} />
+            <ThreadItem thread={item} currentUserId={currentUserId} enableEditItem={enableEditItem} currentUserId2={currentUserId2} currentUserName2={currentUserName2} currentProfilePic2={currentProfilePic2} />
             <View my="$2" />
         </View>
     )
@@ -55,6 +61,7 @@ export const ThreadList = ({
                     onRefresh={onRefresh}
                 />
             }
+            extraData={currentUserId} // Track current user to trigger re-renders
         />
     );
 };
